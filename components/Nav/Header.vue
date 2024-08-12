@@ -1,0 +1,247 @@
+<script lang="ts" setup>
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {
+  faBars,
+  faCartShopping,
+  faHourglassEmpty,
+  faMagnifyingGlass,
+  faXmark,
+  faRightFromBracket,
+} from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-regular-svg-icons/faUser";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { vOnClickOutside } from "@vueuse/components";
+const router = useRouter();
+const cart = ref<boolean>(false);
+const toggleCart = (): void => {
+  cart.value = true;
+};
+const outSideCart = (): void => {
+  cart.value = false;
+};
+const hideCart = (): void => {
+  cart.value = false;
+};
+const { toggleMenu, handleClickOutside, resizeWindow, isShowNav } = useToggleNav(1024);
+watch(router.currentRoute, (): void => {
+  isShowNav.value = false;
+  cart.value = false;
+});
+
+watch(cart, (newVal: boolean): void => {
+  if (newVal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
+
+watch(isShowNav, (newVal: boolean): void => {
+  if (newVal) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+});
+
+onMounted(() => {
+  resizeWindow();
+});
+</script>
+
+<template>
+  <div>
+    <header class="h-[70px] relative">
+      <nav class="bg-white shadow-lg p-3 z-[10] fixed w-full">
+        <div class="container mx-auto flex items-center justify-between">
+          <div class="flex items-center">
+            <button
+              @click="toggleMenu"
+              class="text-xl lg:hidden focus:outline-none"
+              id="menu-toggle"
+            >
+              <FontAwesomeIcon :icon="faBars" />
+            </button>
+            <NuxtLink
+              to="/"
+              class="text-purple-600 ml-5 text-2xl font-bold ml-2"
+              >WooNuxt</NuxtLink
+            >
+          </div>
+          <div class="hidden lg:flex items-center space-x-6">
+            <NuxtLink to="/" class="text-gray-600 hover:text-purple-600"
+              >Home</NuxtLink
+            >
+            <NuxtLink to="/products" class="text-gray-600 hover:text-purple-600"
+              >Products</NuxtLink
+            >
+            <NuxtLink
+              to="/categories"
+              class="text-gray-600 hover:text-purple-600"
+              >Categories</NuxtLink
+            >
+            <NuxtLink to="/contact" class="text-gray-600 hover:text-purple-600"
+              >Contact</NuxtLink
+            >
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="flex-grow relative max-w-xs mx-4">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                <FontAwesomeIcon :icon="faMagnifyingGlass" />
+              </span>
+              <input
+                type="text"
+                placeholder="Search Products..."
+                class="py-3 text-sm pl-10 pr-4 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              />
+            </div>
+            <div class="text-gray-600 hover:text-purple-600 user relative">
+              <img
+                src="../../public/ava/unnamed.jpg"
+                class="w-[30px] cursor-pointer ava rounded-full"
+                alt=""
+              />
+              <div
+                class="dropdown shadow rounded-lg p-3 bg-white absolute w-[224px] top-[30px] z-60 right-0"
+              >
+                <NuxtLink
+                  class="flex rounded-lg hover:bg-gray-200 align-center py-3 px-4"
+                  to="/my-account"
+                >
+                  <FontAwesomeIcon class="fa-sm" :icon="faUser" />
+                  <span class="ml-4 text-base">My Account</span>
+                </NuxtLink>
+                <NuxtLink
+                  class="flex align-center rounded-lg hover:bg-gray-200 py-3 px-4"
+                  to="/my-account?tab=wishlist"
+                >
+                  <FontAwesomeIcon class="fa-sm" :icon="faHeart" />
+                  <span class="ml-4 text-base">WishList</span>
+                </NuxtLink>
+                <NuxtLink
+                  class="flex align-center rounded-lg hover:bg-gray-200 py-3 px-4"
+                  to="/my-account"
+                >
+                  <FontAwesomeIcon class="fa-sm" :icon="faRightFromBracket" />
+                  <span class="ml-4 text-base">Log Out</span>
+                </NuxtLink>
+              </div>
+            </div>
+            <button
+              @click="toggleCart"
+              class="text-gray-600 hover:text-purple-600 relative"
+            >
+              <FontAwesomeIcon class="fa-lg" :icon="faCartShopping" />
+              <span
+                class="absolute top-[-10px] right-[-10px] text-xs text-center text-white inline-block w-5 h-5 bg-purple-600 rounded-full"
+                >0</span
+              >
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <Transition name="mobileNav">
+      <div
+        v-if="isShowNav"
+        v-on-click-outside="handleClickOutside"
+        class="mobile-menu h-screen w-1/2 bg-white fixed top-0 left-0 z-50 lg:hidden p-10"
+      >
+        <div class="title text-center">Menu</div>
+        <NuxtLink
+          to="/"
+          class="block mt-6 text-gray-600 hover:text-purple-600 py-2"
+          >Home</NuxtLink
+        >
+        <NuxtLink
+          to="/products"
+          class="block text-gray-600 hover:text-purple-600 py-2"
+          >Products</NuxtLink
+        >
+        <NuxtLink
+          to="/categories"
+          class="block text-gray-600 hover:text-purple-600 py-2"
+          >Categories</NuxtLink
+        >
+        <NuxtLink
+          to="/contact"
+          class="block text-gray-600 hover:text-purple-600 py-2"
+          >Contact</NuxtLink
+        >
+      </div>
+    </Transition>
+    <Transition name="shoppingCart">
+      <div
+        v-if="cart"
+        v-on-click-outside="outSideCart"
+        class="h-screen w-[500px] bg-white fixed top-0 right-0 z-50 p-6 pr-3"
+      >
+        <div class="header-cart flex justify-between">
+          <FontAwesomeIcon
+            @click="hideCart"
+            class="fa-xl cursor-pointer"
+            :icon="faXmark"
+          />
+          <div class="count">Cart (<span>0</span>)</div>
+          <FontAwesomeIcon class="fa-xl cursor-pointer" :icon="faTrashCan" />
+        </div>
+        <div
+          class="flex flex-col flex-1 mt-4 gap-4 p-6 overflow-y-scroll md:px-1 md:py-8"
+        >
+          <CartProducts v-for="n in 5" :key="n"></CartProducts>
+        </div>
+        <div class="p-8 w-full absolute bottom-0 bg-white z-60">
+          <a
+            href="/checkout"
+            class="block p-3 text-lg text-center text-white bg-gray-800 rounded-lg shadow-md justify-evenly hover:bg-gray-900"
+            ><span class="mx-2">Checkout</span><span>€28.00</span></a
+          >
+        </div>
+      </div>
+    </Transition>
+    <div
+      v-if="isShowNav || cart"
+      class="bg-black z-10 opacity-25 inset-0 fixed"
+    ></div>
+  </div>
+</template>
+
+<style scoped>
+.mobileNav-enter-active {
+  transition: all 0.3s ease-in-out;
+}
+.mobileNav-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+.mobileNav-enter-from {
+  transform: translateX(-250px);
+}
+.mobileNav-enter-to {
+  transform: translateX(0);
+}
+.mobileNav-leave-to {
+  transform: translateX(-250px);
+}
+.shoppingCart-enter-active {
+  transition: all 0.3s ease-in-out;
+}
+.shoppingCart-leave-active {
+  transition: all 0.3s ease-in-out;
+}
+.shoppingCart-enter-from {
+  transform: translateX(calc(1920px + 512px));
+}
+.shoppingCart-enter-to {
+  transform: translateX(1920px);
+}
+.shoppingCart-leave-to {
+  transform: translateX(calc(1920px + 512px));
+}
+.dropdown {
+  display: none;
+}
+.user:hover .dropdown {
+  display: block;
+}
+</style>
