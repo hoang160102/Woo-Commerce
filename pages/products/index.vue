@@ -1,20 +1,268 @@
 <script setup lang="ts">
-import { ScrollAreaRoot, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from 'radix-vue'
 import { vOnClickOutside } from "@vueuse/components";
-const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } = useToggleNav(768)
+const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } =
+  useToggleNav(768);
+const products = ref([
+  {
+    id: 1,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 20,
+    sale: 18,
+    rating: 4,
+    category: ['clothing', 'pants'],
+    color: ['red']
+  },
+  {
+    id: 2,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 30,
+    sale: 30,
+    rating: 5,
+    category: ['clothing', 'shorts'],
+    color: ['red', 'yellow']
+  },
+  {
+    id: 3,
+    name: "Woo Logo",
+    inStock: 3,
+    price: 27,
+    sale: 23,
+    rating: 3,
+    category: ['clothing', 'socks'],
+    color: ['black', 'yellow', 'blue']
+  },
+  {
+    id: 4,
+    name: "Woo Logo",
+    inStock: 4,
+    price: 28,
+    sale: 22,
+    rating: 4,
+    category: ['clothing', 't-shirts'],
+    color: ['orange', 'green', 'yellow', 'blue']
+  },
+  {
+    id: 5,
+    name: "Woo Logo",
+    inStock: 3,
+    price: 60,
+    sale: 60,
+    rating: 4,
+    category: ['clothing', 'hoodies'],
+    color: ['red', 'gray']
+  },
+  {
+    id: 6,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 40,
+    sale: 40,
+    rating: 4,
+    category: ['clothing', 'shoes'],
+    color: ['gray']
+  },
+  {
+    id: 7,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 76,
+    sale: 76,
+    rating: 3,
+    category: ['bags'],
+    color: ['gray', 'black']
+  },
+  {
+    id: 8,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 80,
+    sale: 74,
+    rating: 4,
+    category: ['clothing', 'jackets'],
+    color: ['red', 'blue', 'yellow']
+  },
+  {
+    id: 9,
+    name: "Woo Logo",
+    inStock: 0,
+    price: 76,
+    sale: 76,
+    rating: 3,
+    category: ['keychain'],
+    color: ['black', 'orannge']
+  },
+  {
+    id: 10,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 56,
+    sale: 50,
+    rating: 2,
+    category: ['keychain'],
+    color: ['blue', 'yellow']
+  },
+  {
+    id: 11,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 43,
+    sale: 40,
+    rating: 3,
+    category: ['clothing', 'jackets'],
+    color: ['green']
+  },
+  {
+    id: 12,
+    name: "Woo Logo",
+    inStock: 3,
+    price: 48,
+    sale: 44,
+    rating: 4,
+    category: ['keychain'],
+    color: ['red', 'blue']
+  },
+  {
+    id: 13,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 68,
+    sale: 68,
+    rating: 5,
+    category: ['clothing', 'shorts'],
+    color: ['red', 'blue', 'orange', 'yellow'],
+  },
+  {
+    id: 14,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 10,
+    sale: 10,
+    rating: 4,
+    category: ['clothing', 'shorts'],
+    color: ['red', 'blue', 'orange']
+  },
+  {
+    id: 15,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 20,
+    sale: 18,
+    rating: 4,
+    category: ['pants', 'T-shirts'],
+    color: ['blue', 'orange']
+  },
+  {
+    id: 16,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 30,
+    sale: 30,
+    rating: 5,
+    category: ['pants', 'shirts'],
+    color: ['blue', 'green']
+  },
+  {
+    id: 17,
+    name: "Woo Logo",
+    inStock: 0,
+    price: 38,
+    sale: 38,
+    rating: 3,
+    category: ['clothing', 'underwear'],
+    color: ['black', 'yellow']
+  },
+  {
+    id: 18,
+    name: "Woo Logo",
+    inStock: 0,
+    price: 96,
+    sale: 90,
+    rating: 4,
+    category: ['clothing', 'underwear'],
+    color: ['black', 'red']
+  },
+  {
+    id: 19,
+    name: "Woo Logo",
+    inStock: 3,
+    price: 86,
+    sale: 80,
+    rating: 4,
+    category: ['clothing', 'pants'],
+    color: ['gray', 'green']
+  },
+  {
+    id: 20,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 20,
+    sale: 18,
+    rating: 4,
+    category: ['bags'],
+    color: ['orange', 'green']
+  },
+  {
+    id: 21,
+    name: "Woo Logo",
+    inStock: 3,
+    price: 40,
+    sale: 40,
+    rating: 3,
+    category: ['bags'],
+    color: ['orange']
+  },
+  {
+    id: 22,
+    name: "Woo Logo",
+    inStock: 2,
+    price: 44,
+    sale: 44,
+    rating: 4,
+    category: ['bags'],
+    color: ['orange', 'yellow']
+  },
+  {
+    id: 23,
+    name: "Woo Logo",
+    inStock: 1,
+    price: 30,
+    sale: 30,
+    rating: 4,
+    category: ['keychain'],
+    color: ['orange', 'black']
+  },
+]);
+const categoriesChecked = ref<string[]>([])
+const colorChecked = ref<string[]>([])
+const onlySale = ref<boolean>(false)
+watch(categoriesChecked, (newValue: Array<string>) => {
+  categoriesChecked.value = newValue
+  selectedCategory.value = categoriesChecked.value
+})
+watch(colorChecked, (newValue: Array<string>) => {
+  colorChecked.value = newValue
+  selectedColor.value = colorChecked.value
+})
+watch(onlySale, (newValue: boolean) => {
+  onlySale.value = newValue
+  isSaleProduct.value = onlySale.value
+  console.log(filteredProducts.value)
+})
+const { updatePriceRange, filteredProducts, selectedCategory, selectedColor, isSaleProduct } = useFilterProduct(products.value);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
 });
 watch(isShowNav, (newVal: boolean): void => {
   if (newVal) {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
   }
-  else {
-    document.body.style.overflow = '';
-  }
-})
+});
 onMounted(() => {
-  resizeWindow()
+  resizeWindow();
 });
 </script>
 <template>
@@ -23,18 +271,17 @@ onMounted(() => {
       <Transition name="filterNav">
         <div
           v-on-click-outside="handleClickOutside"
-          :class="filter"
+          :class="[filter, { 'overscroll-y-auto': isShowNav }]"
           class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative w-[280px] md:block"
         >
-          <FilterPrice></FilterPrice>
-          <FilterCategories></FilterCategories>
-          <FilterSize></FilterSize>
-          <FilterColor></FilterColor>
+          <FilterPrice @update:price-range="updatePriceRange"></FilterPrice>
+          <FilterCategories v-model="categoriesChecked"></FilterCategories>
+          <FilterColor v-model="colorChecked"></FilterColor>
           <div
             class="sale-product pb-8 mt-8 border-b border-gray-300 border-solid"
           >
             <div class="font-semibold">Sale Products Only</div>
-            <input type="checkbox" />
+            <input v-model="onlySale" type="checkbox" />
           </div>
           <div>dsadas</div>
           <div>asdasd</div>
@@ -43,10 +290,33 @@ onMounted(() => {
       <div class="w-full">
         <div class="flex justify-between mb-10">
           <div class="products-shown">Showing 1 to 24 of 38</div>
+          <select
+            class="hidden border shadow outline-none bg-white px-4 py-1 rounded-md md:block"
+            aria-label="Order by"
+          >
+            <option value="latest">Latest</option>
+            <option value="price">Price</option>
+            <option value="alphabetically">Alphabetically</option>
+            <option value="rating">Rating</option>
+            <option value="discount">Discount</option>
+          </select>
           <button @click="toggleMenu" class="block md:hidden">Filter</button>
         </div>
-        <div :class="{ 'overflow-hidden': isShowNav }" class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <HomeProducts v-for="n in 24" :key="n"></HomeProducts>
+        <div
+          :class="{ 'overflow-hidden': isShowNav }"
+          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        >
+          <HomeProducts
+            v-for="product in filteredProducts"
+            :key="product.id"
+            :id="product.id"
+            :name="product.name"
+            :inStock="product.inStock"
+            :price="product.price"
+            :sale="product.sale"
+            :rating="product.rating"
+            class="animation"
+          ></HomeProducts>
         </div>
       </div>
     </div>

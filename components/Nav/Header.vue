@@ -169,6 +169,11 @@ onMounted(() => {
           class="block text-gray-600 hover:text-purple-600 py-2"
           >Contact</NuxtLink
         >
+        <NuxtLink
+          to="/my-account?tab=wishlist"
+          class="block text-gray-600 hover:text-purple-600 py-2"
+          >WishList</NuxtLink
+        >
       </div>
     </Transition>
     <Transition name="shoppingCart">
@@ -243,5 +248,11 @@ onMounted(() => {
 }
 .user:hover .dropdown {
   display: block;
+}
+.router-link-exact-active { 
+  color: rgb(147 51 234) !important;
+}
+.dropdown > .router-link-exact-active {
+  color: black !important;
 }
 </style>

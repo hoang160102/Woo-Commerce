@@ -8,13 +8,17 @@ const sliderValues = ref<[number, number]>([0, 100]);
 const minValue = ref<number>(sliderValues.value[0]);
 const maxValue = ref<number>(sliderValues.value[1]);
 
+const emit = defineEmits(['update:priceRange']);
+
 watch(sliderValues, (newValue: [number, number]) => {
   minValue.value = newValue[0];
   maxValue.value = newValue[1];
+  emit('update:priceRange', newValue);
 });
 
 watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
   sliderValues.value = [newMin, newMax];
+  emit('update:priceRange', [newMin, newMax]);
 });
 </script>
 
