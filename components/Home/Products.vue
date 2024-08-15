@@ -2,12 +2,12 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 const props = defineProps<{
-  id?: number;
+  id: number;
   name: string;
-  inStock?: number;
-  price?: number;
-  sale?: number;
-  rating?: number;
+  inStock: number;
+  price: number;
+  sale: number;
+  rating: number;
 }>();
 </script>
 <template>

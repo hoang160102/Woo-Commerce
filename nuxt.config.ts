@@ -1,10 +1,10 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-import Aura from '@primevue/themes/aura';
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+import Aura from "@primevue/themes/aura";
 export default defineNuxtConfig({
-  compatibilityDate: '2024-04-03',
+  compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
-  css: ['~/assets/main.css'],
+  css: ["~/assets/main.css"],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -12,17 +12,17 @@ export default defineNuxtConfig({
     },
   },
   modules: [
-    '@vueuse/nuxt',
+    "@vueuse/nuxt",
     (_options, nuxt) => {
-      nuxt.hooks.hook('vite:extendConfig', (config) => {
+      nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }))
-      })
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
     },
-    '@primevue/nuxt-module'
+    "@primevue/nuxt-module",
   ],
   build: {
-    transpile: ['vuetify'],
+    transpile: ["vuetify"],
   },
   vite: {
     vue: {
@@ -33,9 +33,9 @@ export default defineNuxtConfig({
   },
   primevue: {
     options: {
-        theme: {
-            preset: Aura
-        }
-    }
-}
-})
+      theme: {
+        preset: Aura,
+      },
+    },
+  },
+});

@@ -11,16 +11,26 @@ const colors = ref([
   "red",
   "yellow",
 ]);
-const checkColors = defineModel<string[]>()
+const checkColors = defineModel<string[]>();
+const isToggleColor = ref<boolean>(true);
+const toggleColor = (): void => {
+  isToggleColor.value = !isToggleColor.value;
+};
 </script>
 <template>
   <div class="color-filter pb-8 mt-8 border-b border-gray-300 border-solid">
     <div class="title flex justify-between">
       <div class="font-semibold">Color</div>
-      <FontAwesomeIcon class="cursor-pointer" :icon="faAngleUp" />
+      <FontAwesomeIcon
+        :class="{ 'rotate-180': isToggleColor }"
+        @click="toggleColor"
+        class="cursor-pointer icon"
+        :icon="faAngleUp"
+      />
     </div>
     <div
-      class="mt-3 relative mr-6 gap-4 max-h-[240px] grid grid-cols-5 md:grid-cols-6 gap-1.5"
+      class="mt-3 relative mr-6 transition-all duration-300 px-2 ease-in overflow-hidden gap-4 max-h-[240px] grid grid-cols-5 md:grid-cols-6 gap-1.5"
+      :style="{ maxHeight: isToggleColor ? '500px' : '0px' }"
     >
       <label
         v-for="color in colors"
@@ -47,4 +57,8 @@ const checkColors = defineModel<string[]>()
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.icon {
+  transition: all 0.3s ease-in-out;
+}
+</style>

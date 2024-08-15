@@ -2,6 +2,7 @@
 import { vOnClickOutside } from "@vueuse/components";
 const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } =
   useToggleNav(768);
+
 const products = ref([
   {
     id: 1,
@@ -10,8 +11,8 @@ const products = ref([
     price: 20,
     sale: 18,
     rating: 4,
-    category: ['clothing', 'pants'],
-    color: ['red']
+    category: ["clothing", "pants"],
+    color: ["red"],
   },
   {
     id: 2,
@@ -20,8 +21,8 @@ const products = ref([
     price: 30,
     sale: 30,
     rating: 5,
-    category: ['clothing', 'shorts'],
-    color: ['red', 'yellow']
+    category: ["clothing", "shorts"],
+    color: ["red", "yellow"],
   },
   {
     id: 3,
@@ -30,8 +31,8 @@ const products = ref([
     price: 27,
     sale: 23,
     rating: 3,
-    category: ['clothing', 'socks'],
-    color: ['black', 'yellow', 'blue']
+    category: ["clothing", "socks"],
+    color: ["black", "yellow", "blue"],
   },
   {
     id: 4,
@@ -40,8 +41,8 @@ const products = ref([
     price: 28,
     sale: 22,
     rating: 4,
-    category: ['clothing', 't-shirts'],
-    color: ['orange', 'green', 'yellow', 'blue']
+    category: ["clothing", "t-shirts"],
+    color: ["orange", "green", "yellow", "blue"],
   },
   {
     id: 5,
@@ -50,8 +51,8 @@ const products = ref([
     price: 60,
     sale: 60,
     rating: 4,
-    category: ['clothing', 'hoodies'],
-    color: ['red', 'gray']
+    category: ["clothing", "hoodies"],
+    color: ["red", "gray"],
   },
   {
     id: 6,
@@ -60,8 +61,8 @@ const products = ref([
     price: 40,
     sale: 40,
     rating: 4,
-    category: ['clothing', 'shoes'],
-    color: ['gray']
+    category: ["clothing", "shoes"],
+    color: ["gray"],
   },
   {
     id: 7,
@@ -70,8 +71,8 @@ const products = ref([
     price: 76,
     sale: 76,
     rating: 3,
-    category: ['bags'],
-    color: ['gray', 'black']
+    category: ["bags"],
+    color: ["gray", "black"],
   },
   {
     id: 8,
@@ -80,8 +81,8 @@ const products = ref([
     price: 80,
     sale: 74,
     rating: 4,
-    category: ['clothing', 'jackets'],
-    color: ['red', 'blue', 'yellow']
+    category: ["clothing", "jackets"],
+    color: ["red", "blue", "yellow"],
   },
   {
     id: 9,
@@ -90,8 +91,8 @@ const products = ref([
     price: 76,
     sale: 76,
     rating: 3,
-    category: ['keychain'],
-    color: ['black', 'orannge']
+    category: ["keychain"],
+    color: ["black", "orannge"],
   },
   {
     id: 10,
@@ -100,8 +101,8 @@ const products = ref([
     price: 56,
     sale: 50,
     rating: 2,
-    category: ['keychain'],
-    color: ['blue', 'yellow']
+    category: ["keychain"],
+    color: ["blue", "yellow"],
   },
   {
     id: 11,
@@ -110,8 +111,8 @@ const products = ref([
     price: 43,
     sale: 40,
     rating: 3,
-    category: ['clothing', 'jackets'],
-    color: ['green']
+    category: ["clothing", "jackets"],
+    color: ["green"],
   },
   {
     id: 12,
@@ -120,8 +121,8 @@ const products = ref([
     price: 48,
     sale: 44,
     rating: 4,
-    category: ['keychain'],
-    color: ['red', 'blue']
+    category: ["keychain"],
+    color: ["red", "blue"],
   },
   {
     id: 13,
@@ -130,8 +131,8 @@ const products = ref([
     price: 68,
     sale: 68,
     rating: 5,
-    category: ['clothing', 'shorts'],
-    color: ['red', 'blue', 'orange', 'yellow'],
+    category: ["clothing", "shorts"],
+    color: ["red", "blue", "orange", "yellow"],
   },
   {
     id: 14,
@@ -140,8 +141,8 @@ const products = ref([
     price: 10,
     sale: 10,
     rating: 4,
-    category: ['clothing', 'shorts'],
-    color: ['red', 'blue', 'orange']
+    category: ["clothing", "shorts"],
+    color: ["red", "blue", "orange"],
   },
   {
     id: 15,
@@ -150,8 +151,8 @@ const products = ref([
     price: 20,
     sale: 18,
     rating: 4,
-    category: ['pants', 'T-shirts'],
-    color: ['blue', 'orange']
+    category: ["pants", "T-shirts"],
+    color: ["blue", "orange"],
   },
   {
     id: 16,
@@ -160,8 +161,8 @@ const products = ref([
     price: 30,
     sale: 30,
     rating: 5,
-    category: ['pants', 'shirts'],
-    color: ['blue', 'green']
+    category: ["pants", "shirts"],
+    color: ["blue", "green"],
   },
   {
     id: 17,
@@ -170,8 +171,8 @@ const products = ref([
     price: 38,
     sale: 38,
     rating: 3,
-    category: ['clothing', 'underwear'],
-    color: ['black', 'yellow']
+    category: ["clothing", "underwear"],
+    color: ["black", "yellow"],
   },
   {
     id: 18,
@@ -180,8 +181,8 @@ const products = ref([
     price: 96,
     sale: 90,
     rating: 4,
-    category: ['clothing', 'underwear'],
-    color: ['black', 'red']
+    category: ["clothing", "underwear"],
+    color: ["black", "red"],
   },
   {
     id: 19,
@@ -190,8 +191,8 @@ const products = ref([
     price: 86,
     sale: 80,
     rating: 4,
-    category: ['clothing', 'pants'],
-    color: ['gray', 'green']
+    category: ["clothing", "pants"],
+    color: ["gray", "green"],
   },
   {
     id: 20,
@@ -200,8 +201,8 @@ const products = ref([
     price: 20,
     sale: 18,
     rating: 4,
-    category: ['bags'],
-    color: ['orange', 'green']
+    category: ["bags"],
+    color: ["orange", "green"],
   },
   {
     id: 21,
@@ -210,8 +211,8 @@ const products = ref([
     price: 40,
     sale: 40,
     rating: 3,
-    category: ['bags'],
-    color: ['orange']
+    category: ["bags"],
+    color: ["orange"],
   },
   {
     id: 22,
@@ -220,8 +221,8 @@ const products = ref([
     price: 44,
     sale: 44,
     rating: 4,
-    category: ['bags'],
-    color: ['orange', 'yellow']
+    category: ["bags"],
+    color: ["orange", "yellow"],
   },
   {
     id: 23,
@@ -230,27 +231,38 @@ const products = ref([
     price: 30,
     sale: 30,
     rating: 4,
-    category: ['keychain'],
-    color: ['orange', 'black']
+    category: ["keychain"],
+    color: ["orange", "black"],
   },
 ]);
-const categoriesChecked = ref<string[]>([])
-const colorChecked = ref<string[]>([])
-const onlySale = ref<boolean>(false)
-watch(categoriesChecked, (newValue: Array<string>) => {
-  categoriesChecked.value = newValue
-  selectedCategory.value = categoriesChecked.value
-})
-watch(colorChecked, (newValue: Array<string>) => {
-  colorChecked.value = newValue
-  selectedColor.value = colorChecked.value
-})
-watch(onlySale, (newValue: boolean) => {
-  onlySale.value = newValue
-  isSaleProduct.value = onlySale.value
-  console.log(filteredProducts.value)
-})
-const { updatePriceRange, filteredProducts, selectedCategory, selectedColor, isSaleProduct } = useFilterProduct(products.value);
+// const categoriesChecked = ref<string[]>([]);
+// const colorChecked = ref<string[]>([]);
+// const ratingChecked = ref<number>(NaN)
+// const onlySale = ref<boolean>(false);
+const {
+  updatePriceRange,
+  filteredProducts,
+  selectedCategory,
+  selectedColor,
+  isSaleProduct,
+  selectedRating
+} = useFilterProduct(products.value);
+// watch(categoriesChecked, (newValue: Array<string>) => {
+//   categoriesChecked.value = newValue;
+//   selectedCategory.value = categoriesChecked.value;
+// });
+// watch(colorChecked, (newValue: Array<string>) => {
+//   colorChecked.value = newValue;
+//   selectedColor.value = colorChecked.value;
+// });
+// watch(onlySale, (newValue: boolean) => {
+//   onlySale.value = newValue;
+//   isSaleProduct.value = !onlySale.value;
+// });
+// watch(ratingChecked, (newValue: number) => {
+//   ratingChecked.value = newValue
+//   selectedRating.value = ratingChecked.value
+// })
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
 });
@@ -275,16 +287,15 @@ onMounted(() => {
           class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative w-[280px] md:block"
         >
           <FilterPrice @update:price-range="updatePriceRange"></FilterPrice>
-          <FilterCategories v-model="categoriesChecked"></FilterCategories>
-          <FilterColor v-model="colorChecked"></FilterColor>
+          <FilterCategories v-model="selectedCategory"></FilterCategories>
+          <FilterColor v-model="selectedColor"></FilterColor>
           <div
             class="sale-product pb-8 mt-8 border-b border-gray-300 border-solid"
           >
             <div class="font-semibold">Sale Products Only</div>
-            <input v-model="onlySale" type="checkbox" />
+            <input v-model="isSaleProduct" type="checkbox" />
           </div>
-          <div>dsadas</div>
-          <div>asdasd</div>
+          <FilterRating v-model="selectedRating"></FilterRating>
         </div>
       </Transition>
       <div class="w-full">
