@@ -36,7 +36,7 @@ watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
       />
     </div>
     <div
-      class="transition-all duration-300 ease-in overflow-hidden p-3"
+      class="transition-all duration-300 ease-in overflow-hidden"
       :style="{ maxHeight: isTogglePrice ? '500px' : '0px' }"
     >
       <div class="mt-3 grid gap-4 grid-cols-2">
@@ -59,7 +59,7 @@ watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
           <label class="px-2 text-gray-400 absolute">$</label>
         </div>
       </div>
-      <div class="card flex mt-6 justify-center">
+      <div class="card flex p-3 mt-6 justify-center">
         <Slider v-model="sliderValues" range class="w-56" />
       </div>
     </div>

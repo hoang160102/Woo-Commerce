@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 </script>
 <template>
-  <div class="flex px-3 py-2 align-center overflow-hidden justify-between">
+  <div class="flex px-3 py-2 align-center justify-between">
     <div class="product align-center flex">
       <img
         class="w-[64px] h-[64px] rounded-lg"

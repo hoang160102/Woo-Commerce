@@ -23,7 +23,8 @@ const outSideCart = (): void => {
 const hideCart = (): void => {
   cart.value = false;
 };
-const { toggleMenu, handleClickOutside, resizeWindow, isShowNav } = useToggleNav(1024);
+const { toggleMenu, handleClickOutside, resizeWindow, isShowNav } =
+  useToggleNav(1024);
 watch(router.currentRoute, (): void => {
   isShowNav.value = false;
   cart.value = false;
@@ -177,34 +178,44 @@ onMounted(() => {
       </div>
     </Transition>
     <Transition name="shoppingCart">
-      <div
-        v-if="cart"
-        v-on-click-outside="outSideCart"
-        class="h-screen w-[500px] bg-white fixed top-0 right-0 z-50 p-6 pr-3"
-      >
-        <div class="header-cart flex justify-between">
-          <FontAwesomeIcon
-            @click="hideCart"
-            class="fa-xl cursor-pointer"
-            :icon="faXmark"
-          />
-          <div class="count">Cart (<span>0</span>)</div>
-          <FontAwesomeIcon class="fa-xl cursor-pointer" :icon="faTrashCan" />
-        </div>
+      <div class="overflow-hidden">
         <div
-          class="flex flex-col flex-1 mt-4 gap-4 p-6 overflow-y-scroll md:px-1 md:py-8"
+          v-on-click-outside="outSideCart"
+          class="h-screen bg-white fixed top-0 transition-all duration-300 ease-in-out right-0 z-50"
+          :style="{ width: cart ? '500px' : '0px' }"
+          :class="[{ 'p-6': cart, 'pr-3': cart }]"
         >
-          <CartProducts v-for="n in 5" :key="n"></CartProducts>
-        </div>
-        <div class="p-8 w-full absolute bottom-0 bg-white z-60">
-          <a
-            href="/checkout"
-            class="block p-3 text-lg text-center text-white bg-gray-800 rounded-lg shadow-md justify-evenly hover:bg-gray-900"
-            ><span class="mx-2">Checkout</span><span>€28.00</span></a
+          <!-- Header (fixed) -->
+          <div class="header-cart flex justify-between p-6">
+            <FontAwesomeIcon
+              @click="hideCart"
+              class="fa-xl cursor-pointer"
+              :icon="faXmark"
+            />
+            <div class="count">Cart (<span>0</span>)</div>
+            <FontAwesomeIcon class="fa-xl cursor-pointer" :icon="faTrashCan" />
+          </div>
+
+          <!-- Scrollable content -->
+          <div
+            class="flex flex-col flex-1 mt-4 gap-4 overflow-y-auto"
+            style="max-height: calc(100% - 200px)"
           >
+            <CartProducts v-for="n in 6" :key="n"></CartProducts>
+          </div>
+
+          <!-- Footer (fixed) -->
+          <div class="p-8 w-full absolute bottom-0 bg-white z-60">
+            <a
+              href="/checkout"
+              class="block p-3 text-lg text-center text-white bg-gray-800 rounded-lg shadow-md justify-evenly hover:bg-gray-900"
+              ><span class="mx-2">Checkout</span><span>€28.00</span></a
+            >
+          </div>
         </div>
       </div>
     </Transition>
+
     <div
       v-if="isShowNav || cart"
       class="bg-black z-10 opacity-25 inset-0 fixed"
@@ -228,7 +239,7 @@ onMounted(() => {
 .mobileNav-leave-to {
   transform: translateX(-250px);
 }
-.shoppingCart-enter-active {
+/* .shoppingCart-enter-active {
   transition: all 0.3s ease-in-out;
 }
 .shoppingCart-leave-active {
@@ -242,14 +253,14 @@ onMounted(() => {
 }
 .shoppingCart-leave-to {
   transform: translateX(calc(1920px + 512px));
-}
+} */
 .dropdown {
   display: none;
 }
 .user:hover .dropdown {
   display: block;
 }
-.router-link-exact-active { 
+.router-link-exact-active {
   color: rgb(147 51 234) !important;
 }
 .dropdown > .router-link-exact-active {

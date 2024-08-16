@@ -1,8 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { vOnClickOutside } from "@vueuse/components";
 const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } =
   useToggleNav(768);
-
 const products = ref([
   {
     id: 1,
@@ -104,136 +103,6 @@ const products = ref([
     category: ["keychain"],
     color: ["blue", "yellow"],
   },
-  {
-    id: 11,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 43,
-    sale: 40,
-    rating: 3,
-    category: ["clothing", "jackets"],
-    color: ["green"],
-  },
-  {
-    id: 12,
-    name: "Woo Logo",
-    inStock: 3,
-    price: 48,
-    sale: 44,
-    rating: 4,
-    category: ["keychain"],
-    color: ["red", "blue"],
-  },
-  {
-    id: 13,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 68,
-    sale: 68,
-    rating: 5,
-    category: ["clothing", "shorts"],
-    color: ["red", "blue", "orange", "yellow"],
-  },
-  {
-    id: 14,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 10,
-    sale: 10,
-    rating: 4,
-    category: ["clothing", "shorts"],
-    color: ["red", "blue", "orange"],
-  },
-  {
-    id: 15,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 20,
-    sale: 18,
-    rating: 4,
-    category: ["pants", "T-shirts"],
-    color: ["blue", "orange"],
-  },
-  {
-    id: 16,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 30,
-    sale: 30,
-    rating: 5,
-    category: ["pants", "shirts"],
-    color: ["blue", "green"],
-  },
-  {
-    id: 17,
-    name: "Woo Logo",
-    inStock: 0,
-    price: 38,
-    sale: 38,
-    rating: 3,
-    category: ["clothing", "underwear"],
-    color: ["black", "yellow"],
-  },
-  {
-    id: 18,
-    name: "Woo Logo",
-    inStock: 0,
-    price: 96,
-    sale: 90,
-    rating: 4,
-    category: ["clothing", "underwear"],
-    color: ["black", "red"],
-  },
-  {
-    id: 19,
-    name: "Woo Logo",
-    inStock: 3,
-    price: 86,
-    sale: 80,
-    rating: 4,
-    category: ["clothing", "pants"],
-    color: ["gray", "green"],
-  },
-  {
-    id: 20,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 20,
-    sale: 18,
-    rating: 4,
-    category: ["bags"],
-    color: ["orange", "green"],
-  },
-  {
-    id: 21,
-    name: "Woo Logo",
-    inStock: 3,
-    price: 40,
-    sale: 40,
-    rating: 3,
-    category: ["bags"],
-    color: ["orange"],
-  },
-  {
-    id: 22,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 44,
-    sale: 44,
-    rating: 4,
-    category: ["bags"],
-    color: ["orange", "yellow"],
-  },
-  {
-    id: 23,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 30,
-    sale: 30,
-    rating: 4,
-    category: ["keychain"],
-    color: ["orange", "black"],
-  },
 ]);
 const {
   updatePriceRange,
@@ -241,7 +110,7 @@ const {
   selectedCategory,
   selectedColor,
   isSaleProduct,
-  selectedRating,
+  selectedRating
 } = useFilterProduct(products.value);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
@@ -266,16 +135,6 @@ onMounted(() => {
           :class="filter"
           class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
         >
-          <select
-            class="block mb-4 border shadow outline-none bg-white p-1 rounded-md md:hidden"
-            aria-label="Order by"
-          >
-            <option value="latest">Latest</option>
-            <option value="price">Price</option>
-            <option value="alphabetically">Alphabetically</option>
-            <option value="rating">Rating</option>
-            <option value="discount">Discount</option>
-          </select>
           <FilterPrice @update:price-range="updatePriceRange"></FilterPrice>
           <FilterCategories v-model="selectedCategory"></FilterCategories>
           <FilterColor v-model="selectedColor"></FilterColor>
@@ -292,7 +151,7 @@ onMounted(() => {
         <div class="flex justify-between mb-10">
           <div class="products-shown">Showing 1 to 24 of 38</div>
           <select
-            class="hidden border shadow outline-none bg-white px-4 py-1 rounded-md md:block"
+            class="hidden border shadow outline-none bg-white p-1 rounded-md md:block"
             aria-label="Order by"
           >
             <option value="latest">Latest</option>
@@ -331,7 +190,7 @@ onMounted(() => {
 <style scoped>
 .filters {
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: 100vh; 
   background-color: white;
 }
 .filters::-webkit-scrollbar {
@@ -358,3 +217,4 @@ onMounted(() => {
   transform: translateX(-250px);
 }
 </style>
+

@@ -17,9 +17,11 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/vue-fontawesome": "^3.0.8",
     "@mdi/font": "^7.4.47",
+    "@nuxt/ui": "^2.18.4",
     "@primevue/themes": "^4.0.4",
     "@vueuse/components": "^10.11.0",
     "nuxt": "^3.12.4",
+    "nuxt-rating": "^0.1.5",
     "primevue": "^4.0.4",
     "radix-vue": "^1.9.3",
     "vue": "latest"

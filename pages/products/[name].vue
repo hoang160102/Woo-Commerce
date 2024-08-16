@@ -123,10 +123,10 @@ const currentTabComponent = computed(() => {
       </div>
       <div class="my-32">
         <nav class="border-b flex gap-8">
-          <div :class="{ 'border-red-400': currentTab === 'Description', 'border-b-2': currentTab === 'Description'}" class="pb-6">
+          <div :class="{ 'border-violet-600 text-violet-600': currentTab === 'Description', 'border-b-2': currentTab === 'Description'}" class="pb-6">
             <button @click="currentTab = `Description`" type="button" class="cursor-pointer text-lg">Description</button>
           </div>
-          <div :class="{ 'border-red-400': currentTab === 'Reviews', 'border-b-2': currentTab === 'Reviews'}" class="pb-6">
+          <div :class="{ 'border-violet-600 text-violet-600': currentTab === 'Reviews', 'border-b-2': currentTab === 'Reviews'}" class="pb-6">
             <button @click="currentTab = `Reviews`" type="button" class="cursor-pointer text-lg">
               Reviews (<span>0</span>)
             </button>

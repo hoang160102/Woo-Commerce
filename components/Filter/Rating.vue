@@ -32,34 +32,38 @@ const toggleRating = (): void => {
       <div class="flex my-1 items-center">
         <input type="radio" id="five" :value="value5" v-model="picked"/>
         <label class="ml-3 flex align-center" for="five">
-          <Rating v-model="value5" readonly />
+          <NuxtRating :readonly="true" :ratingValue="value5" activeColor="#ffd700"></NuxtRating>
         </label>
       </div>
       <div class="flex my-1 items-center">
         <input type="radio" id="four" :value="value4" v-model="picked"/>
         <label class="ml-3 flex align-center" for="four">
-          <Rating v-model="value4" readonly />
+          <NuxtRating :readonly="true" :ratingValue="value4" activeColor="#ffd700"></NuxtRating>
+          <div class="ml-1 font-light text-sm">& Up</div>
         </label>
       </div>
       <div class="flex my-1 items-center">
         <input type="radio" id="three" :value="value3" v-model="picked"/>
         <label class="ml-3 flex align-center" for="three">
-          <Rating v-model="value3" readonly />
+          <NuxtRating :readonly="true" :ratingValue="value3" activeColor="#ffd700"></NuxtRating>
+          <div class="ml-1 font-light text-sm">& Up</div>
         </label>
       </div>
       <div class="flex my-1 items-center">
         <input type="radio" id="two" :value="value2" v-model="picked"/>
         <label class="ml-3 flex align-center" for="two">
-          <Rating v-model="value2" readonly />
+          <NuxtRating :readonly="true" :ratingValue="value2" activeColor="#ffd700"></NuxtRating>
+          <div class="ml-1 font-light text-sm">& Up</div>
         </label>
       </div>
       <div class="flex my-1 items-center">
         <input type="radio" id="one" :value="value1" v-model="picked"/>
         <label class="ml-3 flex align-center" for="one">
-          <Rating v-model="value1" readonly />
+          <NuxtRating :readonly="true" :ratingValue="value1" activeColor="#ffd700"></NuxtRating>
           <div class="ml-1 font-light text-sm">& Up</div>
         </label>
       </div>
     </div>
   </div>
 </template>
+

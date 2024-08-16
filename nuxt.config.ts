@@ -11,16 +11,13 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: [
-    "@vueuse/nuxt",
-    (_options, nuxt) => {
-      nuxt.hooks.hook("vite:extendConfig", (config) => {
-        // @ts-expect-error
-        config.plugins.push(vuetify({ autoImport: true }));
-      });
-    },
-    "@primevue/nuxt-module",
-  ],
+  modules: ["@vueuse/nuxt", // (_options, nuxt) => {
+  //   nuxt.hooks.hook("vite:extendConfig", (config) => {
+  //     // @ts-expect-error
+  //     config.plugins.push(vuetify({ autoImport: true }));
+  //   });
+  // },
+  "@primevue/nuxt-module", "nuxt-rating", "@nuxt/ui"],
   build: {
     transpile: ["vuetify"],
   },

@@ -109,9 +109,11 @@ const countries = countriesData.sort();
         />
       </div>
     </div>
-    <div
-      class="bg-white backdrop-blur-sm bg-opacity-75 border-t col-span-full p-4 sticky bottom-0 rounded-b-lg"
-    >
+    <div class="p-8">
+      <h3 class="text-xl mb-4 font-semibold col-span-full">Billing</h3>
+      <Billing></Billing>
+    </div>
+    <div class="bg-white backdrop-blur-sm bg-opacity-75 border-t col-span-full p-4 sticky bottom-0 rounded-b-lg">
       <button
         class="rounded-md flex font-semibold ml-auto text-white py-2 px-4 gap-4 items-center disabled:bg-gray-400 disabled:cursor-not-allowed bg-primary hover:bg-primary-dark"
       >
