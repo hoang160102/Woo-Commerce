@@ -10,39 +10,55 @@ type Product = {
 };
 
 export default function useFilteredProducts(arr1: Product[]) {
-  const priceRange = ref<[number, number]>([0, 100]);
+  const minValue = ref<number>(0);
+  const maxValue = ref<number>(100);
   const selectedCategory = ref<string[]>([]);
   const selectedColor = ref<string[]>([]);
   const isSaleProduct = ref<boolean>(false);
   const selectedRating = ref<number>(NaN);
 
-  const updatePriceRange = (range: [number, number]) => {
-    priceRange.value = range;
-  };
-
   const filteredProducts = computed(() => {
     return arr1.filter((item: Product) => {
-      const filterPrice =
-        item.sale >= priceRange.value[0] && item.sale <= priceRange.value[1];
+      const filterPrice = item.price >= minValue.value && item.price <= maxValue.value;
       const filterCategory =
         selectedCategory.value.length === 0 ||
-        item.category.some((cate: string) => selectedCategory.value.includes(cate));
+        item.category.some((cate: string) =>
+          selectedCategory.value.includes(cate)
+        );
       const filterColor =
         selectedColor.value.length === 0 ||
         item.color.some((color: string) => selectedColor.value.includes(color));
       const filterRating =
-        Number.isNaN(selectedRating.value) || item.rating >= selectedRating.value;
+        Number.isNaN(selectedRating.value) ||
+        item.rating >= selectedRating.value;
       const filterSale = !isSaleProduct.value || item.sale < item.price;
+  
+      // Only skip all filters if no filters are applied, including the price filter
       const noFiltersApplied =
         selectedCategory.value.length === 0 &&
         selectedColor.value.length === 0 &&
         !isSaleProduct.value &&
-        Number.isNaN(selectedRating.value);
-
-      return noFiltersApplied || (filterPrice && filterCategory && filterColor && filterSale && filterRating);
+        Number.isNaN(selectedRating.value) &&
+        minValue.value === 0 &&
+        maxValue.value === 100;
+  
+      return (
+        noFiltersApplied ||
+        (
+          filterPrice &&
+          filterCategory &&
+          filterColor &&
+          filterSale &&
+          filterRating
+        )
+      );
     });
   });
-
+  
+  watch([minValue, maxValue], (newValues: number[]) => {
+    minValue.value = newValues[0]
+    maxValue.value = newValues[1]
+  })
   watch(selectedCategory, (newValue: string[]) => {
     selectedCategory.value = newValue;
   });
@@ -60,7 +76,8 @@ export default function useFilteredProducts(arr1: Product[]) {
   });
 
   return {
-    updatePriceRange,
+    minValue,
+    maxValue,
     filteredProducts,
     selectedCategory,
     selectedColor,

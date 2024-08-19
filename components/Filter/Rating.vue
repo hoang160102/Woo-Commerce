@@ -2,7 +2,6 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import Rating from "primevue/rating";
 const isToggleRating = ref<boolean>(true);
 const value1 = ref<number>(1)
 const value2 = ref<number>(2)

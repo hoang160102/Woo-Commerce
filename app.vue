@@ -16,6 +16,7 @@ body {
 :root {
   --p-rating-icon-active-color: #ffd700 !important;
   --p-rating-icon-size: 13px !important;
+  --p-rating-icon-hover-color: #ffd700 !important;
 }
 
 </style>

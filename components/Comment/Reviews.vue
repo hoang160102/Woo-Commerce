@@ -2,6 +2,7 @@
 import Rating from "primevue/rating";
 const value = ref<number>(1);
 const progressValue = ref<number>(0);
+const isReview = ref<boolean>(false);
 const widthProgress = computed(() => {
   return {
     width: `${(300 / 100) * progressValue.value}px`,
@@ -10,7 +11,9 @@ const widthProgress = computed(() => {
 watch(progressValue, (newValue: number) => {
   progressValue.value = newValue;
 });
-
+const toggleReview = computed(() => {
+  isReview.value = !isReview.value;
+});
 onMounted(() => {
   const timer = setTimeout(() => (progressValue.value = 90), 500);
   return () => clearTimeout(timer);
@@ -118,10 +121,66 @@ onMounted(() => {
         experience.
       </div>
       <button
+        @click="toggleReview"
         class="border rounded-lg text-center w-full p-2"
+        v-if="!isReview"
       >
         Write a Review
       </button>
+      <button
+        @click="toggleReview"
+        class="border rounded-lg text-center w-full p-2"
+        v-if="isReview"
+      >
+        Close
+      </button>
+      <form v-if="isReview" class="writeReview ease-in-out transform transition-all">
+        <div class="w-full text-gray-500">
+          <div class="p-5 mt-3 grid gap-2 border rounded-lg">
+            <div class="block text-center mb-1.5">
+              <label class="text-center mb-3 text-sm block relative m-auto"
+                >How would you rate your experience with this product? We strive
+                for a 5 star experience
+                <span class="text-red-500">*</span></label
+              >
+              <div class="flex rating-review justify-center">
+                <Rating v-model="value" />
+              </div>
+            </div>
+            <div class="w-full col-span-full">
+              <label for="content" class="text-sm mb-0.5"
+                >How was your experience?
+                <span class="text-red-500">*</span></label
+              ><textarea
+                class="w-full outline-none bg-white p-2 rounded-lg"
+                id="content"
+                placeholder="Great Quality"
+              ></textarea>
+            </div>
+            <div class="w-full col-span-full">
+              <label for="author" class="text-sm mb-0.5"
+                >Your email <span class="text-red-500">*</span></label
+              ><input
+              class="w-full outline-none bg-white p-2 rounded-lg"
+                id="author"
+                placeholder="example@example.com"
+                type="email"
+                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
+
+              />
+            </div>
+            <!----><!---->
+            <div class="w-full col-span-full text-center mt-3">
+              <button
+                class="flex gap-4 justify-center items-center transition font-semibold rounded-md w-full p-2 bg-amber-300 text-amber-900 hover:bg-amber-400"
+                type="submit"
+              >
+                 <span>Submit</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
   </section>
 </template>

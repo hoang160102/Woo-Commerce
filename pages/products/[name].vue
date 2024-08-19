@@ -137,7 +137,7 @@ const currentTabComponent = computed(() => {
         </div>
       </div>
       <div class="my-32">
-        <div class="mb-4 text-xl font-semibold" data-v-da93534a="">You May Also Like</div>
+        <div class="mb-4 text-xl font-semibold">You May Also Like</div>
         <div class="grid gap-8 grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           <HomeProducts v-for="n in 5" :key="n"></HomeProducts>
         </div>

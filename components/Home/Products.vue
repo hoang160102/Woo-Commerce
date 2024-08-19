@@ -19,7 +19,11 @@ const props = defineProps<{
       <img class="rounded-lg" src="../../public/products/products.png" alt="" />
     </NuxtLink>
     <div class="py-2">
-      <NuxtRating :readonly="true" :ratingValue="props.rating" activeColor="#ffd700"></NuxtRating>
+      <NuxtRating
+        :readonly="true"
+        :ratingValue="props.rating"
+        activeColor="#ffd700"
+      ></NuxtRating>
     </div>
     <NuxtLink to="/" class="mb-2 hover:text-purple-600 font-light">{{
       name
@@ -31,7 +35,7 @@ const props = defineProps<{
             'line-through': sale !== price,
             'text-gray-400': sale !== price,
             'text-black': sale === price,
-            'font-normal': sale !== price
+            'font-normal': sale !== price,
           },
         ]"
         >€{{ price }}.00</span

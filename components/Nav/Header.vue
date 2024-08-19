@@ -64,6 +64,9 @@ onMounted(() => {
             >
               <FontAwesomeIcon :icon="faBars" />
             </button>
+            <NuxtLink to="/">
+              <img class="w-[42px] rounded-full" src="../../public/logo/logoo.png" alt="">
+            </NuxtLink>
             <NuxtLink
               to="/"
               class="text-purple-600 ml-5 text-2xl font-bold ml-2"

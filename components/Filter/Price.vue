@@ -1,27 +1,32 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import Slider from "primevue/slider";
-const sliderValues = ref<[number, number]>([0, 100]);
-const minValue = ref<number>(sliderValues.value[0]);
-const maxValue = ref<number>(sliderValues.value[1]);
+
 const isTogglePrice = ref<boolean>(true);
 const togglePrice = (): void => {
   isTogglePrice.value = !isTogglePrice.value;
 };
-const emit = defineEmits(["update:priceRange"]);
+const minPrice = defineModel<number>("minPrice");
+const maxPrice = defineModel<number>("maxPrice");
 
-watch(sliderValues, (newValue: [number, number]) => {
-  minValue.value = newValue[0];
-  maxValue.value = newValue[1];
-  emit("update:priceRange", newValue);
+const sliderValues = ref<number[]>([minPrice.value ?? 0, maxPrice.value ?? 0]);
+watch([minPrice, maxPrice], (newValues: [number, number]) => {
+  if (newValues[0] > newValues[1]) {
+    newValues[0] = newValues[1];
+  }
+  sliderValues.value = [newValues[0], newValues[1]]
 });
 
-watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
-  sliderValues.value = [newMin, newMax];
-  emit("update:priceRange", [newMin, newMax]);
+watch(sliderValues, (newValues: [number, number]) => {
+  if (newValues[0] > newValues[1]) {
+    newValues[0] = newValues[1];
+  }
+  minPrice.value = newValues[0];
+  maxPrice.value = newValues[1];
 });
+
 </script>
 
 <template>
@@ -43,7 +48,7 @@ watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
         <div class="min flex relative items-center">
           <input
             type="number"
-            v-model.number="minValue"
+            v-model.number="minPrice"
             min="0"
             class="bg-white border rounded-lg max-w-full border-gray-200 leading-none w-auto p-2 pl-6 md:text-sm"
           />
@@ -52,7 +57,7 @@ watch([minValue, maxValue], ([newMin, newMax]: [number, number]) => {
         <div class="min flex relative items-center">
           <input
             type="number"
-            v-model.number="maxValue"
+            v-model.number="maxPrice"
             min="1"
             class="bg-white border rounded-lg max-w-full border-gray-200 leading-none w-auto p-2 pl-6 md:text-sm"
           />

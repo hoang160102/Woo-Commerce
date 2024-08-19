@@ -236,15 +236,19 @@ const products = ref([
   },
 ]);
 const {
-  updatePriceRange,
   filteredProducts,
   selectedCategory,
   selectedColor,
   isSaleProduct,
   selectedRating,
+  minValue,
+  maxValue
 } = useFilterProduct(products.value);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
+});
+watch(selectedCategory, (newValue: string[]): void => {
+  selectedCategory.value = newValue;
 });
 watch(isShowNav, (newVal: boolean): void => {
   if (newVal) {
@@ -264,7 +268,7 @@ onMounted(() => {
         <div
           v-on-click-outside="handleClickOutside"
           :class="filter"
-          class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
+          class="filters max-h-[100vh] md:min-h-[100vh] z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
         >
           <select
             class="block mb-4 border shadow outline-none bg-white p-1 rounded-md md:hidden"
@@ -276,7 +280,10 @@ onMounted(() => {
             <option value="rating">Rating</option>
             <option value="discount">Discount</option>
           </select>
-          <FilterPrice @update:price-range="updatePriceRange"></FilterPrice>
+          <FilterPrice
+            v-model:min-price="minValue"
+            v-model:max-price="maxValue"
+          ></FilterPrice>
           <FilterCategories v-model="selectedCategory"></FilterCategories>
           <FilterColor v-model="selectedColor"></FilterColor>
           <div
@@ -303,9 +310,11 @@ onMounted(() => {
           </select>
           <button @click="toggleMenu" class="block md:hidden">Filter</button>
         </div>
-        <div
+        <transition-group
+          name="product"
+          tag="div"
           :class="{ 'overflow-hidden': isShowNav }"
-          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animation"
         >
           <HomeProducts
             v-for="product in filteredProducts"
@@ -316,9 +325,8 @@ onMounted(() => {
             :price="product.price"
             :sale="product.sale"
             :rating="product.rating"
-            class="animation"
           ></HomeProducts>
-        </div>
+        </transition-group>
       </div>
     </div>
     <div
@@ -331,11 +339,10 @@ onMounted(() => {
 <style scoped>
 .filters {
   overflow-y: auto;
-  max-height: 100vh;
   background-color: white;
 }
 .filters::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 @media screen and (min-width: 768px) {
   .filters {
@@ -356,5 +363,19 @@ onMounted(() => {
 }
 .filterNav-leave-to {
   transform: translateX(-250px);
+}
+.product-enter-active,
+.product-leave-active {
+  transition: all 0.5s ease;
+}
+.product-enter-from,
+.product-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.product-enter-to,
+.product-leave-from {
+  opacity: 1;
+  transform: translateY(0);
 }
 </style>

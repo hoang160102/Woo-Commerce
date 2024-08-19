@@ -29,7 +29,7 @@ const toggleColor = (): void => {
       />
     </div>
     <div
-      class="mt-3 relative mr-6 transition-all duration-300 px-2 ease-in overflow-hidden gap-4 max-h-[240px] grid grid-cols-5 md:grid-cols-6 gap-1.5"
+      class="mt-3 relative pr-3 transition-all duration-300 ease-in overflow-hidden gap-4 max-h-[240px] grid grid-cols-5 md:grid-cols-6 gap-1.5"
       :style="{ maxHeight: isToggleColor ? '500px' : '0px' }"
     >
       <label
