@@ -8,12 +8,12 @@ import {
   faDatabase,
   faUser,
   faAngleDown,
-  faGear,
   faRightFromBracket,
   faArrowLeft,
   faArrowRight,
   faCircleUser,
   faUsers,
+  faBagShopping
 } from "@fortawesome/free-solid-svg-icons";
 
 const route = useRoute();
@@ -48,11 +48,11 @@ const toggle = (): void => {
 
 <template>
   <nav
-    class="p-5 border-r fixed w-[120px] lg:w-[260px] h-screen transition-all duration-300 ease-in-out"
+    class="p-5 border-r fixed w-[100px] lg:w-[260px] h-screen transition-all duration-300 ease-in-out"
   >
     <div class="info-admin mb-5 px-3 py-2 justify-center flex">
       <img
-        class="w-[43px] h-[43px] rounded-full"
+        class="w-[38px] h-[38px] rounded-full"
         src="../../public/ava/unnamed.jpg"
         alt="Avatar"
       />
@@ -82,6 +82,13 @@ const toggle = (): void => {
       >
         <FontAwesomeIcon class="fa-xl" :icon="faDatabase" />
         <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Categories</span>
+      </NuxtLink>
+      <NuxtLink
+        to="/admin/orders"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+      >
+        <FontAwesomeIcon class="fa-xl" :icon="faBagShopping" />
+        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Orders</span>
       </NuxtLink>
       <div
         class="justify-between cursor-pointer rounded-lg px-3 py-2"
@@ -121,13 +128,6 @@ const toggle = (): void => {
         </div>
       </div>
       <div class="bar h-[1px] w-full bg-gray-300 my-3"></div>
-      <NuxtLink
-        to="/admin/settings"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
-      >
-        <FontAwesomeIcon class="fa-xl" :icon="faGear" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Settings</span>
-      </NuxtLink>
       <NuxtLink
         to="/admin/settings"
         class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"

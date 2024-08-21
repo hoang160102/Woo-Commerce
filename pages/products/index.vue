@@ -242,7 +242,7 @@ const {
   isSaleProduct,
   selectedRating,
   minValue,
-  maxValue
+  maxValue,
 } = useFilterProduct(products.value);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
@@ -263,6 +263,7 @@ onMounted(() => {
 </script>
 <template>
   <main class="main-content py-10 bg-gray-100">
+    <div v-if="name">{{ name }}</div>
     <div class="container flex w-full gap-16 px-8 mx-auto xl:w-10/12">
       <Transition name="filterNav">
         <div

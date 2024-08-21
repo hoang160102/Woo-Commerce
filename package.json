@@ -20,6 +20,8 @@
     "@nuxt/ui": "^2.18.4",
     "@primevue/themes": "^4.0.4",
     "@vueuse/components": "^10.11.0",
+    "chart.js": "^4.4.3",
+    "mongoose": "^8.5.3",
     "nuxt": "^3.12.4",
     "nuxt-rating": "^0.1.5",
     "primevue": "^4.0.4",

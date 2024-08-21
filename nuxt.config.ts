@@ -11,8 +11,8 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@vueuse/nuxt", // (_options, nuxt) => {
-  //   nuxt.hooks.hook("vite:extendConfig", (config) => {
+  modules: [// (_options, nuxt) => {
+  "@vueuse/nuxt", //   nuxt.hooks.hook("vite:extendConfig", (config) => {
   //     // @ts-expect-error
   //     config.plugins.push(vuetify({ autoImport: true }));
   //   });

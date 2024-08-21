@@ -4,5 +4,5 @@ definePageMeta({
 })
 </script>
 <template>
-    <h1>staff admin</h1>
+    
 </template>
