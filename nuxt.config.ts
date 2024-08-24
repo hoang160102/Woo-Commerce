@@ -12,12 +12,12 @@ export default defineNuxtConfig({
     },
   },
   modules: [// (_options, nuxt) => {
-  "@vueuse/nuxt", //   nuxt.hooks.hook("vite:extendConfig", (config) => {
-  //     // @ts-expect-error
+  //   nuxt.hooks.hook("vite:extendConfig", (config) => {
+  "@vueuse/nuxt", //     // @ts-expect-error
   //     config.plugins.push(vuetify({ autoImport: true }));
   //   });
   // },
-  "@primevue/nuxt-module", "nuxt-rating", "@nuxt/ui"],
+  "@primevue/nuxt-module", "nuxt-rating", "@nuxt/ui", "@pinia/nuxt"],
   build: {
     transpile: ["vuetify"],
   },
@@ -35,4 +35,13 @@ export default defineNuxtConfig({
       },
     },
   },
+  runtimeConfig: {
+    MONGO_URL: process.env.MONGO_URL,
+    public: {
+
+    }
+  },
+  nitro: {
+    plugins: ["@/server/db/index.ts"]
+  }
 });
