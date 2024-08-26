@@ -35,13 +35,7 @@ export default defineNuxtConfig({
       },
     },
   },
-  runtimeConfig: {
-    MONGO_URL: process.env.MONGO_URL,
-    public: {
-
-    }
-  },
-  nitro: {
-    plugins: ["@/server/db/index.ts"]
-  }
+  plugins: [
+    { src: '~/plugins/mongoose.ts', mode: 'server' }
+  ],
 });

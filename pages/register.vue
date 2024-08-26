@@ -12,8 +12,9 @@ import {
 definePageMeta({
   layout: "authentication",
 });
-const firstName = ref<string>("");
-const lastName = ref<string>("");
+import { useUsersStore } from "~/store/auth";
+const { usersList, userRegister } = useUsersStore();
+const name = ref<string>("");
 const userName = ref<string>("");
 const email = ref<string>("");
 const password = ref<string>("");
@@ -30,6 +31,15 @@ const isShowConfirmPassword = ref<boolean>(false);
 const isConfirmPassword = computed(() => {
   return isShowConfirmPassword.value ? "text" : "password";
 });
+const isFormValid = computed(() => {
+  return (
+    name.value.length > 0 &&
+    userName.value.length > 0 &&
+    email.value.match(/^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim) &&
+    password.value.length > 6 &&
+    confirmPassword.value === password.value
+  );
+});
 const toggleConfirmPassword = (): void => {
   isShowConfirmPassword.value = !isShowConfirmPassword.value;
 };
@@ -37,6 +47,14 @@ const toggleConfirmPassword = (): void => {
 const signUp = async () => {
   event?.preventDefault();
   isSubmit.value = true;
+  if (isFormValid.value) {
+    await userRegister({
+      name: name.value,
+      username: userName.value,
+      email: email.value,
+      password: password.value,
+    })
+  }
 };
 </script>
 
@@ -47,37 +65,19 @@ const signUp = async () => {
       <form class="w-full md:w-1/2">
         <div class="form-control my-4 relative">
           <div class="group relative">
-            <label class="absolute top-1/2 -translate-y-1/2" for="firstName">
+            <label class="absolute top-1/2 -translate-y-1/2" for="name">
               <FontAwesomeIcon :icon="faUser" class="fa-xs" />
             </label>
             <input
               type="text"
-              v-model="firstName"
-              placeholder="First Name"
+              v-model="name"
+              placeholder="Name"
               class="outline-none w-full px-6 py-2 border-b border-black"
             />
           </div>
           <span
             class="px-4 text-xs text-red-500"
-            v-if="isSubmit && firstName.length === 0"
-            >This field is invalid</span
-          >
-        </div>
-        <div class="form-control my-4 relative">
-          <div class="group relative">
-            <label class="absolute top-1/2 -translate-y-1/2" for="lastName">
-              <FontAwesomeIcon :icon="faUser" class="fa-xs" />
-            </label>
-            <input
-              type="text"
-              v-model="lastName"
-              placeholder="Last Name"
-              class="outline-none w-full px-6 py-2 border-b border-black"
-            />
-          </div>
-          <span
-            class="px-4 text-xs text-red-500"
-            v-if="isSubmit && lastName.length === 0"
+            v-if="isSubmit && name.length === 0"
             >This field is invalid</span
           >
         </div>
@@ -182,8 +182,8 @@ const signUp = async () => {
           </div>
           <span
             class="px-4 text-xs text-red-500"
-            v-if="isSubmit && confirmPassword === password"
-            >Your password is too weak</span
+            v-if="isSubmit && !(confirmPassword === password)"
+            >Your password confirmation does not match</span
           >
         </div>
         <button

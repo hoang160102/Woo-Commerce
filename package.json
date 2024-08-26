@@ -21,6 +21,7 @@
     "@pinia/nuxt": "^0.5.4",
     "@primevue/themes": "^4.0.4",
     "@vueuse/components": "^10.11.0",
+    "bcrypt": "^5.1.1",
     "chart.js": "^4.4.3",
     "mongodb": "^6.8.0",
     "mongoose": "^8.5.3",
@@ -29,10 +30,12 @@
     "pinia": "^2.2.2",
     "primevue": "^4.0.4",
     "radix-vue": "^1.9.3",
+    "uuid": "^10.0.0",
     "vue": "latest"
   },
   "devDependencies": {
     "@primevue/nuxt-module": "^4.0.4",
+    "@types/bcrypt": "^5.0.2",
     "@vueuse/core": "^10.11.0",
     "@vueuse/nuxt": "^10.11.0",
     "autoprefixer": "^10.4.19",
