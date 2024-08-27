@@ -13,7 +13,7 @@ definePageMeta({
   layout: "authentication",
 });
 import { useUsersStore } from "~/store/auth";
-const { usersList, userRegister } = useUsersStore();
+const { userRegister } = useUsersStore();
 const name = ref<string>("");
 const userName = ref<string>("");
 const email = ref<string>("");
@@ -59,8 +59,8 @@ const signUp = async () => {
 </script>
 
 <template>
-  <div class="rounded-lg md:w-auto w-full shadow bg-white p-10 md:p-20">
-    <div class="title text-3xl font-extrabold">Sign Up</div>
+  <div class="rounded-lg md:w-auto w-2/3 shadow bg-white p-10 md:p-20">
+    <div class="title text-3xl text-center font-extrabold">Sign Up</div>
     <div class="flex mt-4">
       <form class="w-full md:w-1/2">
         <div class="form-control my-4 relative">
@@ -186,9 +186,13 @@ const signUp = async () => {
             >Your password confirmation does not match</span
           >
         </div>
+        <div class="flex mt-4">
+          <span class="text-sm">Already have an account?</span>
+          <NuxtLink to="/login" class="text-sm ml-2 underline text-blue-500">Login</NuxtLink>
+        </div>
         <button
           @click="signUp"
-          class="px-13 py-3 bg-blue-500 rounded-lg mt-4 text-white text-lg font-semibold"
+          class="px-13 w-full md:w-auto py-3 bg-blue-500 rounded-lg mt-4 text-white text-lg font-semibold"
         >
           Register
         </button>

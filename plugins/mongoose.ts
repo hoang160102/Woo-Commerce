@@ -7,12 +7,10 @@ export default defineNuxtPlugin(async () => {
   }
 
   // MongoDB connection string
-  const url = process.env.MONGODB_URI || 'mongodb+srv://hoang123:<db_password>@cluster0.thcnq.mongodb.net/';
+  const url = process.env.MONGODB_URL || 'mongodb://localhost:27017/Woo-Commerce';
 
   // Connect to MongoDB
-  await mongoose.connect(url, {
-    serverSelectionTimeoutMS: 30000
-  },)
+  await mongoose.connect(url)
     .then(() => {
       console.log('Connected to MongoDB');
     })

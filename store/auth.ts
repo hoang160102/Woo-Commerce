@@ -20,5 +20,19 @@ export const useUsersStore = defineStore("users-store", () => {
       console.log(err);
     }
   }
-  return { usersList, userRegister };
+  async function userLogin(user: object) {
+    try {
+      const data = await $fetch("/api/users/auth/login", {
+        method: "post",
+        body: JSON.stringify(user),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+  return { usersList, userRegister, userLogin };
 });

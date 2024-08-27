@@ -17,7 +17,7 @@ interface User {
 const userSchema: Schema<User> = new mongoose.Schema({
     name: { type: String, required: true },
     username: { type: String, required: true },
-    email: { type: String, required: true},
+    email: { type: String, required: true, unique: true},
     password: { type: String, required: true },
     billing_info_id: { type: String, default: () => uuidv4() },
     shipping_info_id: { type: String, default: () => uuidv4() },

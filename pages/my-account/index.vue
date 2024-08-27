@@ -4,10 +4,44 @@ import {
   faBagShopping,
   faHeart,
   faRightFromBracket,
+  faClose,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { vOnClickOutside } from "@vueuse/components";
 const route = useRoute();
 const activeTab = computed(() => route.query.tab || "my-details");
+const isModal = ref<boolean>(false);
+const file = ref<string>("");
+const toUpdateProfile = () => {
+  isModal.value = true;
+};
+const closeModal = () => {
+  isModal.value = false;
+};
+const handleClickOutside = () => {
+  isModal.value = false;
+};
+watch(isModal, (newVal: boolean) => {
+  if (newVal) {
+    document.body.classList.add("overflow-hidden");
+  } else {
+    document.body.classList.remove("overflow-hidden");
+  }
+});
+const imgUrl = ref<string>("../../public/ava/unnamed.jpg");
+  const onFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e: ProgressEvent<FileReader>) => {
+      if (e.target) {
+        imgUrl.value = e.target.result as string;
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+};
 </script>
 <template>
   <section class="bg-gray-100">
@@ -18,8 +52,9 @@ const activeTab = computed(() => route.query.tab || "my-details");
         <div class="mt-2 lg:sticky top-16 w-full lg:max-w-[260px]">
           <section class="my-8 flex gap-4 items-start justify-center w-full">
             <img
-              src=""
-              class="rounded-full aspect-square border border-white"
+              @click="toUpdateProfile"
+              src="../../public/ava/unnamed.jpg"
+              class="rounded-full cursor-pointer aspect-square border border-white"
               alt="user-image"
               width="48"
               height="48"
@@ -76,15 +111,42 @@ const activeTab = computed(() => route.query.tab || "my-details");
           </button>
         </div>
 
-        <main
+        <div
           class="flex-1 w-full lg:my-8 rounded-lg max-w-screen-lg lg:sticky top-24"
         >
           <AccountDetails v-if="activeTab === 'my-details'"></AccountDetails>
           <OrderHistory v-else-if="activeTab === 'orders'"></OrderHistory>
           <Wishlist v-else-if="activeTab === 'wishlist'"></Wishlist>
-        </main>
+        </div>
       </div>
     </div>
+    <Teleport to="body">
+      <div
+        v-if="isModal"
+        class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
+      >
+        <div
+          v-on-click-outside="handleClickOutside"
+          class="modal-content bg-white rounded-lg w-[500px] h-[400px] p-6"
+        >
+          <FontAwesomeIcon
+            @click="closeModal"
+            :icon="faClose"
+            class="float-right fa-lg cursor-pointer"
+          />
+          <div
+            class="main-content w-full flex flex-col mt-10 justify-center align-center"
+          >
+            <div
+              class="border overflow-hidden rounded-full w-[150px] h-[150px]"
+            >
+              <img class="w-full h-full" :src="imgUrl" alt="" />
+            </div>
+            <input type="file" @change="onFileChange" class="ml-20 mt-20" />
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </section>
 </template>
 
@@ -97,5 +159,8 @@ const activeTab = computed(() => route.query.tab || "my-details");
     0 1px 2px -1px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+.modal {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>
