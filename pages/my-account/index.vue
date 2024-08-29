@@ -29,7 +29,7 @@ watch(isModal, (newVal: boolean) => {
   }
 });
 const imgUrl = ref<string>("../../public/ava/unnamed.jpg");
-  const onFileChange = (event: Event) => {
+const onFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
   if (file) {
@@ -135,14 +135,20 @@ const imgUrl = ref<string>("../../public/ava/unnamed.jpg");
             class="float-right fa-lg cursor-pointer"
           />
           <div
-            class="main-content w-full flex flex-col mt-10 justify-center align-center"
+            class="main-content w-full flex flex-col mt-5 justify-center align-center"
           >
             <div
               class="border overflow-hidden rounded-full w-[150px] h-[150px]"
             >
               <img class="w-full h-full" :src="imgUrl" alt="" />
             </div>
-            <input type="file" @change="onFileChange" class="ml-20 mt-20" />
+            <input type="file" @change="onFileChange" class="ml-20 mt-10" />
+            <button
+              @click="closeModal"
+              class="px-9 py-3 bg-blue-500 mt-7 rounded-lg text-white"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>

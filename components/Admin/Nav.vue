@@ -48,7 +48,7 @@ const toggle = (): void => {
 
 <template>
   <nav
-    class="p-5 border-r fixed w-[100px] lg:w-[260px] h-screen transition-all duration-300 ease-in-out"
+    class="p-5 border-r fixed w-[100px] xl:w-[260px] h-screen transition-all duration-300 ease-in-out"
   >
     <div class="info-admin mb-5 px-3 py-2 justify-center flex">
       <img
@@ -56,7 +56,7 @@ const toggle = (): void => {
         src="../../public/ava/unnamed.jpg"
         alt="Avatar"
       />
-      <div class="ml-3 hidden lg:block user">
+      <div class="ml-3 hidden xl:block user">
         <div class="name">Nguyen Viet Hoang</div>
         <div class="email text-sm">hoang160102@gmail.com</div>
       </div>
@@ -64,40 +64,40 @@ const toggle = (): void => {
     <div class="navigation flex flex-col">
       <NuxtLink
         to="/admin"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faHouse" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Home</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Home</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/products"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBox" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Products</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Products</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/categories"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faDatabase" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Categories</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Categories</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/orders"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBagShopping" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Orders</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Orders</span>
       </NuxtLink>
       <div
         class="justify-between cursor-pointer rounded-lg px-3 py-2"
         @click="toggle"
       >
-        <div class="flex nav align-center justify-between">
+        <div class="flex nav justify-center align-center justify-between">
           <div class="flex">
             <FontAwesomeIcon class="fa-xl" :icon="faUser" />
-            <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Users</span>
+            <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Users</span>
           </div>
           <FontAwesomeIcon
             class="icon fa-lg"
@@ -110,30 +110,30 @@ const toggle = (): void => {
           :class="{ 'max-h-0': !isExpanded, 'max-h-40': isExpanded }"
         >
           <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
+            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav justify-center align-center"
             to="/admin/staffs"
   
           >
             <FontAwesomeIcon :icon="faCircleUser" />
-            <span v-if="!navWidth" class="ml-2 hidden lg:block">Employees</span>
+            <span v-if="!navWidth" class="ml-2 hidden xl:block">Employees</span>
           </NuxtLink>
           <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
+            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav justify-center align-center"
             to="/admin/users"
   
           >
             <FontAwesomeIcon :icon="faUsers" />
-            <span v-if="!navWidth" class="ml-2 hidden lg:block">Clients</span>
+            <span v-if="!navWidth" class="ml-2 hidden xl:block">Clients</span>
           </NuxtLink>
         </div>
       </div>
       <div class="bar h-[1px] w-full bg-gray-300 my-3"></div>
       <NuxtLink
         to="/admin/settings"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faRightFromBracket" />
-        <span v-if="!navWidth" class="text-lg hidden lg:block ml-3">Logout</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Logout</span>
       </NuxtLink>
     </div>
   </nav>

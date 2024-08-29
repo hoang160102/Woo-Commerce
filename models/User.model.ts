@@ -6,6 +6,7 @@ interface User {
     username: string
     password: string;
     email: string;
+    phone: string;
     billing_info_id: string;
     shipping_info_id: string;
     createAt: Date;
@@ -19,6 +20,7 @@ const userSchema: Schema<User> = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true},
     password: { type: String, required: true },
+    phone: { type: String, required: true},
     billing_info_id: { type: String, default: () => uuidv4() },
     shipping_info_id: { type: String, default: () => uuidv4() },
     createAt: { type: Date, default: Date.now() },

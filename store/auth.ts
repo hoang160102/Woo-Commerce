@@ -1,9 +1,8 @@
 import { defineStore } from "pinia";
 
-export const useUsersStore = defineStore("users-store", () => {
-  const usersList = ref<object[]>([]);
+export const useAuthStore = defineStore("auth-store", () => {
   const userAuth = ref<object>();
-  const token = ref<string>();
+  const token = ref<string>('');
   async function userRegister(newUsers: object) {
     const createUsers = {
       ...newUsers,
@@ -22,17 +21,18 @@ export const useUsersStore = defineStore("users-store", () => {
   }
   async function userLogin(user: object) {
     try {
-      const data = await $fetch("/api/users/auth/login", {
+      const { data, error } = await $fetch("/api/users/auth/login", {
         method: "post",
         body: JSON.stringify(user),
         headers: {
           "Content-Type": "application/json",
         },
       })
+      console.log(error)
     }
     catch(err) {
       console.log(err)
     }
   }
-  return { usersList, userRegister, userLogin };
+  return { userRegister, userLogin };
 });

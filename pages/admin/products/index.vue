@@ -25,22 +25,22 @@ definePageMeta({
     <ClientOnly>
       <table class="w-full">
         <tr class="bg-gray-100">
-          <th class="py-3">Product</th>
-          <th class="py-3">Product ID</th>
-          <th class="py-3">Price</th>
-          <th class="py-3">Sale</th>
-          <th class="py-3">Quantity</th>
-          <th class="py-3">Category</th>
-          <th class="py-3">Action</th>
+          <th class="py-3 px-5 text-start">Product</th>
+          <th class="py-3 px-5 text-start">Product ID</th>
+          <th class="py-3 px-5 text-start">Price</th>
+          <th class="py-3 px-5 text-start">Sale</th>
+          <th class="py-3 px-5 text-start">Quantity</th>
+          <th class="py-3 px-5 text-start">Category</th>
+          <th class="py-3 px-5 text-start">Action</th>
         </tr>
         <tr v-for="n in 10" :key="n">
-          <td class="text-center py-3">Woo Hoodies</td>
-          <td class="text-center py-3">#123</td>
-          <td class="text-center py-3">30$</td>
-          <td class="text-center py-3">30$</td>
-          <td class="text-center py-3">1230</td>
-          <td class="text-center py-3">Hoodies, Shirt</td>
-          <td class="text-center py-3">
+          <td class="px-5 text-start py-3">Woo Hoodies</td>
+          <td class="px-5 text-start py-3">#123</td>
+          <td class="px-5 text-start py-3">30$</td>
+          <td class="px-5 text-start py-3">30$</td>
+          <td class="px-5 text-start py-3">1230</td>
+          <td class="px-5 text-start py-3">Hoodies, Shirt</td>
+          <td class="px-5 text-start py-3">
             <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
             <FontAwesomeIcon :icon="faTrashCan" class="cursor-pointer ml-3" />
           </td>
@@ -51,12 +51,14 @@ definePageMeta({
 </template>
 
 <style scoped>
-tr td:first-child, tr th:first-child {
+tr td:first-child,
+tr th:first-child {
   border-top-left-radius: 16px;
   border-bottom-left-radius: 16px;
 }
 
-tr td:last-child, tr th:last-child {
+tr td:last-child,
+tr th:last-child {
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
 }

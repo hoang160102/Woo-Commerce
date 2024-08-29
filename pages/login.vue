@@ -7,11 +7,11 @@ import {
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { useUsersStore } from "~/store/auth";
+import { useAuthStore } from "~/store/auth";
 definePageMeta({
   layout: "authentication",
 });
-const { userLogin } = useUsersStore();
+const { userLogin } = useAuthStore();
 const email = ref<string>("");
 const password = ref<string>("");
 const isSubmit = ref<boolean>(false);
@@ -22,8 +22,7 @@ const isPassword = computed(() => {
 const togglePassword = (): void => {
   isShowPassword.value = !isShowPassword.value;
 };
-const login = async (event: Event) => {
-  event.preventDefault();
+const login = async () => {
   isSubmit.value = true;
   await userLogin({
     email: email.value,
@@ -35,7 +34,7 @@ const login = async (event: Event) => {
   <div class="rounded-lg md:w-auto w-2/3 shadow bg-white p-10 md:p-20">
     <div class="title text-3xl text-center font-extrabold">Login</div>
     <div class="flex mt-4">
-      <form class="w-full md:w-1/2">
+      <form @submit.prevent="login" class="w-full md:w-1/2">
         <div class="form-control my-4 relative">
           <div class="group relative">
             <label class="absolute top-1/2 -translate-y-1/2" for="email">
@@ -48,7 +47,9 @@ const login = async (event: Event) => {
               class="outline-none w-full px-6 py-2 border-b border-black"
             />
           </div>
-          <span class="text-red-500 text-xs">Your email is not correct</span>
+          <span v-if="isSubmit" class="text-red-500 text-xs hidden"
+            >Your email is not correct</span
+          >
         </div>
         <div class="form-control my-4 relative">
           <div class="group relative">
@@ -75,7 +76,9 @@ const login = async (event: Event) => {
               class="fa-xs absolute cursor-pointer top-1/2 -translate-y-1/2 right-[10px]"
             />
           </div>
-          <span class="text-red-500 text-xs">Your password is not correct</span>
+          <span v-if="isSubmit" class="text-red-500 text-xs hidden"
+            >Your password is not correct</span
+          >
         </div>
         <div>
           <a href="" class="text-sm">Forgot Password?</a>
@@ -87,7 +90,9 @@ const login = async (event: Event) => {
           >
         </div>
         <div>
-          <button class="border w-full md:w-auto px-13 py-3 outline-none rounded-lg mt-4">
+          <button
+            class="border w-full md:w-auto px-13 py-3 outline-none rounded-lg mt-4"
+          >
             <FontAwesomeIcon :icon="faGoogle" />
             Login With Google
           </button>

@@ -8,12 +8,13 @@ import {
   faCircleCheck,
   faEyeSlash,
   faEye,
+  faPhone
 } from "@fortawesome/free-solid-svg-icons";
 definePageMeta({
   layout: "authentication",
 });
-import { useUsersStore } from "~/store/auth";
-const { userRegister } = useUsersStore();
+import { useAuthStore } from "~/store/auth";
+const { userRegister } = useAuthStore();
 const name = ref<string>("");
 const userName = ref<string>("");
 const email = ref<string>("");
@@ -21,6 +22,7 @@ const password = ref<string>("");
 const confirmPassword = ref<string>("");
 const isShowPassword = ref<boolean>(false);
 const isSubmit = ref<boolean>(false);
+const phone = ref<string>('')
 const isPassword = computed(() => {
   return isShowPassword.value ? "text" : "password";
 });
@@ -36,6 +38,7 @@ const isFormValid = computed(() => {
     name.value.length > 0 &&
     userName.value.length > 0 &&
     email.value.match(/^((?!\.)[\w-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/gim) &&
+    phone.value.match(/\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/) &&
     password.value.length > 6 &&
     confirmPassword.value === password.value
   );
@@ -53,6 +56,7 @@ const signUp = async () => {
       username: userName.value,
       email: email.value,
       password: password.value,
+      phone: phone.value
     })
   }
 };
@@ -120,6 +124,24 @@ const signUp = async () => {
               )
             "
             >Your email is invalid</span
+          >
+        </div>
+        <div class="form-control my-4 relative">
+          <div class="group relative">
+            <label class="absolute top-1/2 -translate-y-1/2" for="phone">
+              <FontAwesomeIcon :icon="faPhone" class="fa-xs" />
+            </label>
+            <input
+              type="text"
+              v-model="phone"
+              placeholder="Phone"
+              class="outline-none w-full px-6 py-2 border-b border-black"
+            />
+          </div>
+          <span
+            class="px-4 text-xs text-red-500"
+            v-if="isSubmit && userName.length === 0"
+            >This field is invalid</span
           >
         </div>
         <div class="form-control my-4 relative">

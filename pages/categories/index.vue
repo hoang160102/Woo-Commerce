@@ -1,3 +1,6 @@
+<script lang="ts" setup>
+</script>
+
 <template>
   <main class="main-content py-10 bg-gray-100">
     <div class="container w-full mx-auto xl:w-9/12">

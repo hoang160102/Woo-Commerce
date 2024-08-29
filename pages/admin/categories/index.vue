@@ -1,9 +1,18 @@
 <script lang="ts" setup>
-import { faEllipsis, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useCategoryStore } from "~/store/categories";
 definePageMeta({
   layout: "admin",
 });
+const allCategories = ref<object[]>([]);
+const { getAllCategories, categoryList } = useCategoryStore();
+async function fetchCategories() {
+  await getAllCategories();
+  allCategories.value = categoryList?.categories;
+}
+fetchCategories();
 </script>
 <template>
   <section class="my-4">
@@ -20,34 +29,31 @@ definePageMeta({
         class="outline-none ml-10 px-4 border rounded-lg"
       />
     </div>
-    <ClientOnly>
-      <table class="w-full">
-        <tr>
-          <th class="pb-5">ID</th>
-          <th class="pb-5">Name</th>
-          <th class="pb-5">Image</th>
-          <th class="pb-5">Date of Created</th>
-          <th class="pb-5">Quanity</th>
-          <th class="pb-5">Action</th>
-        </tr>
-        <tr v-for="n in 10" :key="n">
-          <td class="text-center py-3">33</td>
-          <td class="text-center py-3">Clothing</td>
-          <td class="flex justify-center py-3 align-center">
-            <img
-              class="w-[60px] aspect-square"
-              src="../../../public/categories/clothing.png"
-              alt=""
-            />
-          </td>
-          <td class="text-center py-3">2/3/2024</td>
-          <td class="text-center py-3">987</td>
-          <td class="text-center py-3">
-            <FontAwesomeIcon :icon="faEllipsis" />
-          </td>
-        </tr>
-      </table>
-    </ClientOnly>
+    <table v-if="allCategories.length > 0" class="w-full">
+      <tr>
+        <th class="pb-5">Name</th>
+        <th class="pb-5">Image</th>
+        <th class="pb-5">Date of Created</th>
+        <th class="pb-5">Date of Updated</th>
+        <th class="pb-5">Action</th>
+      </tr>
+      <tr v-for="cate in allCategories" :key="cate['_id'].toString()">
+        <td class="text-center py-3">Clothing</td>
+        <td class="flex justify-center py-3 align-center">
+          <img
+            class="w-[60px] aspect-square"
+            src="../../../public/category/albums.jpeg"
+            :alt="cate.name"
+          />
+        </td>
+        <td class="text-center py-3">{{ cate.createdAt }}</td>
+        <td class="text-center py-3">{{ cate.updatedAt }}</td>
+        <td class="text-center py-3">
+          <FontAwesomeIcon :icon="faEdit" />
+          <FontAwesomeIcon :icon="faTrashCan" class="ml-2" />
+        </td>
+      </tr>
+    </table>
   </section>
 </template>
 

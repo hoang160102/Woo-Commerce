@@ -4,7 +4,7 @@ import Aura from "@primevue/themes/aura";
 export default defineNuxtConfig({
   compatibilityDate: "2024-04-03",
   devtools: { enabled: true },
-  css: ["~/assets/main.css"],
+  css: ["~/assets/main.css", 'vue-toastification/dist/index.css'],
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   //     config.plugins.push(vuetify({ autoImport: true }));
   //   });
   // },
-  "@primevue/nuxt-module", "nuxt-rating", "@nuxt/ui", "@pinia/nuxt"],
+  "@primevue/nuxt-module", "nuxt-rating", "@pinia/nuxt", "@primevue/nuxt-module"],
   build: {
     transpile: ["vuetify"],
   },
@@ -36,6 +36,7 @@ export default defineNuxtConfig({
     },
   },
   plugins: [
-    { src: '~/plugins/mongoose.ts', mode: 'server' }
+    { src: '~/plugins/mongoose.ts', mode: 'server' },
+    '~/plugins/toastification.ts'
   ],
 });
