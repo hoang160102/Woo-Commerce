@@ -7,6 +7,7 @@ type Product = {
   rating: number;
   category: string[];
   color: string[];
+  gender: string[];
 };
 
 export default function useFilteredProducts(arr1: Product[]) {
@@ -14,12 +15,17 @@ export default function useFilteredProducts(arr1: Product[]) {
   const maxValue = ref<number>(100);
   const selectedCategory = ref<string[]>([]);
   const selectedColor = ref<string[]>([]);
+  const selectedGender = ref<string[]>([]);
   const isSaleProduct = ref<boolean>(false);
   const selectedRating = ref<number>(NaN);
 
   const filteredProducts = computed(() => {
     return arr1.filter((item: Product) => {
-      const filterPrice = item.price >= minValue.value && item.price <= maxValue.value;
+      const filterPrice =
+        item.price >= minValue.value && item.price <= maxValue.value;
+      const filterGender =
+        selectedGender.value.length === 0 ||
+        item.gender.some((gen: string) => selectedGender.value.includes(gen));
       const filterCategory =
         selectedCategory.value.length === 0 ||
         item.category.some((cate: string) =>
@@ -32,45 +38,44 @@ export default function useFilteredProducts(arr1: Product[]) {
         Number.isNaN(selectedRating.value) ||
         item.rating >= selectedRating.value;
       const filterSale = !isSaleProduct.value || item.sale < item.price;
-  
-      // Only skip all filters if no filters are applied, including the price filter
+
       const noFiltersApplied =
         selectedCategory.value.length === 0 &&
+        selectedGender.value.length === 0 &&
         selectedColor.value.length === 0 &&
         !isSaleProduct.value &&
         Number.isNaN(selectedRating.value) &&
         minValue.value === 0 &&
         maxValue.value === 100;
-  
+
       return (
         noFiltersApplied ||
-        (
-          filterPrice &&
+        (filterPrice &&
+          filterGender &&
           filterCategory &&
           filterColor &&
           filterSale &&
-          filterRating
-        )
+          filterRating)
       );
     });
   });
-  
+
   watch([minValue, maxValue], (newValues: number[]) => {
-    minValue.value = newValues[0]
-    maxValue.value = newValues[1]
-  })
+    minValue.value = newValues[0];
+    maxValue.value = newValues[1];
+  });
   watch(selectedCategory, (newValue: string[]) => {
     selectedCategory.value = newValue;
   });
-
+  watch(selectedGender, (newValue: string[]) => {
+    selectedGender.value = newValue;
+  });
   watch(selectedColor, (newValue: string[]) => {
     selectedColor.value = newValue;
   });
-
   watch(isSaleProduct, (newValue: boolean) => {
     isSaleProduct.value = newValue;
   });
-
   watch(selectedRating, (newValue: number) => {
     selectedRating.value = newValue;
   });
@@ -80,6 +85,7 @@ export default function useFilteredProducts(arr1: Product[]) {
     maxValue,
     filteredProducts,
     selectedCategory,
+    selectedGender,
     selectedColor,
     isSaleProduct,
     selectedRating,

@@ -10,7 +10,7 @@ definePageMeta({
 <template>
   <section class="my-4">
     <div class="nav flex my-8">
-      <NuxtLink to="/admin/categories/create">
+      <NuxtLink to="/admin/products/create">
         <button class="px-4 py-3 rounded-lg bg-violet-600 text-white">
           <FontAwesomeIcon :icon="faPlus" />
           Add New Product

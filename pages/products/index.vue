@@ -8,6 +8,7 @@ const products = ref([
     id: 1,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men', 'women'],
     price: 20,
     sale: 18,
     rating: 4,
@@ -18,6 +19,7 @@ const products = ref([
     id: 2,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['Men', 'Women'],
     price: 30,
     sale: 30,
     rating: 5,
@@ -28,6 +30,7 @@ const products = ref([
     id: 3,
     name: "Woo Logo",
     inStock: 3,
+    gender: ['men'],
     price: 27,
     sale: 23,
     rating: 3,
@@ -38,6 +41,7 @@ const products = ref([
     id: 4,
     name: "Woo Logo",
     inStock: 4,
+    gender: ['women'],
     price: 28,
     sale: 22,
     rating: 4,
@@ -48,6 +52,7 @@ const products = ref([
     id: 5,
     name: "Woo Logo",
     inStock: 3,
+    gender: ['men', 'women'],
     price: 60,
     sale: 60,
     rating: 4,
@@ -58,6 +63,7 @@ const products = ref([
     id: 6,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['women'],
     price: 40,
     sale: 40,
     rating: 4,
@@ -68,6 +74,7 @@ const products = ref([
     id: 7,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['men'],
     price: 76,
     sale: 76,
     rating: 3,
@@ -78,6 +85,7 @@ const products = ref([
     id: 8,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['men', 'women'],
     price: 80,
     sale: 74,
     rating: 4,
@@ -88,6 +96,7 @@ const products = ref([
     id: 9,
     name: "Woo Logo",
     inStock: 0,
+    gender: ['men'],
     price: 76,
     sale: 76,
     rating: 3,
@@ -98,6 +107,7 @@ const products = ref([
     id: 10,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['women'],
     price: 56,
     sale: 50,
     rating: 2,
@@ -108,6 +118,7 @@ const products = ref([
     id: 11,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['men', 'women'],
     price: 43,
     sale: 40,
     rating: 3,
@@ -118,6 +129,7 @@ const products = ref([
     id: 12,
     name: "Woo Logo",
     inStock: 3,
+    gender: ['women'],
     price: 48,
     sale: 44,
     rating: 4,
@@ -128,6 +140,7 @@ const products = ref([
     id: 13,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men'],
     price: 68,
     sale: 68,
     rating: 5,
@@ -138,6 +151,7 @@ const products = ref([
     id: 14,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men', 'women'],
     price: 10,
     sale: 10,
     rating: 4,
@@ -148,6 +162,7 @@ const products = ref([
     id: 15,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men'],
     price: 20,
     sale: 18,
     rating: 4,
@@ -158,6 +173,7 @@ const products = ref([
     id: 16,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['women'],
     price: 30,
     sale: 30,
     rating: 5,
@@ -168,6 +184,7 @@ const products = ref([
     id: 17,
     name: "Woo Logo",
     inStock: 0,
+    gender: ['men', 'women'],
     price: 38,
     sale: 38,
     rating: 3,
@@ -178,6 +195,7 @@ const products = ref([
     id: 18,
     name: "Woo Logo",
     inStock: 0,
+    gender: ['men'],
     price: 96,
     sale: 90,
     rating: 4,
@@ -188,6 +206,7 @@ const products = ref([
     id: 19,
     name: "Woo Logo",
     inStock: 3,
+    gender: ['women'],
     price: 86,
     sale: 80,
     rating: 4,
@@ -198,6 +217,7 @@ const products = ref([
     id: 20,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men', 'women'],
     price: 20,
     sale: 18,
     rating: 4,
@@ -208,6 +228,7 @@ const products = ref([
     id: 21,
     name: "Woo Logo",
     inStock: 3,
+    gender: ['men'],
     price: 40,
     sale: 40,
     rating: 3,
@@ -218,6 +239,7 @@ const products = ref([
     id: 22,
     name: "Woo Logo",
     inStock: 2,
+    gender: ['women'],
     price: 44,
     sale: 44,
     rating: 4,
@@ -228,6 +250,7 @@ const products = ref([
     id: 23,
     name: "Woo Logo",
     inStock: 1,
+    gender: ['men', 'women'],
     price: 30,
     sale: 30,
     rating: 4,
@@ -239,16 +262,18 @@ const {
   filteredProducts,
   selectedCategory,
   selectedColor,
+  selectedGender,
   isSaleProduct,
   selectedRating,
   minValue,
   maxValue,
 } = useFilterProduct(products.value);
+watch(selectedGender, (newValue: any) => {
+  selectedGender.value = newValue
+  console.log(selectedGender.value)
+})
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
-});
-watch(selectedCategory, (newValue: string[]): void => {
-  selectedCategory.value = newValue;
 });
 watch(isShowNav, (newVal: boolean): void => {
   if (newVal) {
@@ -263,13 +288,12 @@ onMounted(() => {
 </script>
 <template>
   <main class="main-content py-10 bg-gray-100">
-    <div v-if="name">{{ name }}</div>
     <div class="container flex w-full gap-16 px-8 mx-auto xl:w-10/12">
       <Transition name="filterNav">
         <div
           v-on-click-outside="handleClickOutside"
           :class="filter"
-          class="filters max-h-[100vh] md:min-h-[100vh] z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
+          class="filters max-h-[100vh] md:min-h-[200vh] z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative w-[280px] md:block"
         >
           <select
             class="block mb-4 border shadow outline-none bg-white p-1 rounded-md md:hidden"
@@ -285,6 +309,7 @@ onMounted(() => {
             v-model:min-price="minValue"
             v-model:max-price="maxValue"
           ></FilterPrice>
+          <FilterGender v-model="selectedGender"></FilterGender>
           <FilterCategories v-model="selectedCategory"></FilterCategories>
           <FilterColor v-model="selectedColor"></FilterColor>
           <div

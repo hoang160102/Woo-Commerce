@@ -1,17 +1,49 @@
 <script lang="ts" setup>
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
 import { faEdit, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { vOnClickOutside } from "@vueuse/components";
 import { useCategoryStore } from "~/store/categories";
 definePageMeta({
   layout: "admin",
 });
+const store = useCategoryStore()
+const { getAllCategories, deleteCategory } = store
 const allCategories = ref<object[]>([]);
-const { getAllCategories, categoryList } = useCategoryStore();
+const selectedCategory = ref<string>("");
+const isModal = ref<boolean>(false);
+const modalDelete = (id: string) => {
+  selectedCategory.value = id;
+  isModal.value = true;
+};
+const closeModal = () => {
+  isModal.value = false;
+};
+const handleClickOutside = () => {
+  isModal.value = false;
+};
+watch(isModal, (newVal: boolean) => {
+  if (newVal) {
+    document.body.classList.add("overflow-hidden");
+  } else {
+    document.body.classList.remove("overflow-hidden");
+  }
+});
 async function fetchCategories() {
   await getAllCategories();
-  allCategories.value = categoryList?.categories;
+  allCategories.value = store.categoryList?.categories;
 }
+watch(() => store.categoryList, (newVal: any) => {
+  allCategories.value = newVal
+})
+const deleteCate = async (id: string) => {
+  await deleteCategory(id);
+  let el = document.getElementById(id)
+  if (el) {
+    el.remove()
+  }
+  isModal.value = false;
+};
 fetchCategories();
 </script>
 <template>
@@ -29,31 +61,75 @@ fetchCategories();
         class="outline-none ml-10 px-4 border rounded-lg"
       />
     </div>
-    <table v-if="allCategories.length > 0" class="w-full">
-      <tr>
-        <th class="pb-5">Name</th>
-        <th class="pb-5">Image</th>
-        <th class="pb-5">Date of Created</th>
-        <th class="pb-5">Date of Updated</th>
-        <th class="pb-5">Action</th>
-      </tr>
-      <tr v-for="cate in allCategories" :key="cate['_id'].toString()">
-        <td class="text-center py-3">Clothing</td>
-        <td class="flex justify-center py-3 align-center">
-          <img
-            class="w-[60px] aspect-square"
-            src="../../../public/category/albums.jpeg"
-            :alt="cate.name"
+    <ClientOnly>
+      <table class="w-full">
+        <tr>
+          <th class="pb-5">Name</th>
+          <th class="pb-5">Image</th>
+          <th class="pb-5">Date of Created</th>
+          <th class="pb-5">Date of Updated</th>
+          <th class="pb-5">Action</th>
+        </tr>
+        <tr :id="cate['_id']" v-for="cate in allCategories" :key="cate['_id']">
+          <td class="text-center py-3">{{ cate.name }}</td>
+          <td class="flex justify-center py-3 align-center">
+            <img
+              class="w-[60px] aspect-square"
+              :src="cate.image"
+              :alt="cate.name"
+            />
+          </td>
+          <td class="text-center py-3">{{ cate.createdAt }}</td>
+          <td class="text-center py-3">{{ cate.updatedAt }}</td>
+          <td class="text-center py-3">
+            <FontAwesomeIcon :icon="faEdit" />
+            <FontAwesomeIcon
+              @click="modalDelete(cate['_id'])"
+              :icon="faTrashCan"
+              class="ml-2"
+            />
+          </td>
+        </tr>
+      </table>
+    </ClientOnly>
+    <Teleport to="body">
+      <div
+        v-if="isModal"
+        class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
+      >
+        <div
+          v-on-click-outside="handleClickOutside"
+          class="modal-content bg-white relative rounded-lg p-10"
+        >
+          <FontAwesomeIcon
+            @click="closeModal"
+            :icon="faClose"
+            class="fa-lg absolute top-[20px] right-[20px] cursor-pointer"
           />
-        </td>
-        <td class="text-center py-3">{{ cate.createdAt }}</td>
-        <td class="text-center py-3">{{ cate.updatedAt }}</td>
-        <td class="text-center py-3">
-          <FontAwesomeIcon :icon="faEdit" />
-          <FontAwesomeIcon :icon="faTrashCan" class="ml-2" />
-        </td>
-      </tr>
-    </table>
+          <div
+            class="main-content w-full flex flex-col mt-5 justify-center align-center"
+          >
+            <div class="text-xl font-semibold">
+              Are you sure to delete category ?
+            </div>
+            <div class="confirm my-10 flex">
+              <button
+                @click="closeModal"
+                class="px-9 py-3 bg-slate-400 font-semibold rounded-lg text-white"
+              >
+                Cancel
+              </button>
+              <button
+                @click="deleteCate(selectedCategory)"
+                class="px-9 ml-5 py-3 bg-red-500 font-sembold rounded-lg text-white"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </section>
 </template>
 
@@ -75,5 +151,8 @@ tr td:first-child {
 tr td:last-child {
   border-top-right-radius: 16px;
   border-bottom-right-radius: 16px;
+}
+.modal {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>

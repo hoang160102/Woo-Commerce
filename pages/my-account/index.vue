@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { vOnClickOutside } from "@vueuse/components";
 const route = useRoute();
 const activeTab = computed(() => route.query.tab || "my-details");
-const isModal = ref<boolean>(false);
 const file = ref<string>("");
+const isModal = ref<boolean>(false);
 const toUpdateProfile = () => {
   isModal.value = true;
 };

@@ -64,34 +64,34 @@ const toggle = (): void => {
     <div class="navigation flex flex-col">
       <NuxtLink
         to="/admin"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faHouse" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Home</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/products"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBox" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Products</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/categories"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faDatabase" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Categories</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/orders"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBagShopping" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Orders</span>
       </NuxtLink>
       <div
-        class="justify-between cursor-pointer rounded-lg px-3 py-2"
+        class="justify-between cursor-pointer rounded-lg p-3"
         @click="toggle"
       >
         <div class="flex nav justify-center align-center justify-between">

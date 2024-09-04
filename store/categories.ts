@@ -12,9 +12,8 @@ export const useCategoryStore = defineStore("category-store", () => {
     }
   }
   async function createCategory(newCate: object) {
-    console.log(newCate)
     try {
-      const data = await useFetch("/api/categories/post", {
+      const data = await $fetch("/api/categories/post", {
         method: 'post',
         body: newCate
       })
@@ -24,5 +23,16 @@ export const useCategoryStore = defineStore("category-store", () => {
       toast.error('Created failed')
     }
   }
-  return { createCategory, getAllCategories, categoryList }
+  async function deleteCategory(id: string) {
+    try {
+      await $fetch(`/api/categories/${id}`, {
+        method: 'delete',
+      })
+      toast.success('Deleted Successfully')
+    }
+    catch (err) {
+      toast.error('Deleted failed')
+    }
+  }
+  return { createCategory, getAllCategories, categoryList, deleteCategory }
 });

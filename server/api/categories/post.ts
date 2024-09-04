@@ -1,35 +1,43 @@
-import { defineEventHandler, readBody } from 'h3';
-import multer from 'multer';
+// server/api/upload.post.ts
 import Category from '~/models/Category.model';
+import formidable from 'formidable';
+import { join } from 'path';
 import fs from 'fs';
-import path from 'path';
-import { v4 as uuidv4 } from 'uuid';
 
-const upload = multer({ dest: 'public/categories' });
+const uploadDir = join(process.cwd(), 'public/category');
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event) => { 
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+  const form = formidable({ multiples: false, uploadDir, keepExtensions: true });
+
   return new Promise((resolve, reject) => {
-    upload.single('image')(event.req, event.res, async (err) => {
+    form.parse(event.node.req, async (err: any, fields: any, files: any) => {
       if (err) {
-        return reject(err);
+        reject(err);
+        return;
       }
-
-      const { name } = event.req.body;
-      const file = event.req.file;
-
+      const { name } = fields;
+      const file = files.image; 
       if (!name || !file) {
-        return reject(new Error('Name and file are required'));
+        reject(new Error('Name and file are required.'));
+        return;
       }
-
-      const filePath = path.join('public/categories', `${uuidv4()}-${file.originalname}`);
-      fs.renameSync(file.path, filePath);
-
       try {
-        await Category.create({ name, image: filePath });
-        resolve({ success: true });
-      } catch (error) {
-        reject(error);
+        // Construct the accessible path for the uploaded file
+        const filePath = `/public/category/${file[0].newFilename}`;
+
+        const fileDocument = new Category({
+          name: name[0],
+          image: filePath
+        });
+        await fileDocument.save();
+        resolve('success');
+      } catch (err) {
+        reject(err);
       }
     });
   });
 });
+
