@@ -25,7 +25,7 @@ export const useCategoryStore = defineStore("category-store", () => {
   }
   async function deleteCategory(id: string) {
     try {
-      await $fetch(`/api/categories/${id}`, {
+      $fetch(`/api/categories/${id}`, {
         method: 'delete',
       })
       toast.success('Deleted Successfully')

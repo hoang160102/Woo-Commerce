@@ -64,28 +64,28 @@ const toggle = (): void => {
     <div class="navigation flex flex-col">
       <NuxtLink
         to="/admin"
-        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faHouse" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Home</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/products"
-        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBox" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Products</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/categories"
-        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faDatabase" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Categories</span>
       </NuxtLink>
       <NuxtLink
         to="/admin/orders"
-        class="flex hover:bg-gray-200 rounded-lg p-3 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBagShopping" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Orders</span>
@@ -94,7 +94,7 @@ const toggle = (): void => {
         class="justify-between cursor-pointer rounded-lg p-3"
         @click="toggle"
       >
-        <div class="flex nav justify-center align-center justify-between">
+        <div class="flex nav align-center justify-between">
           <div class="flex">
             <FontAwesomeIcon class="fa-xl" :icon="faUser" />
             <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Users</span>
@@ -110,7 +110,7 @@ const toggle = (): void => {
           :class="{ 'max-h-0': !isExpanded, 'max-h-40': isExpanded }"
         >
           <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav justify-center align-center"
+            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
             to="/admin/staffs"
   
           >
@@ -118,7 +118,7 @@ const toggle = (): void => {
             <span v-if="!navWidth" class="ml-2 hidden xl:block">Employees</span>
           </NuxtLink>
           <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav justify-center align-center"
+            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
             to="/admin/users"
   
           >
@@ -130,7 +130,7 @@ const toggle = (): void => {
       <div class="bar h-[1px] w-full bg-gray-300 my-3"></div>
       <NuxtLink
         to="/admin/settings"
-        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav justify-center align-center"
+        class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faRightFromBracket" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Logout</span>
@@ -157,7 +157,7 @@ nav {
   transition: width 0.3s ease;
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 1280px) {
   .nav {
     justify-content: center;
   }

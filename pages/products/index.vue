@@ -268,10 +268,6 @@ const {
   minValue,
   maxValue,
 } = useFilterProduct(products.value);
-watch(selectedGender, (newValue: any) => {
-  selectedGender.value = newValue
-  console.log(selectedGender.value)
-})
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
 });

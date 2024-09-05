@@ -1,21 +1,29 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
-const categories = ref<string[]>([
-  "Clothing",
-  "Pants",
-  "Shorts",
-  "T-shirts",
-  "Shirts",
-  "Jackets",
-  "Underwear",
-  "Keychain",
-]);
+import { useCategoryStore } from "~/store/categories";
+const store = useCategoryStore()
+const { getAllCategories } = store;
+const categories = ref<object[]>([]);
+
 const checkCate = defineModel<string[]>();
 const isToggleCate = ref<boolean>(true);
 const toggleCate = (): void => {
   isToggleCate.value = !isToggleCate.value;
 };
+async function fetchCategories() {
+  await getAllCategories();
+  categories.value = store.categoryList?.categories || [];
+}
+fetchCategories();
+watch(
+  () => store.categoryList,
+  (newVal: any) => {
+    console.log('Updated category list:', newVal); 
+    categories.value = newVal?.categories || [];
+  },
+  { immediate: true }
+);
 </script>
 <template>
   <div
@@ -36,19 +44,19 @@ const toggleCate = (): void => {
     >
       <div
         v-for="cate in categories"
-        :key="cate"
+        :key="cate['_id']"
         class="flex gap-2 align-center items-start"
       >
         <input
           v-model="checkCate"
           id="clothing"
           type="checkbox"
-          :value="cate.toLowerCase()"
+          :value="cate.name.toLowerCase()"
         />
         <label
           for="clothing"
           class="cursor-pointer text-gray-600 text-sm leading-tight"
-          >{{ cate }}
+          >{{ cate.name }}
         </label>
       </div>
     </div>

@@ -105,12 +105,14 @@ const products = ref([
   },
 ]);
 const {
-  updatePriceRange,
   filteredProducts,
   selectedCategory,
   selectedColor,
+  selectedGender,
   isSaleProduct,
-  selectedRating
+  selectedRating,
+  minValue,
+  maxValue,
 } = useFilterProduct(products.value);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
@@ -135,7 +137,11 @@ onMounted(() => {
           :class="filter"
           class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
         >
-          <FilterPrice @update:price-range="updatePriceRange"></FilterPrice>
+          <FilterPrice
+            v-model:min-price="minValue"
+            v-model:max-price="maxValue"
+          ></FilterPrice>
+          <FilterGender v-model="selectedGender"></FilterGender>
           <FilterCategories v-model="selectedCategory"></FilterCategories>
           <FilterColor v-model="selectedColor"></FilterColor>
           <div
@@ -162,9 +168,11 @@ onMounted(() => {
           </select>
           <button @click="toggleMenu" class="block md:hidden">Filter</button>
         </div>
-        <div
+        <transition-group
+          name="product"
+          tag="div"
           :class="{ 'overflow-hidden': isShowNav }"
-          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animation"
         >
           <HomeProducts
             v-for="product in filteredProducts"
@@ -175,9 +183,8 @@ onMounted(() => {
             :price="product.price"
             :sale="product.sale"
             :rating="product.rating"
-            class="animation"
           ></HomeProducts>
-        </div>
+        </transition-group>
       </div>
     </div>
     <div
@@ -190,11 +197,11 @@ onMounted(() => {
 <style scoped>
 .filters {
   overflow-y: auto;
-  max-height: 100vh; 
+  max-height: 100vh;
   background-color: white;
 }
 .filters::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 @media screen and (min-width: 768px) {
   .filters {
@@ -216,5 +223,18 @@ onMounted(() => {
 .filterNav-leave-to {
   transform: translateX(-250px);
 }
+.product-enter-active,
+.product-leave-active {
+  transition: all 0.5s ease;
+}
+.product-enter-from,
+.product-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.product-enter-to,
+.product-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
 </style>
-

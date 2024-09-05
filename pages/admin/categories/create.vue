@@ -8,32 +8,12 @@ definePageMeta({
 });
 const { createCategory } = useCategoryStore();
 const name = ref<string>("");
-// const imgUrl = ref<string>("");
-// const fileImg = ref<string>('');
 const file = ref<File | null>(null);
 const isSubmit = ref<boolean>(false)
 
 const onFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   file.value = target.files ? target.files[0] : null;
-  // if (file.value) {
-  //   fileImg.value = file.value.name;
-  //   const reader = new FileReader();
-
-  //   reader.onload = (e: ProgressEvent<FileReader>) => {
-  //     if (e.target && file.value) {
-  //       if (
-  //         file.value.type === "image/png" ||
-  //         file.value.type === "image/jpeg" ||
-  //         file.value.type === "image/jpg"
-  //       ) {
-  //         imgUrl.value = e.target.result as string;
-  //         console.log(imgUrl.value);
-  //       }
-  //     }
-  //   };
-  //   reader.readAsDataURL(file.value);
-  // }
 };
 
 const sumbitData = async () => {

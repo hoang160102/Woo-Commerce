@@ -1,27 +1,45 @@
 <script lang="ts" setup>
-import { faPlus, faClose } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPlus,
+  faClose,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { faEdit, faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { vOnClickOutside } from "@vueuse/components";
 import { useCategoryStore } from "~/store/categories";
+
 definePageMeta({
   layout: "admin",
+  middleware: ["middleware"],
 });
-const store = useCategoryStore()
-const { getAllCategories, deleteCategory } = store
+
+const store = useCategoryStore();
+const { getAllCategories, deleteCategory } = store;
 const allCategories = ref<object[]>([]);
 const selectedCategory = ref<string>("");
 const isModal = ref<boolean>(false);
+
+const nameCategory = computed(() => {
+  const selectCate = allCategories.value.find(
+    (cate: any) => cate["_id"] === selectedCategory.value
+  );
+  return selectCate ? selectCate.name : "";
+});
+const { searchInput, filteredListItems } = useSearchItem(allCategories);
 const modalDelete = (id: string) => {
   selectedCategory.value = id;
   isModal.value = true;
 };
+
 const closeModal = () => {
   isModal.value = false;
 };
+
 const handleClickOutside = () => {
   isModal.value = false;
 };
+
 watch(isModal, (newVal: boolean) => {
   if (newVal) {
     document.body.classList.add("overflow-hidden");
@@ -31,21 +49,34 @@ watch(isModal, (newVal: boolean) => {
 });
 async function fetchCategories() {
   await getAllCategories();
-  allCategories.value = store.categoryList?.categories;
+  allCategories.value = store.categoryList?.categories || [];
 }
-watch(() => store.categoryList, (newVal: any) => {
-  allCategories.value = newVal
-})
+
+watch(
+  () => store.categoryList,
+  (newVal: any) => {
+    console.log("Updated category list:", newVal);
+    allCategories.value = newVal?.categories || [];
+  },
+  { immediate: true }
+);
+
 const deleteCate = async (id: string) => {
-  await deleteCategory(id);
-  let el = document.getElementById(id)
-  if (el) {
-    el.remove()
+  const deleteCate = allCategories.value.filter((cate: any) => {
+    return cate["_id"] === id;
+  });
+  const index = allCategories.value.indexOf(deleteCate);
+  if (index > -1) {
+    allCategories.value.splice(index, 1);
   }
+  console.log(allCategories.value);
+  // await deleteCategory(id);
   isModal.value = false;
 };
+
 fetchCategories();
 </script>
+
 <template>
   <section class="my-4">
     <div class="nav flex my-8">
@@ -55,41 +86,56 @@ fetchCategories();
           Create new category
         </button>
       </NuxtLink>
-      <input
-        type="text"
-        placeholder="Search"
-        class="outline-none ml-10 px-4 border rounded-lg"
-      />
+      <div class="relative ml-10 px-4 border flex align-center rounded-lg">
+        <input
+          type="text"
+          placeholder="Search by name"
+          class="outline-none pl-5"
+          v-model="searchInput"
+        />
+        <FontAwesomeIcon
+          :icon="faMagnifyingGlass"
+          class="absolute text-gray-600 left-[10px]"
+        />
+      </div>
     </div>
     <ClientOnly>
       <table class="w-full">
-        <tr>
-          <th class="pb-5">Name</th>
-          <th class="pb-5">Image</th>
-          <th class="pb-5">Date of Created</th>
-          <th class="pb-5">Date of Updated</th>
-          <th class="pb-5">Action</th>
-        </tr>
-        <tr :id="cate['_id']" v-for="cate in allCategories" :key="cate['_id']">
-          <td class="text-center py-3">{{ cate.name }}</td>
-          <td class="flex justify-center py-3 align-center">
-            <img
-              class="w-[60px] aspect-square"
-              :src="cate.image"
-              :alt="cate.name"
-            />
-          </td>
-          <td class="text-center py-3">{{ cate.createdAt }}</td>
-          <td class="text-center py-3">{{ cate.updatedAt }}</td>
-          <td class="text-center py-3">
-            <FontAwesomeIcon :icon="faEdit" />
-            <FontAwesomeIcon
-              @click="modalDelete(cate['_id'])"
-              :icon="faTrashCan"
-              class="ml-2"
-            />
-          </td>
-        </tr>
+        <thead>
+          <tr>
+            <th class="pb-5">Name</th>
+            <th class="pb-5">Image</th>
+            <th class="pb-5">Date of Created</th>
+            <th class="pb-5">Date of Updated</th>
+            <th class="pb-5">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            :id="cate['_id']"
+            v-for="cate in filteredListItems"
+            :key="cate['_id']"
+          >
+            <td class="text-center py-3">{{ cate.name }}</td>
+            <td class="flex justify-center py-3 align-center">
+              <img
+                class="w-[60px] aspect-square"
+                :src="cate.image"
+                :alt="cate.name"
+              />
+            </td>
+            <td class="text-center py-3">{{ cate.createdAt }}</td>
+            <td class="text-center py-3">{{ cate.updatedAt }}</td>
+            <td class="text-center py-3">
+              <FontAwesomeIcon :icon="faEdit" />
+              <FontAwesomeIcon
+                @click="modalDelete(cate['_id'])"
+                :icon="faTrashCan"
+                class="ml-2"
+              />
+            </td>
+          </tr>
+        </tbody>
       </table>
     </ClientOnly>
     <Teleport to="body">
@@ -110,7 +156,7 @@ fetchCategories();
             class="main-content w-full flex flex-col mt-5 justify-center align-center"
           >
             <div class="text-xl font-semibold">
-              Are you sure to delete category ?
+              Are you sure to delete category {{ nameCategory }} ?
             </div>
             <div class="confirm my-10 flex">
               <button
