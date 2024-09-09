@@ -55,22 +55,16 @@ async function fetchCategories() {
 watch(
   () => store.categoryList,
   (newVal: any) => {
-    console.log("Updated category list:", newVal);
     allCategories.value = newVal?.categories || [];
   },
   { immediate: true }
 );
 
 const deleteCate = async (id: string) => {
-  const deleteCate = allCategories.value.filter((cate: any) => {
-    return cate["_id"] === id;
-  });
-  const index = allCategories.value.indexOf(deleteCate);
-  if (index > -1) {
-    allCategories.value.splice(index, 1);
-  }
-  console.log(allCategories.value);
-  // await deleteCategory(id);
+  allCategories.value = allCategories.value.filter(
+    (category: any) => category["_id"] !== id
+  );
+  await deleteCategory(id);
   isModal.value = false;
 };
 
@@ -127,11 +121,13 @@ fetchCategories();
             <td class="text-center py-3">{{ cate.createdAt }}</td>
             <td class="text-center py-3">{{ cate.updatedAt }}</td>
             <td class="text-center py-3">
-              <FontAwesomeIcon :icon="faEdit" />
+              <NuxtLink :to="`/admin/categories/${cate['_id']}`">
+                <FontAwesomeIcon class="cursor-pointer" :icon="faEdit" />
+              </NuxtLink>
               <FontAwesomeIcon
                 @click="modalDelete(cate['_id'])"
                 :icon="faTrashCan"
-                class="ml-2"
+                class="ml-2 cursor-pointer"
               />
             </td>
           </tr>
@@ -185,9 +181,8 @@ table tr:nth-child(even) {
   font-weight: bold;
   color: #333;
 }
-tr:not(:first-child):hover {
+tbody > tr:hover {
   background-color: #edf1f5;
-  cursor: pointer;
 }
 tr td:first-child {
   border-top-left-radius: 16px;

@@ -5,6 +5,7 @@ type Product = {
   price: number;
   sale: number;
   rating: number;
+  size: string[];
   category: string[];
   color: string[];
   gender: string[];
@@ -16,6 +17,7 @@ export default function useFilteredProducts(arr1: Product[]) {
   const selectedCategory = ref<string[]>([]);
   const selectedColor = ref<string[]>([]);
   const selectedGender = ref<string[]>([]);
+  const selectedSize = ref<string[]>([]);
   const isSaleProduct = ref<boolean>(false);
   const selectedRating = ref<number>(NaN);
 
@@ -31,6 +33,11 @@ export default function useFilteredProducts(arr1: Product[]) {
         item.category.some((cate: string) =>
           selectedCategory.value.includes(cate)
         );
+      const filterSize =
+        selectedSize.value.length === 0 ||
+        item.size.some((s: string) => {
+          return selectedSize.value.includes(s);
+        });
       const filterColor =
         selectedColor.value.length === 0 ||
         item.color.some((color: string) => selectedColor.value.includes(color));
@@ -42,6 +49,7 @@ export default function useFilteredProducts(arr1: Product[]) {
       const noFiltersApplied =
         selectedCategory.value.length === 0 &&
         selectedGender.value.length === 0 &&
+        selectedSize.value.length === 0 &&
         selectedColor.value.length === 0 &&
         !isSaleProduct.value &&
         Number.isNaN(selectedRating.value) &&
@@ -53,6 +61,7 @@ export default function useFilteredProducts(arr1: Product[]) {
         (filterPrice &&
           filterGender &&
           filterCategory &&
+          filterSize &&
           filterColor &&
           filterSale &&
           filterRating)
@@ -70,6 +79,9 @@ export default function useFilteredProducts(arr1: Product[]) {
   watch(selectedGender, (newValue: string[]) => {
     selectedGender.value = newValue;
   });
+  watch(selectedSize, (newValue: string[]) => {
+    selectedSize.value = newValue;
+  });
   watch(selectedColor, (newValue: string[]) => {
     selectedColor.value = newValue;
   });
@@ -86,6 +98,7 @@ export default function useFilteredProducts(arr1: Product[]) {
     filteredProducts,
     selectedCategory,
     selectedGender,
+    selectedSize,
     selectedColor,
     isSaleProduct,
     selectedRating,
