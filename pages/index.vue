@@ -5,6 +5,25 @@ import {
   faMoneyBillTransfer,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
+import { useCategoryStore } from "~/store/categories";
+const store = useCategoryStore();
+const { getAllCategories } = store;
+const firstSixCategories = ref<object[]>([]);
+async function fetchCategories() {
+  await getAllCategories();
+  firstSixCategories.value = store.categoryList?.categories || [];
+  firstSixCategories.value.pop()
+}
+
+watch(
+  () => store.categoryList,
+  (newVal: any) => {
+    console.log("Updated category list:", newVal);
+    firstSixCategories.value = newVal?.categories || [];
+  },
+  { immediate: true }
+);
+fetchCategories();
 </script>
 <template>
   <main>
@@ -52,9 +71,15 @@ import {
             >
           </div>
           <div
-            class="grid justify-center grid-cols-2 gap-4 mt-8 md:grid-cols-3 lg:grid-cols-6"
+            class="grid justify-center grid-cols-2 gap-4 mt-8 md:grid-cols-3 lg:grid-cols-4"
           >
-            <HomeCategories v-for="n in 6" :key="n"></HomeCategories>
+            <HomeCategories
+              v-for="cate in firstSixCategories"
+              :key="cate['_id']"
+              :id="cate['_id']"
+              :image="cate.image"
+              :name="cate.name"
+            ></HomeCategories>
           </div>
         </div>
         <section class="grid gap-4 my-24 md:grid-cols-2 lg:grid-cols-4">
@@ -107,7 +132,7 @@ import {
             >
           </div>
           <div class="grid gap-8 grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            <HomeProducts v-for="n in 5" :key="n"></HomeProducts>
+            <!-- <HomeProducts v-for="n in 5" :key="n"></HomeProducts> -->
           </div>
         </section>
       </div>

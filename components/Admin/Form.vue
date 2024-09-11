@@ -1,54 +1,49 @@
-<script lang="ts" setup>
+<!-- <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { useCategoryStore } from "~/store/categories";
-definePageMeta({
-  layout: "admin",
+import { withDefaults, defineProps, defineEmits } from "vue";
+interface Props {
+  isUpdate: boolean;
+  initialData: Object;
+}
+const props = withDefaults(defineProps<Props>(), {
+  isUpdate: false,
+  initialData: () => ({ name: "", file: null }),
 });
-const route = useRoute();
-const store = useCategoryStore();
-const cate = ref<object>({});
-const { getCateById, updateCategory } = store;
-const name = ref<string>("");
-const file = ref<File | null>(null);
+const emit = defineEmits(["submit"]);
+const formData = ref<object>({ ...props.initialData }); 
 const isSubmit = ref<boolean>(false);
-const onFileChange = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  file.value = target.files ? target.files[0] : null;
+const onFileChange = (event: any) => {
+  formData.value.file = event.target.files[0];
 };
-const saveData = async () => {
+const handleSubmit = () => {
   isSubmit.value = true;
-  const formData = new FormData();
-  if (file.value && name.value.length > 0) {
-    formData.append("name", name.value);
-    formData.append("image", file.value);
-    await updateCategory(route.params.id, formData);
+  if (formData.value.name && formData.value.file) {
+    emit("submit", formData.value);
   }
 };
-watch(
-  () => store.categoryById,
-  (newVal: any) => {
-    cate.value = newVal?.cate || {};
-    console.log(cate.value)
-  },
-  { immediate: true }
-);
-async function fetchCate() {
-  await getCateById(route.params.id);
-  cate.value = store.categoryById?.cate;
-  name.value = cate.value.name;
-}
-fetchCate();
+watch(formData, (newVal: any) => {
+  formData.value = newVal;
+  console.log(formData.value);
+});
+// const props = defineProps({
+//   isUpdate: {
+//     type: Boolean,
+//     default: false,
+//   },
+//   initialData: {
+//     type: Object,
+//     default: () => ({ name: '', file: null }),
+//   },
+// });
 </script>
 <template>
-  <!-- <AdminForm :isUpdate="true" :initialData="{ name: cate?.name, file: null }">
-  </AdminForm> -->
-  <section class="mt-4">
+  <section v-if="formData.name" class="mt-4">
     <div class="title mb-4 font-semibold text-2xl text-blue-500">
-      Update Category
+      {{ isUpdate ? "Update Category" : "Add Category" }}
     </div>
-    <div v-if="cate" class="rounded-lg border bg-card shadow-sm">
-      <form @submit.prevent="saveData()" class="p-4">
+    <div class="rounded-lg border bg-card shadow-sm">
+      <form @submit.prevent="handleSubmit" class="p-4">
         <div
           class="form-control my-4 flex flex-col md:flex-row md:align-center"
         >
@@ -62,11 +57,11 @@ fetchCate();
             aria-required="true"
             type="text"
             name="text"
-            v-model="name"
+            v-model="formData.name"
           />
         </div>
         <span
-          v-if="isSubmit && !(name.length > 0)"
+          v-if="isSubmit && !(formData.name.length > 0)"
           class="text-red-500 text-sm m-0 md: ml-40 pl-40 my-2"
           >Please choose an image</span
         >
@@ -96,7 +91,9 @@ fetchCate();
                     accept=".jpeg, .png, .jpg"
                   />
                 </label>
-                <span v-if="isSubmit && !file" class="text-red-500 text-sm mt-2"
+                <span
+                  v-if="isSubmit && !formData.file"
+                  class="text-red-500 text-sm mt-2"
                   >Please choose an image</span
                 >
               </div>
@@ -111,4 +108,7 @@ fetchCate();
       </form>
     </div>
   </section>
+</template> -->
+<template>
+    <h1></h1>
 </template>

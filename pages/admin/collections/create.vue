@@ -1,63 +1,47 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { useCategoryStore } from "~/store/categories";
+import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",
 });
-const route = useRoute();
-const store = useCategoryStore();
-const cate = ref<object>({});
-const { getCateById, updateCategory } = store;
+const { createCollection } = useCollectionStore()
 const name = ref<string>("");
 const file = ref<File | null>(null);
 const isSubmit = ref<boolean>(false);
+
 const onFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   file.value = target.files ? target.files[0] : null;
 };
-const saveData = async () => {
+
+const sumbitData = async () => {
   isSubmit.value = true;
   const formData = new FormData();
   if (file.value && name.value.length > 0) {
     formData.append("name", name.value);
     formData.append("image", file.value);
-    await updateCategory(route.params.id, formData);
+    await createCollection(formData);
   }
 };
-watch(
-  () => store.categoryById,
-  (newVal: any) => {
-    cate.value = newVal?.cate || {};
-    console.log(cate.value)
-  },
-  { immediate: true }
-);
-async function fetchCate() {
-  await getCateById(route.params.id);
-  cate.value = store.categoryById?.cate;
-  name.value = cate.value.name;
-}
-fetchCate();
 </script>
+
 <template>
-  <!-- <AdminForm :isUpdate="true" :initialData="{ name: cate?.name, file: null }">
-  </AdminForm> -->
   <section class="mt-4">
     <div class="title mb-4 font-semibold text-2xl text-blue-500">
-      Update Category
+      Add Collection
     </div>
-    <div v-if="cate" class="rounded-lg border bg-card shadow-sm">
-      <form @submit.prevent="saveData()" class="p-4">
+    <div class="rounded-lg border bg-card shadow-sm">
+      <form @submit.prevent="sumbitData()" class="p-4">
         <div
           class="form-control my-4 flex flex-col md:flex-row md:align-center"
         >
           <label for="name" class="font-semibold p-0 md:pr-20 text-xl mb-3"
-            >Category Name</label
+            >Collection Name</label
           >
           <input
             class="outline-none flex-grow m-0 md:ml-20 px-4 py-2 rounded-md border"
-            placeholder="Category name"
+            placeholder="Collection name"
             tabindex="0"
             aria-required="true"
             type="text"

@@ -1,35 +1,38 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { useCategoryStore } from "~/store/categories";
-const store = useCategoryStore()
-const { getAllCategories } = store;
-const categories = ref<object[]>([]);
-
-const checkCate = defineModel<string[]>();
+import { useCollectionStore } from "~/store/collections";
+const store = useCollectionStore()
+const { getAllCollections } = store;
+const collections = ref<object[]>([]);
+const checkCollect = defineModel<string[]>();
 const isToggleCate = ref<boolean>(true);
 const toggleCate = (): void => {
   isToggleCate.value = !isToggleCate.value;
 };
-async function fetchCategories() {
-  await getAllCategories();
-  categories.value = store.categoryList?.categories || [];
+async function fetchCollections() {
+  await getAllCollections();
+  collections.value = store.collectionsList?.collections || [];
 }
-fetchCategories();
+fetchCollections();
 watch(
-  () => store.categoryList,
+  () => store.collectionsList,
   (newVal: any) => {
-    categories.value = newVal?.categories || [];
+    collections.value = newVal?.collections || [];
   },
   { immediate: true }
 );
+watch(checkCollect, (newVal: any) => {
+    checkCollect.value = newVal
+    console.log(checkCollect.value)
+})
 </script>
 <template>
   <div
-    class="categories-filter pb-8 mt-8 border-b border-gray-300 border-solid"
+    class="collections-filter pb-8 mt-8 border-b border-gray-300 border-solid"
   >
     <div class="title flex justify-between">
-      <div class="font-semibold">Categories</div>
+      <div class="font-semibold">Collections</div>
       <FontAwesomeIcon
         :class="{ 'rotate-180': isToggleCate }"
         @click="toggleCate"
@@ -42,20 +45,20 @@ watch(
       :style="{ maxHeight: isToggleCate ? '600px' : '0px' }"
     >
       <div
-        v-for="cate in categories"
-        :key="cate['_id']"
+        v-for="collect in collections"
+        :key="collect['_id']"
         class="flex gap-2 align-center items-start"
       >
         <input
-          v-model="checkCate"
-          id="clothing"
+          v-model="checkCollect"
+          :id="collect.name"
           type="checkbox"
-          :value="cate.name.toLowerCase()"
+          :value="collect.name"
         />
         <label
-          for="clothing"
+          :for="collect.name"
           class="cursor-pointer text-gray-600 text-sm leading-tight"
-          >{{ cate.name }}
+          >{{ collect.name }}
         </label>
       </div>
     </div>
@@ -67,3 +70,4 @@ watch(
   transition: all 0.3s ease-in-out;
 }
 </style>
+

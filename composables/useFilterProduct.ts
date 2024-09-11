@@ -9,12 +9,14 @@ type Product = {
   category: string[];
   color: string[];
   gender: string[];
+  collection:string[]
 };
 
 export default function useFilteredProducts(arr1: Product[]) {
   const minValue = ref<number>(0);
   const maxValue = ref<number>(100);
   const selectedCategory = ref<string[]>([]);
+  const selectedCollection = ref<string[]>([])
   const selectedColor = ref<string[]>([]);
   const selectedGender = ref<string[]>([]);
   const selectedSize = ref<string[]>([]);
@@ -33,6 +35,11 @@ export default function useFilteredProducts(arr1: Product[]) {
         item.category.some((cate: string) =>
           selectedCategory.value.includes(cate)
         );
+      const filterCollection = 
+        selectedCollection.value.length === 0 ||
+        item.collection.some((collect: string) => {
+          return selectedCollection.value.includes(collect)
+        })
       const filterSize =
         selectedSize.value.length === 0 ||
         item.size.some((s: string) => {
@@ -48,6 +55,7 @@ export default function useFilteredProducts(arr1: Product[]) {
 
       const noFiltersApplied =
         selectedCategory.value.length === 0 &&
+        selectedCollection.value.length === 0 &&
         selectedGender.value.length === 0 &&
         selectedSize.value.length === 0 &&
         selectedColor.value.length === 0 &&
@@ -61,6 +69,7 @@ export default function useFilteredProducts(arr1: Product[]) {
         (filterPrice &&
           filterGender &&
           filterCategory &&
+          filterCollection &&
           filterSize &&
           filterColor &&
           filterSale &&
@@ -76,6 +85,9 @@ export default function useFilteredProducts(arr1: Product[]) {
   watch(selectedCategory, (newValue: string[]) => {
     selectedCategory.value = newValue;
   });
+  watch(selectedCollection, (newValue: string[]) => {
+    selectedCollection.value = newValue
+  })
   watch(selectedGender, (newValue: string[]) => {
     selectedGender.value = newValue;
   });
@@ -97,6 +109,7 @@ export default function useFilteredProducts(arr1: Product[]) {
     maxValue,
     filteredProducts,
     selectedCategory,
+    selectedCollection,
     selectedGender,
     selectedSize,
     selectedColor,

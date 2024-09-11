@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { useCategoryStore } from "~/store/categories";
+import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",
 });
 const route = useRoute();
-const store = useCategoryStore();
+const store = useCollectionStore();
 const cate = ref<object>({});
-const { getCateById, updateCategory } = store;
+const { getCollectionById, updateCollection } = store;
 const name = ref<string>("");
 const file = ref<File | null>(null);
 const isSubmit = ref<boolean>(false);
@@ -22,20 +22,20 @@ const saveData = async () => {
   if (file.value && name.value.length > 0) {
     formData.append("name", name.value);
     formData.append("image", file.value);
-    await updateCategory(route.params.id, formData);
+    await updateCollection(route.params.id, formData);
   }
 };
 watch(
-  () => store.categoryById,
+  () => store.collectionById,
   (newVal: any) => {
     cate.value = newVal?.cate || {};
-    console.log(cate.value)
   },
   { immediate: true }
 );
 async function fetchCate() {
-  await getCateById(route.params.id);
-  cate.value = store.categoryById?.cate;
+  await getCollectionById(route.params.id);
+  console.log(store.collectionById)
+  cate.value = store.collectionById?.cate;
   name.value = cate.value.name;
 }
 fetchCate();
@@ -45,7 +45,7 @@ fetchCate();
   </AdminForm> -->
   <section class="mt-4">
     <div class="title mb-4 font-semibold text-2xl text-blue-500">
-      Update Category
+      Update Collection
     </div>
     <div v-if="cate" class="rounded-lg border bg-card shadow-sm">
       <form @submit.prevent="saveData()" class="p-4">

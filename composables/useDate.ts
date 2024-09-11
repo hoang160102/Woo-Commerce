@@ -1,8 +1,7 @@
 export default function dateToString() {
-  const timestamp = Date.now(); // Current timestamp
-  const date = new Date(timestamp); // Convert to Date object
+  const timestamp = Date.now();
+  const date = new Date(timestamp);
 
-  // Use Intl.DateTimeFormat to format the date
   const formattedDate = new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "short",

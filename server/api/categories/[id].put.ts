@@ -1,4 +1,3 @@
-import { defineEventHandler } from "h3";
 import multer from "multer";
 import Category from "~/models/Category.model";
 import cloudinary from "~/server/config/cloudinary";

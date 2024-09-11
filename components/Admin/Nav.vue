@@ -13,13 +13,14 @@ import {
   faArrowRight,
   faCircleUser,
   faUsers,
-  faBagShopping
+  faBagShopping,
+  faBoxArchive,
+  faCopy
 } from "@fortawesome/free-solid-svg-icons";
 
 const route = useRoute();
 const isExpanded = ref<boolean>(false);
 const navWidth = ref<boolean>(false);
-
 const checkRoute = () => {
   const path = route.path;
   if (path.includes("staffs") || path.includes("users")) {
@@ -74,21 +75,36 @@ const toggle = (): void => {
         class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBox" />
-        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Products</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Products</span
+        >
       </NuxtLink>
       <NuxtLink
         to="/admin/categories"
         class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faDatabase" />
-        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Categories</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Categories</span
+        >
+      </NuxtLink>
+      <NuxtLink
+        to="/admin/collections"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
+      >
+        <FontAwesomeIcon class="fa-xl" :icon="faCopy" />
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Collections</span
+        >
       </NuxtLink>
       <NuxtLink
         to="/admin/orders"
         class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faBagShopping" />
-        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Orders</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Orders</span
+        >
       </NuxtLink>
       <div
         class="justify-between cursor-pointer rounded-lg p-3"
@@ -97,7 +113,9 @@ const toggle = (): void => {
         <div class="flex nav align-center justify-between">
           <div class="flex">
             <FontAwesomeIcon class="fa-xl" :icon="faUser" />
-            <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Users</span>
+            <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+              >Users</span
+            >
           </div>
           <FontAwesomeIcon
             class="icon fa-lg"
@@ -112,7 +130,6 @@ const toggle = (): void => {
           <NuxtLink
             class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
             to="/admin/staffs"
-  
           >
             <FontAwesomeIcon :icon="faCircleUser" />
             <span v-if="!navWidth" class="ml-2 hidden xl:block">Employees</span>
@@ -120,7 +137,6 @@ const toggle = (): void => {
           <NuxtLink
             class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
             to="/admin/users"
-  
           >
             <FontAwesomeIcon :icon="faUsers" />
             <span v-if="!navWidth" class="ml-2 hidden xl:block">Clients</span>
@@ -133,7 +149,9 @@ const toggle = (): void => {
         class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faRightFromBracket" />
-        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3">Logout</span>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Logout</span
+        >
       </NuxtLink>
     </div>
   </nav>
@@ -149,7 +167,7 @@ const toggle = (): void => {
   color: #f0f0f0 !important;
 }
 
- nav.align-center {
+nav.align-center {
   height: 45px;
 }
 
