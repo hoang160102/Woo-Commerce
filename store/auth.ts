@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-
+import { useToast } from "vue-toastification";
+const toast = useToast()
 export const useAuthStore = defineStore("auth-store", () => {
   const userAuth = ref<object>();
   const token = ref<string>('');
@@ -15,20 +16,28 @@ export const useAuthStore = defineStore("auth-store", () => {
           "Content-Type": "application/json",
         },
       });
-    } catch (err) {
-      console.log(err);
+      console.log(data)
+      toast.success('Register Successfully')
+      setTimeout(() => {
+        navigateTo('/login')
+      }, 2000)
+    } catch (err: any) {
+      if (err.response && err.response._data) {
+        toast.error(err.response._data.statusMessage || 'An error occurred');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
     }
   }
   async function userLogin(user: object) {
     try {
-      const { data, error } = await $fetch("/api/users/auth/login", {
+      const data = await $fetch("/api/users/auth/login", {
         method: "post",
         body: JSON.stringify(user),
         headers: {
           "Content-Type": "application/json",
         },
       })
-      console.log(error)
     }
     catch(err) {
       console.log(err)

@@ -2,6 +2,7 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { useCategoryStore } from "~/store/categories";
+import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",
 });
@@ -11,11 +12,16 @@ const expirationDate = ref<string>("");
 const file = ref<FileList | null>(null);
 const linkImg = ref<string[]>([]);
 const categories = ref<object[]>([]);
-const store = useCategoryStore();
-const { getAllCategories } = store;
+const collections = ref<object[]>([]);
+const storeCate = useCategoryStore();
+const storeCollect = useCollectionStore();
+const { getAllCategories } = storeCate;
+const { getAllCollections } = storeCollect;
 async function fetchCategories() {
   await getAllCategories();
-  categories.value = store.categoryList?.categories || [];
+  await getAllCollections();
+  categories.value = storeCate.categoryList?.categories || [];
+  collections.value = storeCollect.collectionsList?.collections || [];
 }
 fetchCategories();
 const handleUploadFiles = async (event: Event) => {
@@ -40,7 +46,6 @@ const removeImage = async (index: number) => {
       }
     });
     file.value = dataTransfer.files;
-    console.log(file.value);
   }
 };
 </script>
@@ -76,8 +81,14 @@ const removeImage = async (index: number) => {
             <select
               class="px-3 py-2 bg-white rounded-lg bg-gray-100 outline-none border"
             >
-              <option value="Select Category">Select Category</option>
-              <option value="Bags">Bags</option>
+              <option
+                v-for="cate in categories"
+                :key="cate['_id']"
+                :id="cate['_id']"
+                :value="cate.name"
+              >
+                {{ cate.name }}
+              </option>
             </select>
           </div>
           <div class="form-control flex flex-col">
@@ -91,6 +102,23 @@ const removeImage = async (index: number) => {
               <option value="Select Gender">Select Gender</option>
               <option value="Men">Men</option>
               <option value="Women">Women</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
+          <div class="form-control flex flex-col">
+            <label for="colelctions" class="font-semibold mb-3"
+              >Colelctions</label
+            >
+            <select
+              class="px-3 py-2 bg-white rounded-lg bg-gray-100 outline-none border"
+            >
+              <option
+                v-for="collect in collections"
+                :key="collect['_id']"
+                :id="collect['_id']"
+                :value="collect.name"
+              >{{ collect.name }}</option>
             </select>
           </div>
         </div>
