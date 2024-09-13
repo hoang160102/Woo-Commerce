@@ -13,11 +13,11 @@ export default defineNuxtConfig({
   },
   modules: [// (_options, nuxt) => {
   //   nuxt.hooks.hook("vite:extendConfig", (config) => {
-  "@vueuse/nuxt", //     // @ts-expect-error
-  //     config.plugins.push(vuetify({ autoImport: true }));
+  //     // @ts-expect-error
+  "@vueuse/nuxt", //     config.plugins.push(vuetify({ autoImport: true }));
   //   });
   // },
-  "@primevue/nuxt-module", "nuxt-rating", "@pinia/nuxt", "@primevue/nuxt-module"],
+  "@primevue/nuxt-module", "nuxt-rating", "@pinia/nuxt", "@primevue/nuxt-module", "nuxt-mail"],
   build: {
     transpile: ["vuetify"],
   },
@@ -39,4 +39,18 @@ export default defineNuxtConfig({
     { src: '~/plugins/mongoose.ts', mode: 'server' },
     '~/plugins/toastification.ts'
   ],
+  mail: {
+    message: {
+      from: '2001140025@s.hanu.edu.vn',
+      to: 'hoang160102@gmail.com'
+    },
+    smtp: {
+      host: 'smtp.gmail.com',
+      port: 587,
+      auth: {
+        user: '2001140025@s.hanu.edu.vn',
+        pass: '2001140025'
+      }
+    }
+  }
 });

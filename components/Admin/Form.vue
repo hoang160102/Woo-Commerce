@@ -1,16 +1,17 @@
-<!-- <script setup lang="ts">
+<script setup lang="ts">
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload } from "@fortawesome/free-solid-svg-icons";
-import { withDefaults, defineProps, defineEmits } from "vue";
 interface Props {
   isUpdate: boolean;
   initialData: Object;
+  page: string
 }
 const props = withDefaults(defineProps<Props>(), {
   isUpdate: false,
   initialData: () => ({ name: "", file: null }),
+  page: ''
 });
-const emit = defineEmits(["submit"]);
+const emit = defineEmits(['submit']);
 const formData = ref<object>({ ...props.initialData }); 
 const isSubmit = ref<boolean>(false);
 const onFileChange = (event: any) => {
@@ -24,23 +25,12 @@ const handleSubmit = () => {
 };
 watch(formData, (newVal: any) => {
   formData.value = newVal;
-  console.log(formData.value);
 });
-// const props = defineProps({
-//   isUpdate: {
-//     type: Boolean,
-//     default: false,
-//   },
-//   initialData: {
-//     type: Object,
-//     default: () => ({ name: '', file: null }),
-//   },
-// });
 </script>
 <template>
-  <section v-if="formData.name" class="mt-4">
+  <section class="mt-4">
     <div class="title mb-4 font-semibold text-2xl text-blue-500">
-      {{ isUpdate ? "Update Category" : "Add Category" }}
+      {{ isUpdate ? "Update" : "Add" }} {{ page }}
     </div>
     <div class="rounded-lg border bg-card shadow-sm">
       <form @submit.prevent="handleSubmit" class="p-4">
@@ -52,7 +42,7 @@ watch(formData, (newVal: any) => {
           >
           <input
             class="outline-none flex-grow m-0 md:ml-20 px-4 py-2 rounded-md border"
-            placeholder="Category name"
+            :placeholder="`${page} name`"
             tabindex="0"
             aria-required="true"
             type="text"
@@ -108,7 +98,8 @@ watch(formData, (newVal: any) => {
       </form>
     </div>
   </section>
-</template> -->
-<template>
-    <h1></h1>
 </template>
+
+function withDefaults(arg0: any, arg1: { isUpdate: boolean; initialData: () => { name: string; file: null; }; page: string; }) {
+  throw new Error("Function not implemented.");
+}

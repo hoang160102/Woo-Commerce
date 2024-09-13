@@ -19,7 +19,7 @@ export const useAuthStore = defineStore("auth-store", () => {
       console.log(data)
       toast.success('Register Successfully')
       setTimeout(() => {
-        navigateTo('/login')
+        navigateTo('/verification')
       }, 2000)
     } catch (err: any) {
       if (err.response && err.response._data) {

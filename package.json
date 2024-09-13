@@ -32,6 +32,7 @@
     "nanoid": "^5.0.7",
     "nanoid-dictionary": "^4.3.0",
     "nuxt": "^3.12.4",
+    "nuxt-mail": "^5.0.1",
     "nuxt-rating": "^0.1.5",
     "pinia": "^2.2.2",
     "primevue": "^4.0.5",

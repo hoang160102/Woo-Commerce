@@ -1,114 +1,40 @@
 <script lang="ts" setup>
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { useCategoryStore } from "~/store/categories";
 definePageMeta({
   layout: "admin",
 });
-const route = useRoute();
+const route: any = useRoute();
 const store = useCategoryStore();
 const cate = ref<object>({});
 const { getCateById, updateCategory } = store;
 const name = ref<string>("");
-const file = ref<File | null>(null);
-const isSubmit = ref<boolean>(false);
-const onFileChange = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  file.value = target.files ? target.files[0] : null;
-};
-const saveData = async () => {
-  isSubmit.value = true;
+const saveData = async (data: any) => {
   const formData = new FormData();
-  if (file.value && name.value.length > 0) {
-    formData.append("name", name.value);
-    formData.append("image", file.value);
-    await updateCategory(route.params.id, formData);
-  }
+  formData.append("name", data.name);
+  formData.append("image", data.file);
+  await updateCategory(route.params.id, formData)
 };
 watch(
   () => store.categoryById,
   (newVal: any) => {
     cate.value = newVal?.cate || {};
-    console.log(cate.value)
   },
   { immediate: true }
 );
 async function fetchCate() {
   await getCateById(route.params.id);
-  cate.value = store.categoryById?.cate;
+  cate.value = store.categoryById.cate;
   name.value = cate.value.name;
 }
 fetchCate();
 </script>
 <template>
-  <!-- <AdminForm :isUpdate="true" :initialData="{ name: cate?.name, file: null }">
-  </AdminForm> -->
-  <section class="mt-4">
-    <div class="title mb-4 font-semibold text-2xl text-blue-500">
-      Update Category
-    </div>
-    <div v-if="cate" class="rounded-lg border bg-card shadow-sm">
-      <form @submit.prevent="saveData()" class="p-4">
-        <div
-          class="form-control my-4 flex flex-col md:flex-row md:align-center"
-        >
-          <label for="name" class="font-semibold p-0 md:pr-20 text-xl mb-3"
-            >Category Name</label
-          >
-          <input
-            class="outline-none flex-grow m-0 md:ml-20 px-4 py-2 rounded-md border"
-            placeholder="Category name"
-            tabindex="0"
-            aria-required="true"
-            type="text"
-            name="text"
-            v-model="name"
-          />
-        </div>
-        <span
-          v-if="isSubmit && !(name.length > 0)"
-          class="text-red-500 text-sm m-0 md: ml-40 pl-40 my-2"
-          >Please choose an image</span
-        >
-        <div
-          class="form-control my-10 flex flex-col md:flex-row md:align-center"
-        >
-          <label for="name" class="font-semibold p-0 md:pr-20 mb-3 text-xl"
-            >Upload Images</label
-          >
-          <div class="upload-image m-0 md:ml-20 flex-grow">
-            <div class="item up-load">
-              <div
-                class="px-4 py-10 border-2 border-dashed border-blue-500 rounded-lg flex flex-col items-center justify-center text-center cursor-pointer hover:border-blue-600"
-              >
-                <label for="file-upload" class="flex flex-col cursor-pointer">
-                  <FontAwesomeIcon
-                    :icon="faUpload"
-                    class="fa-2xl text-blue-500"
-                  />
-                  <p class="text-gray-500">Drop your images here or select</p>
-                  <span class="text-blue-500 underline">click to browse</span>
-                  <input
-                    @change="onFileChange"
-                    id="file-upload"
-                    type="file"
-                    class="mt-4"
-                    accept=".jpeg, .png, .jpg"
-                  />
-                </label>
-                <span v-if="isSubmit && !file" class="text-red-500 text-sm mt-2"
-                  >Please choose an image</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-        <button
-          class="px-20 bg-blue-500 text-white font-semibold mt-8 text-xl py-3 rounded-lg outline-none"
-        >
-          Save
-        </button>
-      </form>
-    </div>
-  </section>
+  <AdminForm
+    v-if="cate.name"
+    @submit="saveData"
+    :isUpdate="true"
+    :initialData="{ name: cate.name, file: null }"
+    page="Category"
+  >
+  </AdminForm>
 </template>
