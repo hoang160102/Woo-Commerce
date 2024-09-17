@@ -10,7 +10,7 @@ const submitData = async (data: any) => {
   formData.append('image', data.file)
   await createCollection(formData)
 };
-</script>
+</script>  
 
 <template>
   <AdminForm

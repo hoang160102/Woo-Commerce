@@ -15,8 +15,9 @@ interface User {
     profile_img: string;
     wishList: string[];
     refreshToken: string;
-    verificationCode: string;
-    verificationCodeExpAt: Date
+    isVerified: boolean
+    verificationToken: string
+    expireAt: Date
 }
 const userSchema: Schema<User> = new mongoose.Schema({
     name: { type: String, required: true },
@@ -32,8 +33,9 @@ const userSchema: Schema<User> = new mongoose.Schema({
     profile_img: { type: String, default: '' },
     wishList: { type: [String], default: [] },
     refreshToken: { type: String, default: '' },
-    verificationCode: { type: String, required: true },
-    verificationCodeExpAt: { type: Date, required: true }
+    isVerified: { type: Boolean, default: false },
+    verificationToken: { type: String, required: true },
+    expireAt: { type: Date }
 });
 const User: Model<User> = mongoose.model<User>('User', userSchema);
 export default User

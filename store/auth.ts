@@ -9,6 +9,7 @@ export const useAuthStore = defineStore("auth-store", () => {
       ...newUsers,
     };
     try {
+      
       const data = await $fetch("/api/users/auth/register", {
         method: "post",
         body: JSON.stringify(createUsers),
@@ -16,12 +17,15 @@ export const useAuthStore = defineStore("auth-store", () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(data)
       toast.success('Register Successfully')
+      await useFetch('/api/users/auth/send-verification', {
+        method: 'post'
+      })
       setTimeout(() => {
         navigateTo('/verification')
       }, 2000)
     } catch (err: any) {
+      console.log(err)
       if (err.response && err.response._data) {
         toast.error(err.response._data.statusMessage || 'An error occurred');
       } else {

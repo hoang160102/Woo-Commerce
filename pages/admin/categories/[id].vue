@@ -2,7 +2,7 @@
 import { useCategoryStore } from "~/store/categories";
 definePageMeta({
   layout: "admin",
-});
+}); 
 const route: any = useRoute();
 const store = useCategoryStore();
 const cate = ref<object>({});
