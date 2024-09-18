@@ -45,7 +45,7 @@ export default defineNuxtConfig({
     port: 465,
     secure: true,
     auth: {
-      user: 'hoang160102@gmail.com',
+      user: '2001140025@s.hanu.edu.vn',
       pass: '',
     },
   },

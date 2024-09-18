@@ -34,7 +34,7 @@ const userSchema: Schema<User> = new mongoose.Schema({
     wishList: { type: [String], default: [] },
     refreshToken: { type: String, default: '' },
     isVerified: { type: Boolean, default: false },
-    verificationToken: { type: String, required: true },
+    verificationToken: { type: String },
     expireAt: { type: Date }
 });
 const User: Model<User> = mongoose.model<User>('User', userSchema);
