@@ -24,7 +24,7 @@ export default function verificationEmailTemplate(name: string, verificationUrl:
             .button {
               background-color: #28a745;
               color: white;
-              padding: 10px 20px;
+              padding: 10px 20px; 
               text-decoration: none;
               font-weight: bold;
               border-radius: 5px;

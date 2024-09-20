@@ -1,15 +1,22 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
+interface Users {
+  name: string,
+  username: string,
+  email: string,
+  password: string,
+  phone: string
+}
+interface Data {
+  email: string
+}
 const toast = useToast()
 export const useAuthStore = defineStore("auth-store", () => {
-  const userAuth = ref<object>();
-  const token = ref<string>('');
-  async function userRegister(newUsers: object) {
+  async function userRegister(newUsers: Users) {
     const createUsers = {
       ...newUsers,
     };
     try {
-      
       const data = await $fetch("/api/users/auth/register", {
         method: "post",
         body: JSON.stringify(createUsers),
@@ -18,9 +25,6 @@ export const useAuthStore = defineStore("auth-store", () => {
         },
       });
       toast.success('Register Successfully')
-      await useFetch('/api/users/auth/send-verification', {
-        method: 'post'
-      })
       setTimeout(() => {
         navigateTo('/verification')
       }, 2000)
@@ -47,5 +51,21 @@ export const useAuthStore = defineStore("auth-store", () => {
       console.log(err)
     }
   }
-  return { userRegister, userLogin };
+  async function resendVerify(data: Data) {
+    try {
+      await $fetch('/api/users/auth/re-verify', {
+        method: 'post',
+        body: JSON.stringify(data)
+      })
+      toast.success('Resend successfully. Check your email')
+    }
+    catch (err: any) {
+      if (err.response && err.response._data) {
+        toast.error(err.response._data.statusMessage || 'An error occurred');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    }
+  }
+  return { userRegister, userLogin, resendVerify };
 });

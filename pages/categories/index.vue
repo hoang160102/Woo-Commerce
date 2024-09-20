@@ -11,7 +11,6 @@ async function fetchCategories() {
 watch(
   () => store.categoryList,
   (newVal: any) => {
-    console.log("Updated category list:", newVal);
     allCategories.value = newVal?.categories || [];
   },
   { immediate: true }

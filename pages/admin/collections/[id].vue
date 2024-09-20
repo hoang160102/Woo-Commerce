@@ -23,7 +23,6 @@ watch(
 );
 async function fetchCate() {
   await getCollectionById(route.params.id);
-  console.log(store.collectionById);
   cate.value = store.collectionById?.cate;
   name.value = cate.value.name;
 }

@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
     const hashedPassword = await bcrypt.hash(body.password, 10);
     const token = crypto.randomBytes(16).toString("hex");
-    const expireAt = new Date(Date.now() + 3600000);
+    const expireAt = new Date(Date.now() + 3600000/60);
     const newUser = new User({
       ...body,
       password: hashedPassword,
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
       expireAt,
     });
     await newUser.save();
-    const verificationLink = `${event.req.headers.origin}/api/users/auth/verify?auth=${token}`;
+    const verificationLink = `${event.req.headers.origin}/verify?auth=${token}`;
     await sendEmailVerification(body.email, body.name, verificationLink)
   } catch (err: any) {
     if (err.statusCode) {
