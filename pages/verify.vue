@@ -32,7 +32,7 @@ async function run() {
   }
 
   try {
-    const { data, error } = await useFetch(`/api/users/auth/verify?token=${token}`);
+    const { data } = await useFetch(`/api/users/auth/verify?token=${token}`);
     if (data.value.success) {
       success.value = true;
       message.value = data.value.message;

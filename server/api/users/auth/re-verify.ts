@@ -22,5 +22,7 @@ export default defineEventHandler(async (event) => {
     const newVerificationLink = `${event.req.headers.origin}/verify?auth=${newToken}`;
     user.verificationToken = newToken;
     user.expireAt = new Date(Date.now() + 3600000);
+    await user.save()
+    await sendEmailVerification(body.email, user.name, newVerificationLink)
   }
 });

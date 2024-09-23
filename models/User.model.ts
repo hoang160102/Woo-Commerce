@@ -15,6 +15,7 @@ interface User {
     profile_img: string;
     wishList: string[];
     refreshToken: string;
+    tokenExpire: Date
     isVerified: boolean
     verificationToken: string
     expireAt: Date
@@ -33,6 +34,7 @@ const userSchema: Schema<User> = new mongoose.Schema({
     profile_img: { type: String, default: '' },
     wishList: { type: [String], default: [] },
     refreshToken: { type: String, default: '' },
+    tokenExpire: { type: Date },
     isVerified: { type: Boolean, default: false },
     verificationToken: { type: String },
     expireAt: { type: Date }

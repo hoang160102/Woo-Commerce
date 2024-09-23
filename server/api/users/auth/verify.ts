@@ -1,13 +1,12 @@
 import User from "~/models/User.model";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event); // Get the token from the query parameter
-  // Find the user with the matching verification token
+  const query = getQuery(event);
   const { token } = query;
   const user = await User.findOne({ verificationToken: token });
   try {
     if (!user) {
-      return { success: false, message: "User not found" };
+      return { success: false, message: "Your account has been verified" };
     }
     const currentTime = new Date();
     if (user.expireAt < currentTime) {
@@ -28,7 +27,7 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error) {
     console.log(error);
-    return {
+    return { 
       statusCode: 500,
       body: { message: "An error occurred during verification." },
     };

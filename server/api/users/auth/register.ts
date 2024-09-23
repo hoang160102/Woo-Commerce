@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     }
     const hashedPassword = await bcrypt.hash(body.password, 10);
     const token = crypto.randomBytes(16).toString("hex");
-    const expireAt = new Date(Date.now() + 3600000/60);
+    const expireAt = new Date(Date.now() + 3600000);
     const newUser = new User({
       ...body,
       password: hashedPassword,
