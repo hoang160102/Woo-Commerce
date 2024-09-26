@@ -1,36 +1,38 @@
 import jwt from "jsonwebtoken";
 import User from "~/models/User.model";
+import { generateRefreshToken } from "~/utils/jwt";
 export default defineEventHandler(async (event) => {
-  const refreshToken = getCookie(event, "refreshToken");
-  const accessTokenSecret: any = process.env.ACCESS_TOKEN_SECRET;
-  const refreshTokenSecret: any = process.env.REFRESH_TOKEN_SECRET;
+  const cookies = parseCookies(event);
+  const refreshToken = cookies.refreshToken;
+  const accessTokenSecret: any = process.env.ACCESS_TOKEN_SECRET
+  const refreshTokenSecret: any = process.env.REFRESH_TOKEN_SECRET
   if (!refreshToken) {
-    return {
-      statusCode: 401,
-      message: "Unauthorized",
-    };
-  }
-  const storedToken = await User.findOne({ refreshToken });
-  if (!storedToken) {
-    return {
-      statusCode: 401,
-      message: "Unauthorized",
-    };
-  }
+    throw createError({ statusCode: 401, statusMessage: 'No refresh token provided' });
+  }  
+
+  // Verify refresh token
   try {
-    const decoded: any = jwt.verify(refreshToken, refreshTokenSecret);
-    console.log(decoded)
-    // const newAccessToken = jwt.sign(
-    //   { userId: decoded.userId },
-    //   accessTokenSecret,
-    //   { expiresIn: "5m" }
-    // );
-    // const newRefreshToken = jwt.sign(
-    //   { userId: decoded.userId },
-    //   refreshTokenSecret,
-    //   { expiresIn: "1y" }
-    // );
-  } catch (err) {
-    console.log(err);
+    const payload: any = jwt.verify(refreshToken, refreshTokenSecret);
+    const user: any = await User.findById(payload.userId);
+    // console.log(user)
+    // if (!user || user.refreshToken !== refreshToken) {
+    //   throw createError({ statusCode: 401, statusMessage: 'Invalid refresh token' });
+    // }
+    console.log(user.refreshToken + 'old token')
+    // Tạo access token mới
+    const accessToken = user.refreshToken
+    // Tạo refresh token mới (giữ nguyên thời hạn)
+    const newRefreshToken = generateRefreshToken(user['_id'])
+
+    // Cập nhật refresh token trong cơ sở dữ liệu
+    user.refreshToken = newRefreshToken;
+    console.log(newRefreshToken + 'newToken')
+    await user.save();
+    
+    return { accessToken, newRefreshToken };
+  } catch (error) {
+    throw createError({ statusCode: 401, statusMessage: 'Invalid or expired refresh token' });
   }
+  
 });
+

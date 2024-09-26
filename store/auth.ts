@@ -1,17 +1,31 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 interface Users {
-  name: string;
-  username: string;
-  email: string;
-  password: string;
-  phone: string;
+  name: string,
+    username: string
+    password: string;
+    email: string;
+    phone: string;
+    billing_info_id: string;
+    shipping_info_id: string;
+    createAt: Date;
+    updatedAt: Date;
+    orders: string[];
+    profile_img: string;
+    wishList: string[];
+    refreshToken: string;
+    tokenExpire: Date
+    isVerified: boolean
 }
 interface Data {
   email: string;
 }
 const toast = useToast();
 export const useAuthStore = defineStore("auth-store", () => {
+  const currentUser = ref<Users | null>(null)
+  const isLoggedIn = computed(() => {
+    return currentUser.value
+  })
   async function userRegister(newUsers: Users) {
     const createUsers = {
       ...newUsers,
@@ -39,22 +53,41 @@ export const useAuthStore = defineStore("auth-store", () => {
   }
   async function userLogin(user: object) {
     try {
-      const data: any = await $fetch("/api/users/auth/login", {
+      const data = await $fetch("/api/users/auth/login", {
         method: "post",
         body: JSON.stringify(user),
         headers: {
           "Content-Type": "application/json",
         },
       });
+      if (data && data['_doc']) {
+        currentUser.value = data['_doc'];
+      }
+      if (data.accessToken && data.refreshToken) {
+        const accessToken = useCookie('accessToken', {
+          maxAge: 300,
+          secure: false,
+          httpOnly: false,
+          path: '/'
+        });
+        accessToken.value = data.accessToken;
+
+        const refreshToken = useCookie('refreshToken', {
+          maxAge: 365 * 24 * 60 * 60,
+          secure: false,
+          httpOnly: false,
+          path: '/'
+        });
+        refreshToken.value = data.refreshToken;
+      }
       toast.success("Login successfully");
-      console.log(data.user)
       setTimeout(() => {
         navigateTo("/");
       }, 2000);
     } catch (err: any) {
       if (err.response && err.response._data) {
         toast.error(err.response._data.statusMessage || "An error occurred");
-      } else {
+      } else { 
         toast.error("An unexpected error occurred");
       }
     }
@@ -74,5 +107,5 @@ export const useAuthStore = defineStore("auth-store", () => {
       }
     }
   }
-  return { userRegister, userLogin, resendVerify };
+  return { currentUser, isLoggedIn, userRegister, userLogin, resendVerify };
 });

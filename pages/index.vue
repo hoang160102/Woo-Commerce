@@ -5,10 +5,13 @@ import {
   faMoneyBillTransfer,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
+// definePageMeta({
+//   middleware: ['token']
+// })
 import { useCategoryStore } from "~/store/categories";
 const store = useCategoryStore();
 const { getAllCategories } = store;
-const firstSixCategories = ref<object[]>([]);
+const firstSixCategories = ref<any>([]);
 async function fetchCategories() {
   await getAllCategories();
   firstSixCategories.value = store.categoryList?.categories || [];

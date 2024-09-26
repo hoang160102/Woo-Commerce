@@ -37,7 +37,7 @@ export default defineNuxtConfig({
   },
   plugins: [
     { src: '~/plugins/mongoose.ts', mode: 'server' },
-    '~/plugins/toastification.ts'
+    '~/plugins/toastification.ts',
   ],
   nodemailer: {
     from: '"Clothing Store" hoang160102@gmail.com>',

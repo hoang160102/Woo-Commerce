@@ -1,14 +1,13 @@
 import User from "~/models/User.model";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { generateAccessToken, generateRefreshToken } from "~/utils/jwt";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { email, password } = body;
-  const accessTokenSecret: any = process.env.ACCESS_TOKEN_SECRET;
-  const refreshTokenSecret: any = process.env.REFRESH_TOKEN_SECRET;
   // verify email, password
-  const user = await User.findOne({ email });
+  const user: any = await User.findOne({ email });
   if (!user) {
     throw createError({
       statusCode: 404,
@@ -33,18 +32,14 @@ export default defineEventHandler(async (event) => {
     });
   }
   // create token
-  const accessToken = jwt.sign({ userId: user["_id"] }, accessTokenSecret, {
-    expiresIn: "5m",
-  });
-  const refreshToken = jwt.sign({ userId: user["_id"] }, refreshTokenSecret, {
-    expiresIn: "1y",
-  });
+  const accessToken = generateAccessToken(user['_id'])
+  const refreshToken = generateRefreshToken(user['_id'])
   const tokenExpire = new Date()
   tokenExpire.setFullYear(tokenExpire.getFullYear() + 1)
   user.tokenExpire = tokenExpire
   user.refreshToken = refreshToken
   await user.save()
-  setCookie(event, 'accessToken', accessToken, { httpOnly: true, maxAge: 300 }); // 5 phút
-  setCookie(event, 'refreshToken', refreshToken, { httpOnly: true, maxAge: 365 * 24 * 60 * 60 }); // 1 nă
-  return { accessToken, refreshToken, user }
+  // setCookie(event, 'accessToken', accessToken, { httpOnly: false, maxAge: 300 }); // 5 phút
+  // setCookie(event, 'refreshToken', refreshToken, { httpOnly: false, maxAge: 365 * 24 * 60 * 60 }); // 1 nă
+  return { accessToken, refreshToken, ...user }
 });
