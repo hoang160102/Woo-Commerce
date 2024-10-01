@@ -5,7 +5,7 @@ import fs from "fs";
 import dateToString from "~/composables/useDate";
 const upload = multer({ dest: "public/categories" });
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: any) => {
   return new Promise((resolve, reject) => {
     upload.single("image")(event.node.req, event.node.res, async (err) => {
       if (err) {
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
       const { id } = event.context.params;
       const file = event.node.req.file;
       try {
-        const cate = await Category.findById(id);
+        // const cate = await Category.findById(id);
         const uploadImg = await cloudinary.uploader.upload(file.path, {
           folder: "categories",
           public_id: file.originalname,
@@ -23,9 +23,9 @@ export default defineEventHandler(async (event) => {
         const category = await Category.findByIdAndUpdate(id, {
           name,
           image: uploadImg.url,
-          updatedAt: dateToString()
+          updatedAt: dateToString(),
         });
-        const destroyImg = await cloudinary.uploader.destroy(cate.image);
+        // const destroyImg = await cloudinary.uploader.destroy(cate.image);
         fs.unlinkSync(file.path);
         resolve({ success: true, category });
       } catch (error) {

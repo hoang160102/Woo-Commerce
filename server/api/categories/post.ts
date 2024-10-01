@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({storage: storage});
-export default defineEventHandler(async (event) => {
+export default defineEventHandler(async (event: any) => {
   return new Promise((resolve, reject) => {
     upload.single('image')(event.node.req, event.node.res, async (err: any) => {
       if (err) {
@@ -24,6 +24,7 @@ export default defineEventHandler(async (event) => {
         return reject(new Error('Name and file are required'));
       }
       try {
+        console.log(file.path)
         const result = await cloudinary.uploader.upload(file.path, {
           folder: 'categories',
           public_id: file.originalname

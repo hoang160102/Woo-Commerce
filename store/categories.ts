@@ -2,8 +2,8 @@ import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 export const useCategoryStore = defineStore("category-store", () => {
-  const categoryList = ref<object>({})
-  const categoryById = ref<object>({});
+  const categoryList = ref<any>({})
+  const categoryById = ref<any>({});
   async function getAllCategories() {
     try {
       const { data } = await useFetch("/api/categories/get");

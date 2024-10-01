@@ -99,7 +99,3 @@ watch(formData, (newVal: any) => {
     </div>
   </section>
 </template>
-
-function withDefaults(arg0: any, arg1: { isUpdate: boolean; initialData: () => { name: string; file: null; }; page: string; }) {
-  throw new Error("Function not implemented.");
-}

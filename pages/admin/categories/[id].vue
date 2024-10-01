@@ -5,7 +5,7 @@ definePageMeta({
 }); 
 const route: any = useRoute();
 const store = useCategoryStore();
-const cate = ref<object>({});
+const cate = ref<any>({});
 const { getCateById, updateCategory } = store;
 const name = ref<string>("");
 const saveData = async (data: any) => {

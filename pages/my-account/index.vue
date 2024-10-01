@@ -8,10 +8,44 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { vOnClickOutside } from "@vueuse/components";
+import { useUsersStore } from "~/store/users";
+interface User {
+  _id: string,
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  phone: string;
+  billing_info_id: string;
+  shipping_info_id: string;
+  orders: string[];
+  profile_img: string;
+  wishList: string[];
+  refreshToken: string;
+  tokenExpire: Date;
+  isVerified: boolean;
+}
+const userCookie: any = useCookie('currentUser');
+const currentUser = ref<User | null>(userCookie.value);
 const route = useRoute();
 const activeTab = computed(() => route.query.tab || "my-details");
-const file = ref<string>("");
+const file = ref<File | undefined>(undefined);
 const isModal = ref<boolean>(false);
+const userStore: any = useUsersStore()
+const { uploadProfileImage } = userStore
+
+if (userCookie.value) {
+  try {
+    currentUser.value = userCookie.value;
+  } catch (error) {
+    console.error("Error parsing stored user data", error);
+  }
+}
+watch(userCookie, (newVal: any) => {
+  if (newVal) {
+    currentUser.value = newVal
+  }
+}, { deep: true });
 const toUpdateProfile = () => {
   isModal.value = true;
 };
@@ -28,20 +62,28 @@ watch(isModal, (newVal: boolean) => {
     document.body.classList.remove("overflow-hidden");
   }
 });
-const imgUrl = ref<string>("../../public/ava/unnamed.jpg");
+const imgUrl = ref<string>("");
 const onFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (file) {
+  file.value = target.files?.[0];
+  if (file.value) {
     const reader = new FileReader();
     reader.onload = (e: ProgressEvent<FileReader>) => {
       if (e.target) {
         imgUrl.value = e.target.result as string;
       }
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file.value);
   }
 };
+const uploadProfile = async () => {
+  if (file.value && currentUser.value) {
+    const formData = new FormData()
+    formData.append('profile_img', file.value)
+    await uploadProfileImage(formData, currentUser.value._id)
+    isModal.value = false
+  }
+}
 </script>
 <template>
   <section class="bg-gray-100">
@@ -52,8 +94,22 @@ const onFileChange = (event: Event) => {
         <div class="mt-2 lg:sticky top-16 w-full lg:max-w-[260px]">
           <section class="my-8 flex gap-4 items-start justify-center w-full">
             <img
+              v-if="
+                !(currentUser &&
+                currentUser.profile_img &&
+                currentUser.profile_img.length > 0)
+              "
               @click="toUpdateProfile"
-              src="../../public/ava/unnamed.jpg"
+              src="../../public/ava/default.png"
+              class="rounded-full cursor-pointer aspect-square border border-white"
+              alt="user-image"
+              width="48"
+              height="48"
+            />
+            <img
+              v-else
+              @click="toUpdateProfile"
+              :src="currentUser.profile_img"
               class="rounded-full cursor-pointer aspect-square border border-white"
               alt="user-image"
               width="48"
@@ -64,7 +120,7 @@ const onFileChange = (event: Event) => {
             >
               <div class="text-lg font-semibold">Welcome</div>
               <span class="text-gray-400 font-light"
-                >hoang160102@gmail.com</span
+                >{{ currentUser?.email }}</span
               >
             </div>
             <button
@@ -112,11 +168,14 @@ const onFileChange = (event: Event) => {
         </div>
 
         <div
+          v-if="currentUser"
           class="flex-1 w-full lg:my-8 rounded-lg max-w-screen-lg lg:sticky top-24"
         >
-          <AccountDetails v-if="activeTab === 'my-details'"></AccountDetails>
-          <OrderHistory v-else-if="activeTab === 'orders'"></OrderHistory>
-          <Wishlist v-else-if="activeTab === 'wishlist'"></Wishlist>
+          <LazyAccountDetails v-if="activeTab === 'my-details'"
+            :currentUser="currentUser"
+          ></LazyAccountDetails>
+          <LazyOrderHistory v-else-if="activeTab === 'orders'"></LazyOrderHistory>
+          <LazyWishlist v-else-if="activeTab === 'wishlist'"></LazyWishlist>
         </div>
       </div>
     </div>
@@ -144,7 +203,7 @@ const onFileChange = (event: Event) => {
             </div>
             <input type="file" @change="onFileChange" class="ml-20 mt-10" />
             <button
-              @click="closeModal"
+              @click="uploadProfile"
               class="px-9 py-3 bg-blue-500 mt-7 rounded-lg text-white"
             >
               Save

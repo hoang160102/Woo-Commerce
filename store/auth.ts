@@ -1,31 +1,28 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 interface Users {
-  name: string,
-    username: string
-    password: string;
-    email: string;
-    phone: string;
-    billing_info_id: string;
-    shipping_info_id: string;
-    createAt: Date;
-    updatedAt: Date;
-    orders: string[];
-    profile_img: string;
-    wishList: string[];
-    refreshToken: string;
-    tokenExpire: Date
-    isVerified: boolean
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  phone: string;
+  billing_info_id: string;
+  shipping_info_id: string;
+  createAt: Date;
+  updatedAt: Date;
+  orders: string[];
+  profile_img: string;
+  wishList: string[];
+  refreshToken: string;
+  tokenExpire: Date;
+  isVerified: boolean;
 }
 interface Data {
   email: string;
 }
 const toast = useToast();
 export const useAuthStore = defineStore("auth-store", () => {
-  const currentUser = ref<Users | null>(null)
-  const isLoggedIn = computed(() => {
-    return currentUser.value
-  })
+  const currentUser: any = useCookie('currentUser');
   async function userRegister(newUsers: Users) {
     const createUsers = {
       ...newUsers,
@@ -60,23 +57,30 @@ export const useAuthStore = defineStore("auth-store", () => {
           "Content-Type": "application/json",
         },
       });
-      if (data && data['_doc']) {
-        currentUser.value = data['_doc'];
-      }
-      if (data.accessToken && data.refreshToken) {
-        const accessToken = useCookie('accessToken', {
-          maxAge: 300,
-          secure: false,
-          httpOnly: false,
-          path: '/'
-        });
-        accessToken.value = data.accessToken;
-
-        const refreshToken = useCookie('refreshToken', {
+      if (data && data["_doc"]) {
+        currentUser.value = data["_doc"];
+        const userCookie = useCookie("currentUser", {
           maxAge: 365 * 24 * 60 * 60,
           secure: false,
           httpOnly: false,
-          path: '/'
+          path: "/",
+        });
+        userCookie.value = JSON.stringify(currentUser.value);
+      }
+      if (data.accessToken && data.refreshToken) {
+        const accessToken = useCookie("accessToken", {
+          maxAge: 300,
+          secure: false,
+          httpOnly: false,
+          path: "/",
+        });
+        accessToken.value = data.accessToken;
+
+        const refreshToken = useCookie("refreshToken", {
+          maxAge: 365 * 24 * 60 * 60,
+          secure: false,
+          httpOnly: false,
+          path: "/",
         });
         refreshToken.value = data.refreshToken;
       }
@@ -87,8 +91,8 @@ export const useAuthStore = defineStore("auth-store", () => {
     } catch (err: any) {
       if (err.response && err.response._data) {
         toast.error(err.response._data.statusMessage || "An error occurred");
-      } else { 
-        toast.error("An unexpected error occurred");
+      } else {
+        console.log(err)
       }
     }
   }
@@ -107,5 +111,18 @@ export const useAuthStore = defineStore("auth-store", () => {
       }
     }
   }
-  return { currentUser, isLoggedIn, userRegister, userLogin, resendVerify };
+  async function userLogout() {
+    const data = await $fetch('/api/users/auth/logout', {
+      method: 'post'
+    })
+    const accessToken = useCookie('accessToken')
+    const refreshToken = useCookie('refreshToken')
+    const currentCookieUser = useCookie('currentUser')
+    accessToken.value = null
+    refreshToken.value = null
+    currentCookieUser.value = null
+    currentUser.value = null
+    await navigateTo('/login')
+  }
+  return { currentUser, userRegister, userLogin, resendVerify, userLogout };
 });

@@ -12,6 +12,29 @@ import { faUser } from "@fortawesome/free-regular-svg-icons/faUser";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { vOnClickOutside } from "@vueuse/components";
+import { useAuthStore } from "~/store/auth";
+interface User {
+  name: string;
+  username: string;
+  password: string;
+  email: string;
+  phone: string;
+  billing_info_id: string;
+  shipping_info_id: string;
+  orders: string[];
+  profile_img: string;
+  wishList: string[];
+  refreshToken: string;
+  tokenExpire: Date;
+  isVerified: boolean;
+}
+const authStore = useAuthStore();
+const { userLogout } = authStore;
+const userCookie: any = useCookie('currentUser')
+const currentUser = ref<User | null>(userCookie.value);
+watch(userCookie, (newVal: User) => {
+  currentUser.value = newVal
+})
 const router = useRouter();
 const cart = ref<boolean>(false);
 const toggleCart = (): void => {
@@ -25,6 +48,9 @@ const hideCart = (): void => {
 };
 const { toggleMenu, handleClickOutside, resizeWindow, isShowNav } =
   useToggleNav(1024);
+const logout = async () => {
+  await userLogout();
+};
 watch(router.currentRoute, (): void => {
   isShowNav.value = false;
   cart.value = false;
@@ -65,7 +91,11 @@ onMounted(() => {
               <FontAwesomeIcon :icon="faBars" />
             </button>
             <NuxtLink to="/">
-              <img class="w-[42px] rounded-full" src="../../public/logo/logoo.png" alt="">
+              <img
+                class="w-[42px] rounded-full"
+                src="../../public/logo/logoo.png"
+                alt=""
+              />
             </NuxtLink>
             <NuxtLink
               to="/"
@@ -102,12 +132,37 @@ onMounted(() => {
             </div>
             <div class="text-gray-600 hover:text-purple-600 user relative">
               <img
-                src="../../public/ava/unnamed.jpg"
+                v-if="
+                  currentUser &&
+                  currentUser.profile_img &&
+                  currentUser.profile_img.length > 0
+                "
+                :src="currentUser.profile_img"
                 class="w-[30px] cursor-pointer ava rounded-full"
                 alt=""
               />
+              <FontAwesomeIcon
+                v-else
+                class="fa-lg cursor-pointer"
+                :icon="faUser"
+              />
               <div
-                class="dropdown shadow rounded-lg p-3 bg-white absolute w-[224px] top-[30px] z-60 right-0"
+                class="dropdown shadow rounded-lg p-3 bg-white absolute w-[224px] z-60 right-0"
+                :class="[
+                  {
+                    'top-[30px]':
+                      currentUser &&
+                      currentUser.profile_img &&
+                      currentUser.profile_img.length > 0,
+                  },
+                  {
+                    'top-[24px]': !(
+                      currentUser &&
+                      currentUser.profile_img &&
+                      currentUser.profile_img.length > 0
+                    ),
+                  },
+                ]"
               >
                 <NuxtLink
                   class="flex rounded-lg hover:bg-gray-200 align-center py-3 px-4"
@@ -123,13 +178,13 @@ onMounted(() => {
                   <FontAwesomeIcon class="fa-sm" :icon="faHeart" />
                   <span class="ml-4 text-base">WishList</span>
                 </NuxtLink>
-                <NuxtLink
-                  class="flex align-center rounded-lg hover:bg-gray-200 py-3 px-4"
-                  to="/my-account"
+                <div
+                  @click="logout"
+                  class="flex align-center cursor-pointer rounded-lg hover:bg-gray-200 py-3 px-4"
                 >
                   <FontAwesomeIcon class="fa-sm" :icon="faRightFromBracket" />
                   <span class="ml-4 text-base">Log Out</span>
-                </NuxtLink>
+                </div>
               </div>
             </div>
             <button
