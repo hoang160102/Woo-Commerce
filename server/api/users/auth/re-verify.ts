@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
 import sendEmailVerification from "~/utils/sendEmailVerification";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);

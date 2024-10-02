@@ -23,7 +23,7 @@ interface Data {
 const toast = useToast();
 export const useAuthStore = defineStore("auth-store", () => {
   const currentUser: any = useCookie('currentUser');
-  async function userRegister(newUsers: Users) {
+  async function userRegister(newUsers: any) {
     const createUsers = {
       ...newUsers,
     };

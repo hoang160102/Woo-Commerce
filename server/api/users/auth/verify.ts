@@ -1,4 +1,4 @@
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);

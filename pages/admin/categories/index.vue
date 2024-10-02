@@ -133,44 +133,46 @@ fetchCategories();
         </tbody>
       </table>
     </ClientOnly>
-    <Teleport to="body">
-      <div
-        v-if="isModal"
-        class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
-      >
+    <ClientOnly>
+      <Teleport to="body">
         <div
-          v-on-click-outside="handleClickOutside"
-          class="modal-content bg-white relative rounded-lg p-10"
+          v-if="isModal"
+          class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
         >
-          <FontAwesomeIcon
-            @click="closeModal"
-            :icon="faClose"
-            class="fa-lg absolute top-[20px] right-[20px] cursor-pointer"
-          />
           <div
-            class="main-content w-full flex flex-col mt-5 justify-center align-center"
+            v-on-click-outside="handleClickOutside"
+            class="modal-content bg-white relative rounded-lg p-10"
           >
-            <div class="text-xl font-semibold">
-              Are you sure to delete category {{ nameCategory }} ?
-            </div>
-            <div class="confirm my-10 flex">
-              <button
-                @click="closeModal"
-                class="px-9 py-3 bg-slate-400 font-semibold rounded-lg text-white"
-              >
-                Cancel
-              </button>
-              <button
-                @click="deleteCate(selectedCategory)"
-                class="px-9 ml-5 py-3 bg-red-500 font-sembold rounded-lg text-white"
-              >
-                Delete
-              </button>
+            <FontAwesomeIcon
+              @click="closeModal"
+              :icon="faClose"
+              class="fa-lg absolute top-[20px] right-[20px] cursor-pointer"
+            />
+            <div
+              class="main-content w-full flex flex-col mt-5 justify-center align-center"
+            >
+              <div class="text-xl font-semibold">
+                Are you sure to delete category {{ nameCategory }} ?
+              </div>
+              <div class="confirm my-10 flex">
+                <button
+                  @click="closeModal"
+                  class="px-9 py-3 bg-slate-400 font-semibold rounded-lg text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="deleteCate(selectedCategory)"
+                  class="px-9 ml-5 py-3 bg-red-500 font-sembold rounded-lg text-white"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Teleport>
+      </Teleport>
+    </ClientOnly>
   </section>
 </template>
 

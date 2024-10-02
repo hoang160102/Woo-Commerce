@@ -37,14 +37,22 @@ export const useUsersStore = defineStore("users-store", () => {
         body: data,
       });
       // userUpdated.value = response.user;
-      console.log(response)
       userCookie.value = { ...response.user }
-      console.log(response.user.profile_img)
-      console.log(userCookie.value)
       toast.success("Updated profile successfully");
     } catch (err) {
       console.log(err);
     }
   };
-  return { usersList, getAllUsers, uploadProfileImage };
+  const updateInformation = async (data: any, id: string) => {
+    try {
+      const response: any = await $fetch(`/api/users/${id}`, {
+        method: "put",
+        body: data
+      })
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+  return { usersList, getAllUsers, uploadProfileImage, updateInformation };
 });

@@ -1,4 +1,4 @@
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
 import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "~/utils/jwt";
 

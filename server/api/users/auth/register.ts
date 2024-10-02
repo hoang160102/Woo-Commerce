@@ -1,6 +1,8 @@
 import bcrypt from "bcrypt";
 import crypto from "crypto";
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
+import Billing from "~/models/user/Billing.model";
+import Shipping from "~/models/user/Shipping.model";
 import sendEmailVerification from "~/utils/sendEmailVerification";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -13,14 +15,20 @@ export default defineEventHandler(async (event) => {
       });
     }
     const hashedPassword = await bcrypt.hash(body.password, 10);
+    const newBilling = new Billing({})
+    const newShipping = new Shipping({})
     const token = crypto.randomBytes(16).toString("hex");
     const expireAt = new Date(Date.now() + 3600000);
-    const newUser = new User({
+    const newUser = new User({      
       ...body,
       password: hashedPassword,
       verificationToken: token,
+      billing: newBilling._id,
+      shipping: newShipping._id,
       expireAt,
     });
+    await newBilling.save()
+    await newShipping.save()
     await newUser.save();
     const verificationLink = `${event.req.headers.origin}/verify?auth=${token}`;
     await sendEmailVerification(body.email, body.name, verificationLink)

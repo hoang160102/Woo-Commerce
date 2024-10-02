@@ -5,7 +5,7 @@ interface Country {
   };
 }
 
-const { data, status, error, refresh, clear } = await useAsyncData<Country[]>(
+const { data, status, error, refresh, clear } = useAsyncData<Country[]>(
   "countries",
   () => $fetch<Country[]>("https://restcountries.com/v3.1/all")
 );
@@ -108,10 +108,6 @@ const countries = countriesData.sort();
           class="bg-gray-100 px-4 py-3 rounded-lg outline-none border"
         />
       </div>
-    </div>
-    <div class="p-8">
-      <h3 class="text-xl mb-4 font-semibold col-span-full">Billing</h3>
-      <Billing></Billing>
     </div>
     <div class="bg-white backdrop-blur-sm bg-opacity-75 border-t col-span-full p-4 sticky bottom-0 rounded-b-lg">
       <button

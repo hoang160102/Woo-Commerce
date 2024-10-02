@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
 import { generateRefreshToken } from "~/utils/jwt";
 export default defineEventHandler(async (event) => {
   const cookies = parseCookies(event);

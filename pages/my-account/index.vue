@@ -16,8 +16,8 @@ interface User {
   password: string;
   email: string;
   phone: string;
-  billing_info_id: string;
-  shipping_info_id: string;
+  billing: string;
+  shipping: string;
   orders: string[];
   profile_img: string;
   wishList: string[];
@@ -52,7 +52,7 @@ const toUpdateProfile = () => {
 const closeModal = () => {
   isModal.value = false;
 };
-const handleClickOutside = () => {
+const clickOutside = () => {
   isModal.value = false;
 };
 watch(isModal, (newVal: boolean) => {
@@ -179,39 +179,41 @@ const uploadProfile = async () => {
         </div>
       </div>
     </div>
-    <Teleport to="body">
-      <div
-        v-if="isModal"
-        class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
-      >
+    <ClientOnly>
+      <Teleport to="body">
         <div
-          v-on-click-outside="handleClickOutside"
-          class="modal-content bg-white rounded-lg w-[500px] h-[400px] p-6"
+          v-if="isModal"
+          class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
         >
-          <FontAwesomeIcon
-            @click="closeModal"
-            :icon="faClose"
-            class="float-right fa-lg cursor-pointer"
-          />
           <div
-            class="main-content w-full flex flex-col mt-5 justify-center align-center"
+            v-on-click-outside="clickOutside"
+            class="modal-content bg-white rounded-lg w-[500px] h-[400px] p-6"
           >
+            <FontAwesomeIcon
+              @click="closeModal"
+              :icon="faClose"
+              class="float-right fa-lg cursor-pointer"
+            />
             <div
-              class="border overflow-hidden rounded-full w-[150px] h-[150px]"
+              class="main-content w-full flex flex-col mt-5 justify-center align-center"
             >
-              <img class="w-full h-full" :src="imgUrl" alt="" />
+              <div
+                class="border overflow-hidden rounded-full w-[150px] h-[150px]"
+              >
+                <img class="w-full h-full" :src="imgUrl" alt="" />
+              </div>
+              <input type="file" @change="onFileChange" class="ml-20 mt-10" />
+              <button
+                @click="uploadProfile"
+                class="px-9 py-3 bg-blue-500 mt-7 rounded-lg text-white"
+              >
+                Save
+              </button>
             </div>
-            <input type="file" @change="onFileChange" class="ml-20 mt-10" />
-            <button
-              @click="uploadProfile"
-              class="px-9 py-3 bg-blue-500 mt-7 rounded-lg text-white"
-            >
-              Save
-            </button>
           </div>
         </div>
-      </div>
-    </Teleport>
+      </Teleport>
+    </ClientOnly>
   </section>
 </template>
 

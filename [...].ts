@@ -1,6 +1,6 @@
  import bcrypt from "bcrypt";
 import cookieParser from "cookie-parser"
-import User from "~/models/User.model";
+import User from "~/models/user/User.model";
 import jwt from "jsonwebtoken"
 export default defineEventHandler(async (event) => {
   // const body = await readBody(event);

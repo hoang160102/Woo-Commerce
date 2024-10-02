@@ -7,8 +7,8 @@ interface User {
   password: string;
   email: string;
   phone: string;
-  billing_info_id: string;
-  shipping_info_id: string;
+  billing: any;
+  shipping: any;
   orders: string[];
   profile_img: string;
   wishList: string[];
@@ -24,12 +24,16 @@ const props = defineProps<{
 <template>
   <div class="grid gap-8 account-form">
     <PersonalInfomation
+      :id="currentUser._id"
       :name="currentUser.name"
       :phone="currentUser.phone"
       :username="currentUser.username"
       :email="currentUser.email"
     ></PersonalInfomation>
-    <Shipping></Shipping>
+    <ClientOnly>
+      <Shipping></Shipping>
+      <Billing></Billing>
+    </ClientOnly>
     <ChangePassword></ChangePassword>
   </div>
 </template> 
