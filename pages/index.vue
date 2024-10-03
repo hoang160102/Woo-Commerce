@@ -69,17 +69,19 @@ fetchCategories();
               >View All</NuxtLink
             >
           </div>
-          <div
-            class="grid justify-center grid-cols-2 gap-4 mt-8 md:grid-cols-3 lg:grid-cols-4"
-          >
-            <HomeCategories
-              v-for="cate in firstSixCategories"
-              :key="cate['_id']"
-              :id="cate['_id']"
-              :image="cate.image"
-              :name="cate.name"
-            ></HomeCategories>
-          </div>
+          <ClientOnly>
+            <div
+              class="grid justify-center grid-cols-2 gap-4 mt-8 md:grid-cols-3 lg:grid-cols-4"
+            >
+              <HomeCategories
+                v-for="cate in firstSixCategories"
+                :key="cate['_id']"
+                :id="cate['_id']"
+                :image="cate.image"
+                :name="cate.name"
+              ></HomeCategories>
+            </div>
+          </ClientOnly>
         </div>
         <section class="grid gap-4 my-24 md:grid-cols-2 lg:grid-cols-4">
           <div class="flex items-center gap-8 p-8 bg-white rounded-lg">

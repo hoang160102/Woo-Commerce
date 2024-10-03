@@ -31,8 +31,12 @@ const props = defineProps<{
       :email="currentUser.email"
     ></PersonalInfomation>
     <ClientOnly>
-      <Shipping></Shipping>
-      <Billing></Billing>
+      <Shipping
+        :currentUser="currentUser"
+      ></Shipping>
+      <Billing
+        :currentUser="currentUser"  
+      ></Billing>
     </ClientOnly>
     <ChangePassword></ChangePassword>
   </div>

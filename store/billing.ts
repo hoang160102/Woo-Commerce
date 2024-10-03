@@ -13,10 +13,27 @@ interface Billing {
   phone: string;
 }
 export const useBillingStore = defineStore("billing-store", () => {
-  const getBill = async () => {};
-  const updateBill = async (data: Billing, id: string) => {
-    console.log(data)
-    console.log(id)
+  const billingById = ref<any>(null)
+  const getBill = async (id: string) => {
+    try {
+      const data = await $fetch(`/api/billing/${id}`)
+      billingById.value = data
+    }
+    catch(err) {
+      console.log(err)
+    }
   };
-  return { updateBill, getBill };
+  const updateBill = async (data: Billing, id: string) => {
+    try {
+      const response = await $fetch(`/api/billing/${id}`, {
+        method: 'put',
+        body: data
+      })
+      toast.success('Updated billing successfully')
+    }
+    catch (err) {
+      console.log(err)
+    }
+  };
+  return { updateBill, getBill, billingById };
 });

@@ -1,7 +1,6 @@
-import Billing from "~/models/user/Billing.model";
+import Shipping from "~/models/user/Shipping.model";
 export default defineEventHandler(async (event: any) => {
   const body = await readBody(event);
-  console.log(body);
   const {
     firstName,
     lastName,
@@ -12,9 +11,11 @@ export default defineEventHandler(async (event: any) => {
     country,
     postal,
     phone,
+    company,
+    email,
   } = body;
   const { id } = event.context.params;
-  const updateBill = await Billing.findByIdAndUpdate(id, {
+  const updateShip = await Shipping.findByIdAndUpdate(id, {
     firstName,
     lastName,
     address1,
@@ -24,6 +25,7 @@ export default defineEventHandler(async (event: any) => {
     country,
     postal,
     phone,
+    company, email
   });
-  return updateBill;
+  return updateShip
 });

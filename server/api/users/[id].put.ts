@@ -9,7 +9,6 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
-
 export default defineEventHandler(async (event: any) => {
   const { id } = event.context.params;
     return new Promise((resolve, reject) => {
@@ -20,6 +19,7 @@ export default defineEventHandler(async (event: any) => {
           if (err) {
             return reject(err);
           }
+          console.log(event.node.req) 
           const file = event.node.req.file;
           try {
             const result = await cloudinary.uploader.upload(file.path, {
