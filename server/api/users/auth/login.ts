@@ -31,14 +31,14 @@ export default defineEventHandler(async (event) => {
     });
   }
   // create token
-  const accessToken = generateAccessToken(user['_id'])
-  const refreshToken = generateRefreshToken(user['_id'])
-  const tokenExpire = new Date()
-  tokenExpire.setFullYear(tokenExpire.getFullYear() + 1)
-  user.tokenExpire = tokenExpire
-  user.refreshToken = refreshToken
-  await user.save()
+  const accessToken = generateAccessToken(user["_id"]);
+  const refreshToken = generateRefreshToken(user["_id"]);
+  const tokenExpire = new Date();
+  tokenExpire.setFullYear(tokenExpire.getFullYear() + 1);
+  user.tokenExpire = tokenExpire;
+  user.refreshToken = refreshToken;
+  await user.save();
   // setCookie(event, 'accessToken', accessToken, { httpOnly: false, maxAge: 300 }); // 5 phút
   // setCookie(event, 'refreshToken', refreshToken, { httpOnly: false, maxAge: 365 * 24 * 60 * 60 }); // 1 nă
-  return { accessToken, refreshToken, ...user }
+  return { accessToken, refreshToken, ...user };
 });

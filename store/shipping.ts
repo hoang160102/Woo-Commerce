@@ -17,6 +17,7 @@ interface Shipping {
 export const useShippingStore = defineStore("shipping-store", () => {
   const shippingById = ref<any>(null);
   const getShip = async (id: string) => {
+    console.log(id)
     try {
       const data = await $fetch(`/api/shipping/${id}`);
       shippingById.value = data;

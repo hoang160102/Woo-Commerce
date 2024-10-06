@@ -38,6 +38,8 @@ const props = defineProps<{
         :currentUser="currentUser"  
       ></Billing>
     </ClientOnly>
-    <ChangePassword></ChangePassword>
+    <ChangePassword
+      :currentUser="currentUser"  
+    ></ChangePassword>
   </div>
 </template> 

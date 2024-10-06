@@ -36,23 +36,55 @@ export const useUsersStore = defineStore("users-store", () => {
         method: "put",
         body: data,
       });
-      // userUpdated.value = response.user;
-      userCookie.value = { ...response.user }
+      userCookie.value = { ...response.user };
       toast.success("Updated profile successfully");
     } catch (err) {
       console.log(err);
     }
   };
-  const updateInformation = async (data: any, id: string) => {
+  const updateInformation = async (updateData: any, id: string) => {
+    const formData = new FormData()
+    formData.append('name', updateData.name)
+    formData.append('phone', updateData.phone)
+    formData.append('username', updateData.username)
+    formData.append('email', updateData.email)
     try {
       const response: any = await $fetch(`/api/users/${id}`, {
         method: "put",
-        body: data
-      })
+        body: formData,
+      });
+      userCookie.value = { ...response.user };
+      toast.success("Update information successfully");
+    } catch (err) {
+      console.log(err);
     }
-    catch(err) {
+  };
+  const updatePassword = async (passwordObj: any, id: string) => {
+    const formData = new FormData()
+    formData.append('oldPassword', passwordObj.oldPassword)
+    formData.append('newPassword', passwordObj.newPassword)
+    try {
+      const response: any = await $fetch(`/api/users/${id}`, {
+        method: 'put',
+        body: formData
+      })
+      console.log(response.success)
+      if (response.success === true) {
+        toast.success(response.message)
+      }
+      else {
+        toast.error(response.message)
+      }
+    }
+    catch(err: any) {
       console.log(err)
     }
-  }
-  return { usersList, getAllUsers, uploadProfileImage, updateInformation };
+  };
+  return {
+    usersList,
+    getAllUsers,
+    uploadProfileImage,
+    updateInformation,
+    updatePassword,
+  };
 });

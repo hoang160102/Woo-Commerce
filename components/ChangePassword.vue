@@ -1,14 +1,36 @@
+<script setup lang="ts">
+import { useUsersStore } from '~/store/users';
+interface User {
+  _id: string,
+  password: string
+}
+const userStore = useUsersStore()
+const { updatePassword } = userStore
+const props = defineProps<{
+  currentUser: User
+}>()
+const oldPassword = ref<string>('')
+const newPassword = ref<string>('')
+const changePassword = async () => {
+  await updatePassword({
+    oldPassword: oldPassword.value,
+    newPassword: newPassword.value
+  }, props.currentUser._id)
+  oldPassword.value = ''
+  newPassword.value = ''
+}
+</script>
 <template>
-  <form class="bg-white rounded-lg shadow">
+  <form @submit.prevent="changePassword" class="bg-white rounded-lg shadow">
     <div class="grid gap-6 p-8 md:grid-cols-2">
       <div class="text-xl font-semibold col-span-full">Change Password</div>
       <div class="w-full flex flex-col">
         <label class="mb-2" for="old-password">Old Password</label>
-        <input type="text" placeholder="Your old password" class="bg-gray-100 px-4 py-3 rounded-lg outline-none border">
+        <input v-model="oldPassword" type="text" placeholder="Your old password" class="bg-gray-100 px-4 py-3 rounded-lg outline-none border">
       </div>
       <div class="w-full flex flex-col">
         <label class="mb-2" for="new-password">New Password</label>
-        <input type="text" placeholder="Your new password" class="bg-gray-100 px-4 py-3 rounded-lg outline-none border">
+        <input v-model="newPassword" type="text" placeholder="Your new password" class="bg-gray-100 px-4 py-3 rounded-lg outline-none border">
       </div>
     </div>
     <div
@@ -22,5 +44,3 @@
     </div>
   </form>
 </template>
-
-<script lang="ts" setup></script>
