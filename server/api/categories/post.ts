@@ -1,5 +1,4 @@
 import cloudinary from '~/server/config/cloudinary';
-import { defineEventHandler } from 'h3';
 import Category from '~/models/Category.model';
 import multer from 'multer'
 import fs from 'fs'

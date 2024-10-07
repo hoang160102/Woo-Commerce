@@ -2,8 +2,8 @@ import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 const toast = useToast();
 export const useCollectionStore = defineStore("collection-store", () => {
-  const collectionsList = ref<object>({});
-  const collectionById = ref<object>({});
+  const collectionsList = ref<any>({});
+  const collectionById = ref<any>({});
   const getAllCollections = async () => {
     try {
       const { data } = await useFetch("/api/collections/get");

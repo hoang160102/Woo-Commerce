@@ -1,29 +1,99 @@
 <script lang="ts" setup>
+import { ref, computed } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faUpload, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useCategoryStore } from "~/store/categories";
 import { useCollectionStore } from "~/store/collections";
+import { useProductStore } from "~/store/products";
+
+interface Category {
+  _id: string;
+  name: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  productItems: object[];
+}
+
+interface Collection {
+  _id: string;
+  name: string;
+  image: string;
+  createdAt: string;
+  updatedAt: string;
+  productItems: object[];
+}
+
 definePageMeta({
   layout: "admin",
 });
+
 const name = ref<string>("");
-const sale = ref<string>("");
-const expirationDate = ref<string>("");
-const file = ref<FileList | null>(null);
+const category = ref<string>("");
+const gender = ref<string>("");
+const collection = ref<string>("");
+const price = ref<number>(NaN);
+const quanity = ref<number>(NaN);
+const sale = ref<number>();
+const expirationDate = ref<Date>();
+const colorArr = ref<string[]>([]);
+const sizeArr = ref<string[]>([]);
+const description = ref<string>("");
+const file = ref<FileList | undefined | null | any>(null);
 const linkImg = ref<string[]>([]);
-const categories = ref<object[]>([]);
-const collections = ref<object[]>([]);
+const categories = ref<Category[]>([]);
+const collections = ref<Collection[]>([]);
+const isSubmit = ref<boolean>(false);
 const storeCate = useCategoryStore();
 const storeCollect = useCollectionStore();
+const storeProduct = useProductStore()
 const { getAllCategories } = storeCate;
 const { getAllCollections } = storeCollect;
+const { createProduct } = storeProduct
+const isFormValid = computed(() => {
+  return (
+    name.value.length > 0 &&
+    name.value.length < 20 &&
+    categories.value.length > 0 &&
+    gender.value.length > 0 &&
+    collection.value.length > 0 &&
+    !isNaN(quanity.value) &&
+    !isNaN(price.value) &&
+    colorArr.value.length > 0 &&
+    sizeArr.value.length > 0 &&
+    description.value.length > 0 &&
+    description.value.length <= 100 &&
+    file.value &&
+    file.value?.length >= 4
+  );
+});
+
+const imageErr = computed(() => {
+  if (!file.value && isSubmit.value) {
+    return "text-red-500";
+  }
+  if (file.value) {
+    if (file.value.length < 4 && isSubmit.value) {
+      return "text-red-500";
+    } else {
+      return "text-gray-700";
+    }
+  }
+});
+
+const descErr = computed(() => {
+  return description.value.length > 100 ? "text-red-500" : "text-gray-500";
+});
+
 async function fetchCategories() {
   await getAllCategories();
   await getAllCollections();
   categories.value = storeCate.categoryList?.categories || [];
   collections.value = storeCollect.collectionsList?.collections || [];
 }
+
 fetchCategories();
+
 const handleUploadFiles = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   if (target.files) {
@@ -36,16 +106,68 @@ const handleUploadFiles = async (event: Event) => {
     linkImg.value = [];
   }
 };
+
 const removeImage = async (index: number) => {
   linkImg.value.splice(index, 1);
   if (file.value) {
     const dataTransfer = new DataTransfer();
-    Array.from(file.value).forEach((f, i) => {
+    Array.from(file.value).forEach((f: any, i) => {
       if (i !== index) {
         dataTransfer.items.add(f);
       }
     });
     file.value = dataTransfer.files;
+  }
+};
+
+const addColor = async (color: string) => {
+  const boolean: boolean = colorArr.value.some((item: string) => {
+    return item === color;
+  });
+  if (!boolean) {
+    colorArr.value.push(color.toLowerCase());
+  }
+};
+
+const addSize = async (size: string) => {
+  const boolean: boolean = sizeArr.value.some((item: string) => {
+    return item === size;
+  });
+  if (!boolean) {
+    sizeArr.value.push(size.toLowerCase());
+  }
+};
+
+const deleteColor = async (color: string) => {
+  colorArr.value = colorArr.value.filter((item: string) => {
+    return item !== color;
+  });
+};
+
+const deleteSize = async (size: string) => {
+  sizeArr.value = sizeArr.value.filter((item: string) => {
+    return item !== size;
+  });
+};
+
+const submitData = async (event: Event) => {
+  event.preventDefault();
+  isSubmit.value = true;
+  if (isFormValid.value) {
+    createProduct({
+      name: name.value,
+      category: category.value,
+      collection: collection.value,
+      gender: gender.value,
+      quanity: quanity.value,
+      price: price.value,
+      sale: sale.value,
+      saleExpiration: expirationDate.value,
+      color: colorArr.value,
+      size: sizeArr.value,
+      description: description.value,
+      product_images: file.value
+    })
   }
 };
 </script>
@@ -68,9 +190,17 @@ const removeImage = async (index: number) => {
             class="outline-none rounded-lg px-5 py-3 text-sm border"
             v-model="name"
           />
-          <span class="text-xs text-gray-500 mt-2"
+          <span
+            v-if="name.length > 20 && isSubmit"
+            class="text-xs text-red-500 mt-2"
             >Do not exceed 20 characters when entering the product name.</span
           >
+          <span
+            v-if="name.length === 0 && isSubmit"
+            class="text-xs text-red-500 mt-2"
+          >
+            Please enter the product name
+          </span>
         </div>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div class="form-control flex flex-col">
@@ -79,8 +209,10 @@ const removeImage = async (index: number) => {
               <span class="text-red-500">*</span>
             </label>
             <select
-              class="px-3 py-2 bg-white rounded-lg bg-gray-100 outline-none border"
+              v-model="category"
+              class="px-3 cursor-pointer py-2 bg-white rounded-lg bg-gray-100 outline-none border"
             >
+              <option disabled value="">Select category</option>
               <option
                 v-for="cate in categories"
                 :key="cate['_id']"
@@ -90,6 +222,11 @@ const removeImage = async (index: number) => {
                 {{ cate.name }}
               </option>
             </select>
+            <span
+              v-if="category.length === 0 && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please choose the category</span
+            >
           </div>
           <div class="form-control flex flex-col">
             <label for="gender" class="font-semibold mb-3"
@@ -97,29 +234,62 @@ const removeImage = async (index: number) => {
               <span class="text-red-500">*</span>
             </label>
             <select
-              class="px-3 py-2 bg-white rounded-lg bg-gray-100 outline-none border"
+              v-model="gender"
+              class="px-3 cursor-pointer py-2 bg-white rounded-lg bg-gray-100 outline-none border"
             >
-              <option value="Select Gender">Select Gender</option>
+              <option disabled value="">Select gender</option>
               <option value="Men">Men</option>
               <option value="Women">Women</option>
             </select>
+            <span
+              v-if="gender.length === 0 && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please choose gender</span
+            >
           </div>
         </div>
         <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
           <div class="form-control flex flex-col">
             <label for="colelctions" class="font-semibold mb-3"
-              >Colelctions</label
-            >
+              >Colelctions
+              <span class="text-red-500">*</span>
+            </label>
             <select
-              class="px-3 py-2 bg-white rounded-lg bg-gray-100 outline-none border"
+              v-model="collection"
+              class="px-3 py-2 cursor-pointer bg-white rounded-lg bg-gray-100 outline-none border"
             >
+              <option disabled value="">Select Collection</option>
               <option
                 v-for="collect in collections"
                 :key="collect['_id']"
                 :id="collect['_id']"
                 :value="collect.name"
-              >{{ collect.name }}</option>
+              >
+                {{ collect.name }}
+              </option>
             </select>
+            <span
+              v-if="collection.length === 0 && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please choose the collection</span
+            >
+          </div>
+          <div class="form-control flex flex-col">
+            <label for="Quanity" class="font-semibold mb-3">
+              Quanity
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              placeholder="Enter quanity"
+              v-model="quanity"
+              class="outline-none rounded-lg px-5 py-3 text-sm border"
+            />
+            <span
+              v-if="isNaN(quanity) && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please enter the quanity</span
+            >
           </div>
         </div>
         <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
@@ -131,8 +301,14 @@ const removeImage = async (index: number) => {
             <input
               type="number"
               placeholder="Price"
+              v-model="price"
               class="outline-none rounded-lg px-5 py-3 text-sm border"
             />
+            <span
+              v-if="isNaN(price) && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please enter the price</span
+            >
           </div>
           <div class="form-control flex flex-col">
             <label for="gender" class="font-semibold mb-3"
@@ -153,40 +329,46 @@ const removeImage = async (index: number) => {
               >Sale Expiration</label
             >
             <input
-              :disabled="sale === '0' || sale.length === 0"
+              :disabled="sale === 0 || !sale"
               type="date"
               id="birthday"
               name="birthday"
               class="outline-none rounded-lg px-5 py-3 text-sm border"
               :class="{
-                'cursor-not-allowed': sale === '0' || sale.length === 0,
+                'cursor-not-allowed': sale === 0 || !sale,
               }"
               v-model="expirationDate"
             />
           </div>
         </div>
         <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
-          <div class="form-control flex flex-col">
-            <div class="form-control flex flex-col">
-              <label for="color" class="font-semibold mb-3"
-                >Color
-                <span class="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                class="outline-none rounded-lg px-5 py-3 text-sm border"
-              />
-            </div>
+          <div>
+            <ColorSizeInput
+              type="Color"
+              placeholder="Enter a color"
+              :list="colorArr"
+              :addItem="addColor"
+              :deleteItem="deleteColor"
+            ></ColorSizeInput>
+            <span
+              class="text-red-500 text-xs"
+              v-if="colorArr.length === 0 && isSubmit"
+              >Please enter the color</span
+            >
           </div>
-          <div class="form-control flex flex-col">
-            <label for="size" class="font-semibold mb-3"
-              >Size
-              <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              class="outline-none rounded-lg px-5 py-3 text-sm border"
-            />
+          <div>
+            <ColorSizeInput
+              type="Size"
+              placeholder="Enter size"
+              :list="sizeArr"
+              :addItem="addSize"
+              :deleteItem="deleteSize"
+            ></ColorSizeInput>
+            <span
+              class="text-red-500 text-xs"
+              v-if="sizeArr.length === 0 && isSubmit"
+              >Please enter size</span
+            >
           </div>
         </div>
         <div class="form-control my-4 flex flex-col">
@@ -194,14 +376,17 @@ const removeImage = async (index: number) => {
             >Description
             <span class="text-red-500">*</span>
           </label>
-          <textarea
-            class="px-3 w-full py-2 outline-none border rounded-lg h-[200px]"
-            name="desc"
-            id="desc"
-            placeholder="Description"
-          >
-          </textarea>
-          <span class="text-xs text-gray-500 mt-2"
+          <ClientOnly>
+            <textarea
+              v-model="description"
+              class="px-3 w-full py-2 outline-none border rounded-lg h-[200px]"
+              name="desc"
+              id="desc"
+              placeholder="Description"
+            >
+            </textarea>
+          </ClientOnly>
+          <span class="text-xs mt-2" :class="descErr"
             >Do not exceed 100 characters when entering the description.</span
           >
         </div>
@@ -234,7 +419,7 @@ const removeImage = async (index: number) => {
                   />
                 </label>
               </div>
-              <div class="mt-2 text-sm text-gray-700">
+              <div class="mt-2 text-sm" :class="imageErr">
                 You need to add at least 4 images.
               </div>
             </div>
@@ -263,6 +448,7 @@ const removeImage = async (index: number) => {
           </div>
         </div>
         <button
+          @click="submitData"
           class="px-20 bg-blue-500 text-white font-semibold text-xl py-3 rounded-lg outline-none"
         >
           Save

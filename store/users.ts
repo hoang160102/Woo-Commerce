@@ -20,7 +20,6 @@ interface Users {
 }
 export const useUsersStore = defineStore("users-store", () => {
   const usersList = ref<any>({});
-  // const userUpdated = ref<Users | null>(null);
   const userCookie: any = useCookie("currentUser");
   async function getAllUsers() {
     try {
