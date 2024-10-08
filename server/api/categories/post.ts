@@ -1,17 +1,17 @@
-import cloudinary from '~/server/config/cloudinary';
-import Category from '~/models/Category.model';
-import multer from 'multer'
-import fs from 'fs'
-  
+import cloudinary from "~/server/config/cloudinary";
+import Category from "~/models/Category.model";
+import multer from "multer";
+import fs from "fs";
+
 const storage = multer.diskStorage({
-  filename: function (req: any,file: any, cb: any) {
-    cb(null, file.originalname)
-  }
+  filename: function (req: any, file: any, cb: any) {
+    cb(null, file.originalname);
+  },
 });
-const upload = multer({storage: storage});
+const upload = multer({ storage: storage });
 export default defineEventHandler(async (event: any) => {
   return new Promise((resolve, reject) => {
-    upload.single('image')(event.node.req, event.node.res, async (err: any) => {
+    upload.single("image")(event.node.req, event.node.res, async (err: any) => {
       if (err) {
         return reject(err);
       }
@@ -20,19 +20,18 @@ export default defineEventHandler(async (event: any) => {
       const file = event.node.req.file;
 
       if (!name || !file) {
-        return reject(new Error('Name and file are required'));
+        return reject(new Error("Name and file are required"));
       }
       try {
-        console.log(file.path)
         const result = await cloudinary.uploader.upload(file.path, {
-          folder: 'categories',
-          public_id: file.originalname
+          folder: "categories",
+          public_id: file.originalname,
         });
         const newCate = new Category({
           name,
-          image: result.url
-        })
-        newCate.save()
+          image: result.url,
+        });
+        newCate.save();
         resolve({ success: true, category: newCate });
       } catch (error) {
         fs.unlinkSync(file.path);

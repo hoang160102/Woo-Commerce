@@ -31,11 +31,11 @@ definePageMeta({
 const name = ref<string>("");
 const category = ref<string>("");
 const gender = ref<string>("");
-const collection = ref<string>("");
+const collection = ref<string[]>([]);
 const price = ref<number>(NaN);
 const quanity = ref<number>(NaN);
-const sale = ref<number>();
-const expirationDate = ref<Date>();
+const sale = ref<number>(0);
+const expirationDate = ref<Date | null>(null);
 const colorArr = ref<string[]>([]);
 const sizeArr = ref<string[]>([]);
 const description = ref<string>("");
@@ -46,10 +46,10 @@ const collections = ref<Collection[]>([]);
 const isSubmit = ref<boolean>(false);
 const storeCate = useCategoryStore();
 const storeCollect = useCollectionStore();
-const storeProduct = useProductStore()
+const storeProduct = useProductStore();
 const { getAllCategories } = storeCate;
 const { getAllCollections } = storeCollect;
-const { createProduct } = storeProduct
+const { createProduct } = storeProduct;
 const isFormValid = computed(() => {
   return (
     name.value.length > 0 &&
@@ -166,8 +166,8 @@ const submitData = async (event: Event) => {
       color: colorArr.value,
       size: sizeArr.value,
       description: description.value,
-      product_images: file.value
-    })
+      product_images: file.value,
+    });
   }
 };
 </script>
@@ -248,47 +248,26 @@ const submitData = async (event: Event) => {
             >
           </div>
         </div>
-        <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 mt-4 gap-4">
           <div class="form-control flex flex-col">
             <label for="colelctions" class="font-semibold mb-3"
               >Colelctions
               <span class="text-red-500">*</span>
             </label>
-            <select
-              v-model="collection"
-              class="px-3 py-2 cursor-pointer bg-white rounded-lg bg-gray-100 outline-none border"
-            >
-              <option disabled value="">Select Collection</option>
-              <option
+            <div class="flex flex-wrap">
+              <div class="form-control mr-6"
                 v-for="collect in collections"
                 :key="collect['_id']"
                 :id="collect['_id']"
-                :value="collect.name"
               >
-                {{ collect.name }}
-              </option>
-            </select>
+                <input class="cursor-pointer" type="checkbox" :id="collect.name" :value="collect.name" v-model="collection">
+                <label class="ml-1" :for="collect.name">{{ collect.name }}</label>
+              </div>
+            </div>
             <span
               v-if="collection.length === 0 && isSubmit"
               class="text-red-500 text-xs mt-2"
               >Please choose the collection</span
-            >
-          </div>
-          <div class="form-control flex flex-col">
-            <label for="Quanity" class="font-semibold mb-3">
-              Quanity
-              <span class="text-red-500">*</span>
-            </label>
-            <input
-              type="number"
-              placeholder="Enter quanity"
-              v-model="quanity"
-              class="outline-none rounded-lg px-5 py-3 text-sm border"
-            />
-            <span
-              v-if="isNaN(quanity) && isSubmit"
-              class="text-red-500 text-xs mt-2"
-              >Please enter the quanity</span
             >
           </div>
         </div>
@@ -311,19 +290,36 @@ const submitData = async (event: Event) => {
             >
           </div>
           <div class="form-control flex flex-col">
+            <label for="Quanity" class="font-semibold mb-3">
+              Quanity
+              <span class="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              placeholder="Enter quanity"
+              v-model="quanity"
+              class="outline-none rounded-lg px-5 py-3 text-sm border"
+            />
+            <span
+              v-if="isNaN(quanity) && isSubmit"
+              class="text-red-500 text-xs mt-2"
+              >Please enter the quanity</span
+            >
+          </div>
+        </div>
+        <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
+          <div class="form-control flex flex-col">
             <label for="gender" class="font-semibold mb-3"
               >Sale
               <span class="text-gray-800">(Optional)</span>
             </label>
             <input
               v-model="sale"
-              type="text"
+              type="number"
               placeholder="Sale"
               class="outline-none rounded-lg px-5 py-3 text-sm border"
             />
           </div>
-        </div>
-        <div class="grid grid-cols-1 mt-4 lg:grid-cols-2 gap-4">
           <div class="form-control flex flex-col">
             <label for="date-expire" class="font-semibold mb-3"
               >Sale Expiration</label
