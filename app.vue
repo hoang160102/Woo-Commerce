@@ -22,4 +22,11 @@ body {
   --p-rating-icon-hover-color: #ffd700 !important;
 }
 
+.p-progressspinner {
+  width: 25px !important;
+  height: 25px !important;
+  margin-left: 8px !important;
+  margin-right: 0 !important;
+}
+
 </style>

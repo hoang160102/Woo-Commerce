@@ -5,6 +5,7 @@ import { faUpload, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useCategoryStore } from "~/store/categories";
 import { useCollectionStore } from "~/store/collections";
 import { useProductStore } from "~/store/products";
+import ProgressSpinner from "primevue/progressspinner";
 
 interface Category {
   _id: string;
@@ -32,10 +33,10 @@ const name = ref<string>("");
 const category = ref<string>("");
 const gender = ref<string>("");
 const collection = ref<string[]>([]);
-const price = ref<number>(NaN);
-const quanity = ref<number>(NaN);
+const price = ref<number>(0);
+const quanity = ref<number>(0);
 const sale = ref<number>(0);
-const expirationDate = ref<Date | null>(null);
+const expirationDate = ref<string | null>(null);
 const colorArr = ref<string[]>([]);
 const sizeArr = ref<string[]>([]);
 const description = ref<string>("");
@@ -47,13 +48,14 @@ const isSubmit = ref<boolean>(false);
 const storeCate = useCategoryStore();
 const storeCollect = useCollectionStore();
 const storeProduct = useProductStore();
+const isLoading = ref<boolean>(false);
 const { getAllCategories } = storeCate;
 const { getAllCollections } = storeCollect;
 const { createProduct } = storeProduct;
 const isFormValid = computed(() => {
   return (
     name.value.length > 0 &&
-    name.value.length < 20 &&
+    name.value.length < 50 &&
     categories.value.length > 0 &&
     gender.value.length > 0 &&
     collection.value.length > 0 &&
@@ -62,7 +64,7 @@ const isFormValid = computed(() => {
     colorArr.value.length > 0 &&
     sizeArr.value.length > 0 &&
     description.value.length > 0 &&
-    description.value.length <= 100 &&
+    description.value.length <= 200 &&
     file.value &&
     file.value?.length >= 4
   );
@@ -82,7 +84,7 @@ const imageErr = computed(() => {
 });
 
 const descErr = computed(() => {
-  return description.value.length > 100 ? "text-red-500" : "text-gray-500";
+  return description.value.length > 200 ? "text-red-500" : "text-gray-500";
 });
 
 async function fetchCategories() {
@@ -151,10 +153,11 @@ const deleteSize = async (size: string) => {
 };
 
 const submitData = async (event: Event) => {
+  isLoading.value = true
   event.preventDefault();
   isSubmit.value = true;
   if (isFormValid.value) {
-    createProduct({
+    await createProduct({
       name: name.value,
       category: category.value,
       collection: collection.value,
@@ -168,8 +171,32 @@ const submitData = async (event: Event) => {
       description: description.value,
       product_images: file.value,
     });
+    name.value = "";
+    category.value = "";
+    gender.value = "";
+    quanity.value = 0;
+    price.value = 0;
+    sale.value = 0;
+    collection.value = []
+    expirationDate.value = null;
+    colorArr.value = [];
+    sizeArr.value = [];
+    description.value = "";
+    file.value = null;
+    linkImg.value = [];
+    isSubmit.value = false;
+    isLoading.value = false
   }
 };
+watch(expirationDate, (newDate: string | null) => {
+  if (newDate) {
+    expirationDate.value = newDate;
+    const today = new Date().toISOString().split("T")[0];
+    if (expirationDate.value < today) {
+      sale.value = 0;
+    }
+  }
+});
 </script>
 
 <template>
@@ -191,9 +218,9 @@ const submitData = async (event: Event) => {
             v-model="name"
           />
           <span
-            v-if="name.length > 20 && isSubmit"
+            v-if="name.length > 50 && isSubmit"
             class="text-xs text-red-500 mt-2"
-            >Do not exceed 20 characters when entering the product name.</span
+            >Do not exceed 50 characters when entering the product name.</span
           >
           <span
             v-if="name.length === 0 && isSubmit"
@@ -255,13 +282,22 @@ const submitData = async (event: Event) => {
               <span class="text-red-500">*</span>
             </label>
             <div class="flex flex-wrap">
-              <div class="form-control mr-6"
+              <div
+                class="form-control mr-6"
                 v-for="collect in collections"
                 :key="collect['_id']"
                 :id="collect['_id']"
               >
-                <input class="cursor-pointer" type="checkbox" :id="collect.name" :value="collect.name" v-model="collection">
-                <label class="ml-1" :for="collect.name">{{ collect.name }}</label>
+                <input
+                  class="cursor-pointer"
+                  type="checkbox"
+                  :id="collect.name"
+                  :value="collect.name"
+                  v-model="collection"
+                />
+                <label class="ml-1" :for="collect.name">{{
+                  collect.name
+                }}</label>
               </div>
             </div>
             <span
@@ -277,12 +313,15 @@ const submitData = async (event: Event) => {
               >Price
               <span class="text-red-500">*</span>
             </label>
-            <input
-              type="number"
-              placeholder="Price"
-              v-model="price"
-              class="outline-none rounded-lg px-5 py-3 text-sm border"
-            />
+            <div class="relative rounded-lg border">
+              <input
+                type="number"
+                placeholder="Price"
+                v-model="price"
+                class="outline-none px-5 py-3 text-sm w-[95%]"
+              />
+              <div class="absolute right-[10px] ml-2">$</div>
+            </div>
             <span
               v-if="isNaN(price) && isSubmit"
               class="text-red-500 text-xs mt-2"
@@ -313,12 +352,15 @@ const submitData = async (event: Event) => {
               >Sale
               <span class="text-gray-800">(Optional)</span>
             </label>
-            <input
-              v-model="sale"
-              type="number"
-              placeholder="Sale"
-              class="outline-none rounded-lg px-5 py-3 text-sm border"
-            />
+            <div class="relative rounded-lg border">
+              <input
+                v-model="sale"
+                type="number"
+                placeholder="Sale"
+                class="outline-none w-[95%] px-5 py-3 text-sm"
+              />
+              <div class="absolute right-[10px]">%</div>
+            </div>
           </div>
           <div class="form-control flex flex-col">
             <label for="date-expire" class="font-semibold mb-3"
@@ -444,12 +486,20 @@ const submitData = async (event: Event) => {
           </div>
         </div>
         <button
+          class="flex px-15 bg-blue-500 text-white font-semibold text-xl py-3 rounded-lg outline-none"
           @click="submitData"
-          class="px-20 bg-blue-500 text-white font-semibold text-xl py-3 rounded-lg outline-none"
         >
           Save
+          <ProgressSpinner v-if="isLoading" />
         </button>
       </div>
     </form>
   </section>
 </template>
+
+<style scoped>
+.absolute {
+  top: 50%;
+  transform: translateY(-50%);
+}
+</style>

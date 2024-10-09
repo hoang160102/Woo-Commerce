@@ -9,13 +9,14 @@ interface Product {
   quanity: number;
   price: number;
   sale: number;
-  saleExpiration: Date | null;
+  saleExpiration: string | null;
   color: string[];
   size: string[];
   description: string;
   product_images: string[];
   createdAt: string;
   updatedAt: string;
+  rating: number;
   reviews: object[]
 }
 const productSchema: Schema<Product> = new mongoose.Schema({
@@ -25,13 +26,14 @@ const productSchema: Schema<Product> = new mongoose.Schema({
   gender: { type: String, required: true },
   quanity: { type: Number, required: true },
   sale: { type: Number, default: 0 },
-  saleExpiration: { type: Date, default: null },
+  saleExpiration: { type: String, default: null },
   color: { type: [String], required: true },
   size: { type: [String], required: true },
   description: { type: String, required: true },
   product_images: { type: [String], required: true },
   createdAt: { type: String, default: dateToString() },
   updatedAt: { type: String, default: dateToString() },
+  rating: { type: Number, default: 0 },
   reviews: { type: [Object], default: [] }
 });
 const Product: Model<Product> = mongoose.model<Product>(

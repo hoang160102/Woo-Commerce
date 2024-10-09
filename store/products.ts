@@ -9,7 +9,7 @@ interface Product {
   quanity: number;
   price: number;
   sale: number;
-  saleExpiration: Date | null;
+  saleExpiration: string | null;
   color: string[];
   size: string[];
   description: string;
@@ -27,10 +27,10 @@ export const useProductStore = defineStore("product-store", () => {
       formData.append("quanity", newProduct.quanity.toString());
       formData.append("price", newProduct.price.toString());
       formData.append("sale", newProduct.sale.toString());
-      formData.append(y
+      formData.append(
         "saleExpiration",
         newProduct.saleExpiration
-          ? newProduct.saleExpiration?.toISOString()
+          ? newProduct.saleExpiration
           : ""
       );
       formData.append("color", JSON.stringify(newProduct.color));

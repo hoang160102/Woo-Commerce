@@ -17,6 +17,7 @@ export default defineEventHandler(async (event: any) => {
         if (err) {
           return reject(err);
         }
+        let { saleExpiration } = event.node.req.body
         const {
           name,
           category,
@@ -25,7 +26,6 @@ export default defineEventHandler(async (event: any) => {
           quanity,
           price,
           sale,
-          saleExpiration,
           color,
           size,
           description,
@@ -34,6 +34,9 @@ export default defineEventHandler(async (event: any) => {
         const collectionArr = productCollection.split(',')
         const colorArr = JSON.parse(color)
         const sizeArr = JSON.parse(size)
+        if (saleExpiration) {
+          saleExpiration = new Date(saleExpiration)
+        }
         try {
           const result = await Promise.all(
             files.map(async (file: any) => {
@@ -43,7 +46,7 @@ export default defineEventHandler(async (event: any) => {
               });
               return uploadResponse.url;
             })
-          );
+          )
           const newProduct = new Product({
             name,
             category,
