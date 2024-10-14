@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 export default defineEventHandler(async (event: any) => {
   return new Promise((resolve, reject) => {
-    upload.array("product_images", 10)(
+    upload.array("product_images", 20)(
       event.node.req,
       event.node.res,
       async (err: any) => {

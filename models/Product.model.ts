@@ -9,7 +9,7 @@ interface Product {
   quanity: number;
   price: number;
   sale: number;
-  saleExpiration: string | null;
+  saleExpiration: Date | null;
   color: string[];
   size: string[];
   description: string;
@@ -25,8 +25,9 @@ const productSchema: Schema<Product> = new mongoose.Schema({
   productCollection: { type: [String], required: true },
   gender: { type: String, required: true },
   quanity: { type: Number, required: true },
+  price: { type: Number, required: true },
   sale: { type: Number, default: 0 },
-  saleExpiration: { type: String, default: null },
+  saleExpiration: { type: Date, default: null },
   color: { type: [String], required: true },
   size: { type: [String], required: true },
   description: { type: String, required: true },

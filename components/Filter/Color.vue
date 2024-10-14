@@ -2,15 +2,30 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-const colors = ref([
-  "black",
-  "blue",
-  "gray",
-  "green",
-  "orange",
-  "red",
-  "yellow",
-]);
+import { useProductStore } from "~/store/products";
+const productStore = useProductStore()
+const { getAllProducts } = productStore
+const allProducts = ref<any[]>([]);
+const allColors = ref<string[]>([])
+const getProducts = async () => {
+  await getAllProducts()
+  allProducts.value = productStore.productsList.products || [];
+  if(allProducts.value && allProducts.value.length > 0) {
+    const colors = allProducts.value.flatMap((prod: any) => {
+      return prod.color
+    })
+    allColors.value = [...new Set(colors)]
+    console.log(allColors.value)
+  }
+}
+getProducts()
+watch(
+  () => productStore.productsList,
+  (newVal: any) => {
+    allProducts.value = newVal.products;
+  },
+  { immediate: true }
+);
 const checkColors = defineModel<string[]>();
 const isToggleColor = ref<boolean>(true);
 const toggleColor = (): void => {
@@ -33,7 +48,7 @@ const toggleColor = (): void => {
       :style="{ maxHeight: isToggleColor ? '500px' : '0px' }"
     >
       <label
-        v-for="color in colors"
+        v-for="color in allColors"
         :key="color"
         :style="{ backgroundColor: color }"
         class="w-8 h-8 rounded cursor-pointer border-2 flex justify-center items-center"
@@ -47,8 +62,8 @@ const toggleColor = (): void => {
         <FontAwesomeIcon
           :icon="faCheck"
           :class="[
-            { 'text-black': color === '#FFFF00' },
-            { 'text-white': color !== '#FFFF00' },
+            { 'text-black': color === 'black' },
+            { 'text-white': color !== 'white' },
           ]"
           class="fa-sm hidden peer-checked:block"
         />

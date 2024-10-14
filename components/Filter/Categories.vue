@@ -6,14 +6,15 @@ const store = useCategoryStore()
 const { getAllCategories } = store;
 const categories = ref<object[]>([]);
 
-const checkCate = defineModel<string[]>();
+const checkCate = defineModel<string[]>([]);
 const isToggleCate = ref<boolean>(true);
 const toggleCate = (): void => {
   isToggleCate.value = !isToggleCate.value;
 };
 async function fetchCategories() {
   await getAllCategories();
-  categories.value = store.categoryList?.categories || [];
+  // categories.value = store.categoryList?.categories || [];
+  // console.log(categories.value)
 }
 fetchCategories();
 watch(
@@ -23,6 +24,10 @@ watch(
   },
   { immediate: true }
 );
+onMounted(async () => {
+  await fetchCategories()
+  categories.value = store.categoryList?.categories || [];
+})
 </script>
 <template>
   <div
@@ -38,6 +43,7 @@ watch(
       />
     </div>
     <div
+      v-if="categories && categories.length > 0"
       class="mt-3 mr-1 max-h-[240px] transition-all duration-300 ease-in-out grid gap-1.5 overflow-hidden"
       :style="{ maxHeight: isToggleCate ? '600px' : '0px' }"
     >

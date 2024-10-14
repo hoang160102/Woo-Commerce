@@ -64,7 +64,7 @@ const isFormValid = computed(() => {
     colorArr.value.length > 0 &&
     sizeArr.value.length > 0 &&
     description.value.length > 0 &&
-    description.value.length <= 200 &&
+    description.value.length <= 300 &&
     file.value &&
     file.value?.length >= 4
   );
@@ -84,7 +84,7 @@ const imageErr = computed(() => {
 });
 
 const descErr = computed(() => {
-  return description.value.length > 200 ? "text-red-500" : "text-gray-500";
+  return description.value.length > 300 ? "text-red-500" : "text-gray-500";
 });
 
 async function fetchCategories() {
@@ -425,7 +425,7 @@ watch(expirationDate, (newDate: string | null) => {
             </textarea>
           </ClientOnly>
           <span class="text-xs mt-2" :class="descErr"
-            >Do not exceed 100 characters when entering the description.</span
+            >Do not exceed 300 characters when entering the description.</span
           >
         </div>
       </div>

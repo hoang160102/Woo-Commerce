@@ -2,7 +2,7 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faAngleUp } from "@fortawesome/free-solid-svg-icons";
 const gender = ref<string[]>(['Men', 'Women'])
-const checkGender = defineModel<string[]>()
+const checkGender = defineModel<string[]>([])
 const isToggleCate = ref<boolean>(true);
 const toggleCate = (): void => {
   isToggleCate.value = !isToggleCate.value;

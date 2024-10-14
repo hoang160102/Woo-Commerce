@@ -12,7 +12,6 @@ const toggleCate = (): void => {
 };
 async function fetchCollections() {
   await getAllCollections();
-  collections.value = store.collectionsList?.collections || [];
 }
 fetchCollections();
 watch(
@@ -24,7 +23,10 @@ watch(
 );
 watch(checkCollect, (newVal: any) => {
     checkCollect.value = newVal
-    console.log(checkCollect.value)
+})
+onMounted(async () => {
+  await fetchCollections()
+  collections.value = store.collectionsList?.collections || [];
 })
 </script>
 <template>

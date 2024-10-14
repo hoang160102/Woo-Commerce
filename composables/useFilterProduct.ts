@@ -1,83 +1,90 @@
 type Product = {
-  id: number;
+  '_id': string;
   name: string;
-  inStock: number;
   price: number;
   sale: number;
+  quanity: number;
   rating: number;
   size: string[];
-  category: string[];
+  category: string;
+  product_images: string[]
   color: string[];
-  gender: string[];
-  collection:string[]
+  gender: string;
+  productCollection: string[];
+  createdAt: Date
 };
 
-export default function useFilteredProducts(arr1: Product[]) {
+export default function useFilteredProducts(arr1: Ref<Product[]>) {
   const minValue = ref<number>(0);
   const maxValue = ref<number>(100);
   const selectedCategory = ref<string[]>([]);
-  const selectedCollection = ref<string[]>([])
+  const selectedCollection = ref<string[]>([]);
   const selectedColor = ref<string[]>([]);
   const selectedGender = ref<string[]>([]);
   const selectedSize = ref<string[]>([]);
   const isSaleProduct = ref<boolean>(false);
   const selectedRating = ref<number>(NaN);
+  const filteredProducts = ref<Product[]>([])
 
-  const filteredProducts = computed(() => {
-    return arr1.filter((item: Product) => {
-      const filterPrice =
-        item.price >= minValue.value && item.price <= maxValue.value;
-      const filterGender =
-        selectedGender.value.length === 0 ||
-        item.gender.some((gen: string) => selectedGender.value.includes(gen));
-      const filterCategory =
-        selectedCategory.value.length === 0 ||
-        item.category.some((cate: string) =>
-          selectedCategory.value.includes(cate)
+  const filtered = computed(() => {
+    if (arr1.value && arr1.value.length > 0) {
+      return arr1.value.filter((item: Product) => {
+        const filterPrice =
+          item.price >= minValue.value && item.price <= maxValue.value;
+        const filterGender =
+          selectedGender.value.length === 0 ||
+          selectedGender.value.includes(item.gender.toLowerCase());
+        const filterCategory =
+          selectedCategory.value.length === 0 ||
+          selectedCategory.value.includes(item.category.toLowerCase());
+        const filterCollection =
+          selectedCollection.value.length === 0 ||
+          item.productCollection.some((collect: string) => {
+            return selectedCollection.value.includes(collect);
+          });
+        const filterSize =
+          selectedSize.value.length === 0 ||
+          item.size.some((s: string) => {
+            return selectedSize.value.includes(s);
+          });
+        const filterColor =
+          selectedColor.value.length === 0 ||
+          item.color.some((color: string) =>
+            selectedColor.value.includes(color)
+          );
+        const filterRating =
+          Number.isNaN(selectedRating.value) ||
+          item.rating >= selectedRating.value;
+        const filterSale = !isSaleProduct.value || item.sale > 0;
+
+        const noFiltersApplied =
+          selectedCategory.value.length === 0 &&
+          selectedCollection.value.length === 0 &&
+          selectedGender.value.length === 0 &&
+          selectedSize.value.length === 0 &&
+          selectedColor.value.length === 0 &&
+          !isSaleProduct.value &&
+          Number.isNaN(selectedRating.value) &&
+          minValue.value === 0 &&
+          maxValue.value === 100;
+
+        return (
+          noFiltersApplied ||
+          (filterPrice &&
+            filterGender &&
+            filterCategory &&
+            filterCollection &&
+            filterSize &&
+            filterColor &&
+            filterSale &&
+            filterRating)
         );
-      const filterCollection = 
-        selectedCollection.value.length === 0 ||
-        item.collection.some((collect: string) => {
-          return selectedCollection.value.includes(collect)
-        })
-      const filterSize =
-        selectedSize.value.length === 0 ||
-        item.size.some((s: string) => {
-          return selectedSize.value.includes(s);
-        });
-      const filterColor =
-        selectedColor.value.length === 0 ||
-        item.color.some((color: string) => selectedColor.value.includes(color));
-      const filterRating =
-        Number.isNaN(selectedRating.value) ||
-        item.rating >= selectedRating.value;
-      const filterSale = !isSaleProduct.value || item.sale < item.price;
-
-      const noFiltersApplied =
-        selectedCategory.value.length === 0 &&
-        selectedCollection.value.length === 0 &&
-        selectedGender.value.length === 0 &&
-        selectedSize.value.length === 0 &&
-        selectedColor.value.length === 0 &&
-        !isSaleProduct.value &&
-        Number.isNaN(selectedRating.value) &&
-        minValue.value === 0 &&
-        maxValue.value === 100;
-
-      return (
-        noFiltersApplied ||
-        (filterPrice &&
-          filterGender &&
-          filterCategory &&
-          filterCollection &&
-          filterSize &&
-          filterColor &&
-          filterSale &&
-          filterRating)
-      );
-    });
+      });
+    }
   });
-
+  watch(filtered, (newVal: any) => {
+    filteredProducts.value = newVal
+  })
   watch([minValue, maxValue], (newValues: number[]) => {
     minValue.value = newValues[0];
     maxValue.value = newValues[1];
@@ -86,8 +93,8 @@ export default function useFilteredProducts(arr1: Product[]) {
     selectedCategory.value = newValue;
   });
   watch(selectedCollection, (newValue: string[]) => {
-    selectedCollection.value = newValue
-  })
+    selectedCollection.value = newValue;
+  });
   watch(selectedGender, (newValue: string[]) => {
     selectedGender.value = newValue;
   });

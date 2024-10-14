@@ -16,7 +16,11 @@ interface Product {
   product_images: FileList;
 }
 export const useProductStore = defineStore("product-store", () => {
-  const productsList = ref<object>();
+  const productsList = ref<any>({});
+  const getAllProducts = async () => {
+    const { data } = await useFetch('/api/products/get')
+    productsList.value = data.value
+  }
   const createProduct = async (newProduct: Product) => {
     try {
       const formData = new FormData();
@@ -48,5 +52,5 @@ export const useProductStore = defineStore("product-store", () => {
       console.log(err);
     }
   };
-  return { createProduct };
+  return { createProduct, getAllProducts, productsList };
 });

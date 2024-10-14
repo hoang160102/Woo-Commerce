@@ -2,26 +2,31 @@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 const props = defineProps<{
-  id: number;
+  id: string;
   name: string;
-  inStock: number;
+  quanity: number;
   price: number;
   sale: number;
   rating: number;
+  image: string
 }>();
+
+function defineProps<T>() {
+  throw new Error("Function not implemented.");
+}
 </script>
 <template>
   <div class="relative product-card">
-    <span v-if="sale !== price" class="red-badge absolute top-2 right-2"
-      >-{{ Math.floor(((price - sale) / price) * 100) }} %</span
+    <span v-if="sale !== 0" class="red-badge absolute top-2 right-2"
+      >- {{ sale }}%</span
     >
     <NuxtLink to="/">
-      <img class="rounded-lg" src="../../public/products/products.png" alt="" />
+      <img class="rounded-lg" :src="image" alt="" />
     </NuxtLink>
     <div class="py-2">
       <NuxtRating
         :readonly="true"
-        :ratingValue="props.rating"
+        :ratingValue="rating"
         activeColor="#ffd700"
       ></NuxtRating>
     </div>
@@ -32,15 +37,15 @@ const props = defineProps<{
       <span
         :class="[
           {
-            'line-through': sale !== price,
-            'text-gray-400': sale !== price,
-            'text-black': sale === price,
-            'font-normal': sale !== price,
+            'line-through': sale !== 0,
+            'text-gray-400': sale !== 0,
+            'text-black': sale == 0,
+            'font-normal': sale !== 0,
           },
         ]"
-        >€{{ price }}.00</span
+        >${{ price }}.00</span
       >
-      <div v-if="sale !== price" class="ml-2">€{{ sale }}.00</div>
+      <div v-if="sale !== 0" class="ml-2">${{ (price - price / 100 * sale).toFixed(2) }}</div>
     </div>
   </div>
 </template>

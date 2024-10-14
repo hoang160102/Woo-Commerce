@@ -10,7 +10,7 @@ const products = ref([
     price: 20,
     sale: 18,
     rating: 4,
-    category: ["clothing", "pants"],
+    category: ["pants"],
     color: ["red"],
   },
   {
