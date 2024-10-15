@@ -6,7 +6,7 @@ export function useSearchItem(listItems: any) {
       const keyword = searchInput.value.toLowerCase().trim();
       if (!keyword) return listItems.value;
   
-      return listItems.value.filter((cate: any) => cate.name.toLowerCase().includes(keyword));
+      return listItems.value.filter((item: any) => item.name.toLowerCase().includes(keyword));
     });
   
     return {

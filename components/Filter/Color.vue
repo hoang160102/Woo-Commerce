@@ -15,7 +15,6 @@ const getProducts = async () => {
       return prod.color
     })
     allColors.value = [...new Set(colors)]
-    console.log(allColors.value)
   }
 }
 getProducts()

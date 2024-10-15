@@ -3,9 +3,24 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useProductStore } from "~/store/products";
 definePageMeta({
   layout: "admin",
 });
+const allProducts = ref<any[]>([])
+const productStore = useProductStore()
+const totalRecords = ref<number>(10)
+const rowsPerPage = ref<number>(0)
+const currentPage = ref<number>(0)
+const isLoading = ref<boolean>(false)
+const { getAllProducts } = productStore
+watchEffect(async () => {
+  isLoading.value = true
+  await getAllProducts()
+  allProducts.value = productStore.productsList.products || []
+  totalRecords.value = allProducts.value.length
+  isLoading.value = false
+})
 </script>
 <template>
   <section class="my-4">
@@ -33,13 +48,13 @@ definePageMeta({
           <th class="py-3 px-5 text-start">Category</th>
           <th class="py-3 px-5 text-start">Action</th>
         </tr>
-        <tr v-for="n in 10" :key="n">
-          <td class="px-5 text-start py-3">Woo Hoodies</td>
-          <td class="px-5 text-start py-3">#123</td>
-          <td class="px-5 text-start py-3">30$</td>
-          <td class="px-5 text-start py-3">30$</td>
-          <td class="px-5 text-start py-3">1230</td>
-          <td class="px-5 text-start py-3">Hoodies, Shirt</td>
+        <tr v-for="product in allProducts" :key="product['_id']">
+          <td class="px-5 text-start py-3">{{ product.name}}</td>
+          <td class="px-5 text-start py-3">{{ product['_id'] }}</td>
+          <td class="px-5 text-start py-3">{{ product.price }}$</td>
+          <td class="px-5 text-start py-3">{{ product.sale }}%</td>
+          <td class="px-5 text-start py-3">{{ product.quanity }}</td>
+          <td class="px-5 text-start py-3">{{ product.category }}</td>
           <td class="px-5 text-start py-3">
             <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
             <FontAwesomeIcon :icon="faTrashCan" class="cursor-pointer ml-3" />

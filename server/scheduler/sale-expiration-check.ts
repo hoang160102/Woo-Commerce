@@ -3,20 +3,10 @@ import Product from '~/models/Product.model'; // Adjust path to your product mod
 
 export default defineNitroPlugin(() => {
   // Schedule the job to run every day at midnight (00:00)
-  schedule.scheduleJob('0 0 * * *', async () => {
+  schedule.scheduleJob('0 */2 * * *', async () => {
     const currentDate = new Date();
     console.log('run')
     try {
-      // await Product.updateMany(
-      //   { saleExpiration: { $type: 'string' } },
-      //   [ { $set: { saleExpiration: { $toDate: "$saleExpiration" } } } ]
-      // );
-      // Find and update all products where the sale has expired
-      // const result = await Product.updateMany(
-      //   { saleExpiration: { $lt: currentDate }, sale: { $gt: 0 } },
-      //   { $set: { sale: 0 } }
-      // );
-      // console.log(result)
       const products = await Product.find()
       products.forEach(async (product: any) => {
         if (product.saleExpiration < currentDate && product.saleExpiration !== null) {
