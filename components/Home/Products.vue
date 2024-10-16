@@ -20,7 +20,7 @@ function defineProps<T>() {
     <span v-if="sale !== 0" class="red-badge absolute top-2 right-2"
       >- {{ sale }}%</span
     >
-    <NuxtLink to="/">
+    <NuxtLink :to="`/products/${name}`">
       <img class="rounded-lg" :src="image" alt="" />
     </NuxtLink>
     <div class="py-2">

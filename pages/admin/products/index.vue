@@ -1,26 +1,32 @@
 <script lang="ts" setup>
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useProductStore } from "~/store/products";
+import Paginator from "primevue/paginator";
 definePageMeta({
   layout: "admin",
 });
-const allProducts = ref<any[]>([])
-const productStore = useProductStore()
-const totalRecords = ref<number>(10)
-const rowsPerPage = ref<number>(0)
-const currentPage = ref<number>(0)
-const isLoading = ref<boolean>(false)
-const { getAllProducts } = productStore
+const allProducts = ref<any[]>([]);
+const productStore = useProductStore();
+const isLoading = ref<boolean>(false);
+const { searchInput, filteredListItems } = useSearchItem(allProducts);
+const { getAllProducts } = productStore;
 watchEffect(async () => {
-  isLoading.value = true
-  await getAllProducts()
-  allProducts.value = productStore.productsList.products || []
-  totalRecords.value = allProducts.value.length
-  isLoading.value = false
-})
+  isLoading.value = true;
+  await getAllProducts();
+  allProducts.value = productStore.productsList.products || [];
+  totalRecords.value = allProducts.value.length;
+  isLoading.value = false;
+});
+const {
+  totalRecords,
+  rowsPerPage,
+  currentPage,
+  onPageChange,
+  paginatedProducts,
+} = usePagination(filteredListItems, allProducts, 15)
 </script>
 <template>
   <section class="my-4">
@@ -31,26 +37,35 @@ watchEffect(async () => {
           Add New Product
         </button>
       </NuxtLink>
-      <input
-        type="text"
-        placeholder="Search"
-        class="outline-none ml-10 px-4 border rounded-lg"
-      />
+      <div class="relative ml-10 px-4 border flex align-center rounded-lg">
+        <input
+          type="text"
+          placeholder="Search by name"
+          class="outline-none pl-5"
+          v-model="searchInput"
+        />
+        <FontAwesomeIcon
+          :icon="faMagnifyingGlass"
+          class="absolute text-gray-600 left-[10px]"
+        />
+      </div>
     </div>
     <ClientOnly>
       <table class="w-full">
         <tr class="bg-gray-100">
           <th class="py-3 px-5 text-start">Product</th>
-          <th class="py-3 px-5 text-start">Product ID</th>
+          <th class="py-3 px-5 text-start">Created At</th>
+          <th class="py-3 px-5 text-start">Updated At</th>
           <th class="py-3 px-5 text-start">Price</th>
           <th class="py-3 px-5 text-start">Sale</th>
           <th class="py-3 px-5 text-start">Quantity</th>
           <th class="py-3 px-5 text-start">Category</th>
           <th class="py-3 px-5 text-start">Action</th>
         </tr>
-        <tr v-for="product in allProducts" :key="product['_id']">
-          <td class="px-5 text-start py-3">{{ product.name}}</td>
-          <td class="px-5 text-start py-3">{{ product['_id'] }}</td>
+        <tr v-for="product in paginatedProducts" :key="product['_id']">
+          <td class="px-5 text-start py-3">{{ product.name }}</td>
+          <td class="px-5 text-start py-3">{{ product.createdAt }}</td>
+          <td class="px-5 text-start py-3">{{ product.updatedAt }}</td>
           <td class="px-5 text-start py-3">{{ product.price }}$</td>
           <td class="px-5 text-start py-3">{{ product.sale }}%</td>
           <td class="px-5 text-start py-3">{{ product.quanity }}</td>
@@ -60,6 +75,15 @@ watchEffect(async () => {
             <FontAwesomeIcon :icon="faTrashCan" class="cursor-pointer ml-3" />
           </td>
         </tr>
+        <div class="flex w-full justify-center">
+          <Paginator
+            v-if="filteredListItems.length > rowsPerPage"
+            :totalRecords="totalRecords"
+            :rows="rowsPerPage"
+            :page="currentPage"
+            @page="onPageChange"
+          ></Paginator>
+        </div>
       </table>
     </ClientOnly>
   </section>

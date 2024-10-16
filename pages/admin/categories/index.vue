@@ -46,18 +46,23 @@ watch(isModal, (newVal: boolean) => {
     document.body.classList.remove("overflow-hidden");
   }
 });
-async function fetchCategories() {
-  await getAllCategories();
-  allCategories.value = store.categoryList?.categories || [];
-}
+// async function fetchCategories() {
+//   await getAllCategories();
+//   allCategories.value = store.categoryList?.categories || [];
+// }
+// fetchCategories();
 
-watch(
-  () => store.categoryList,
-  (newVal: any) => {
-    allCategories.value = newVal?.categories || [];
-  },
-  { immediate: true }
-);
+// watch(
+//   () => store.categoryList,
+//   (newVal: any) => {
+//     allCategories.value = newVal?.categories || [];
+//   },
+//   { immediate: true }
+// );
+watchEffect(async () => {
+  await getAllCategories()
+  allCategories.value = store.categoryList.categories || []
+})
 
 const deleteCate = async (id: string) => {
   allCategories.value = allCategories.value.filter(
@@ -67,7 +72,6 @@ const deleteCate = async (id: string) => {
   isModal.value = false;
 };
 
-fetchCategories();
 </script>
 
 <template>

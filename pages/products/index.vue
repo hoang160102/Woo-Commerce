@@ -5,45 +5,17 @@ import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import Paginator from "primevue/paginator";
 import { useProductStore } from "~/store/products";
 const allProducts = ref<any[]>([]);
-const totalRecords = ref<number>(0);
-const rowsPerPage = ref<number>(16);
-const currentPage = ref<number>(0);
 const isLoading = ref<boolean>(false);
 const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } =
   useToggleNav(768);
 const productStore = useProductStore();
-const { loadProducts, getAllProducts } = productStore;
-
-// watchEffect(async () => {
-//   isLoading.value = true;
-//   await loadProducts(currentPage.value, rowsPerPage.value);
-//   allProducts.value = productStore.getProducts.products || [];
-//   totalRecords.value = productStore.getProducts.total || 0;
-//   isLoading.value = false;
-// });
-
+const { getAllProducts } = productStore;
 watchEffect(async () => {
-  isLoading.value = true
-  await getAllProducts()
-  allProducts.value = productStore.productsList.products || []
+  isLoading.value = true;
+  await getAllProducts();
+  allProducts.value = productStore.productsList.products || [];
   totalRecords.value = allProducts.value.length
-  isLoading.value = false
-});
-
-const onPageChange = async (event: any) => {
-  currentPage.value = event.page;
-  rowsPerPage.value = event.rows;
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth", // This makes the scrolling smooth
-  });
-  // Sorting applied before pagination now
-  // await loadProducts(currentPage.value, rowsPerPage.value);
-};
-const paginatedProducts = computed(() => {
-  const start = currentPage.value * rowsPerPage.value;
-  const end = start + rowsPerPage.value;
-  return sortedProducts.value.slice(start, end);
+  isLoading.value = false;
 });
 const {
   filteredProducts,
@@ -57,8 +29,15 @@ const {
   minValue,
   maxValue,
 } = useFilterProduct(allProducts);
-
 const { sortedProducts, selectedOrder } = useSortProducts(filteredProducts);
+
+const {
+  totalRecords,
+  rowsPerPage,
+  currentPage,
+  onPageChange,
+  paginatedProducts,
+} = usePagination(sortedProducts, allProducts, 16);
 
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
@@ -105,7 +84,6 @@ onMounted(() => {
                 <option value="rating">Rating</option>
               </select>
             </div>
-            <!-- Filters go here -->
             <FilterPrice
               :min-price="minValue"
               :max-price="maxValue"
@@ -117,7 +95,9 @@ onMounted(() => {
             <FilterCollections v-model="selectedCollection"></FilterCollections>
             <FilterSize v-model="selectedSize"></FilterSize>
             <FilterColor v-model="selectedColor"></FilterColor>
-            <div class="sale-product pb-8 mt-8 border-b border-gray-300 border-solid">
+            <div
+              class="sale-product pb-8 mt-8 border-b border-gray-300 border-solid"
+            >
               <div class="font-semibold">Sale Products Only</div>
               <input v-model="isSaleProduct" type="checkbox" />
             </div>
@@ -132,7 +112,9 @@ onMounted(() => {
             <span class="text-gray-400">{{ paginatedProducts.length }}</span>
             of {{ totalRecords }}
           </div>
-          <div class="hidden border shadow cursor-pointer outline-none bg-white rounded-md md:flex">
+          <div
+            class="hidden border shadow cursor-pointer outline-none bg-white rounded-md md:flex"
+          >
             <div class="px-3 py-1 border-r">
               <FontAwesomeIcon :icon="faFilter"></FontAwesomeIcon>
             </div>
@@ -175,6 +157,7 @@ onMounted(() => {
           </transition-group>
         </div>
         <Paginator
+          v-if="sortedProducts.length > rowsPerPage "
           :totalRecords="totalRecords"
           :rows="rowsPerPage"
           :page="currentPage"
@@ -182,7 +165,10 @@ onMounted(() => {
         />
       </div>
     </div>
-    <div v-if="isShowNav" class="bg-black z-10 top-0 opacity-25 inset-0 z-10 fixed"></div>
+    <div
+      v-if="isShowNav"
+      class="bg-black z-10 top-0 opacity-25 inset-0 z-10 fixed"
+    ></div>
   </main>
 </template>
 

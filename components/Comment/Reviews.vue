@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 <template>
   <section
-    class="review grid gap-4 mt-4 grid-cols-1 w-full md:grid-cols-2 md:w-1/2"
+    class="review grid gap-4 mt-4 grid-cols-1 w-full"
   >
     <div class="reviews">
       <h1 class="font-semibold text-sm">Customer reviews</h1>
