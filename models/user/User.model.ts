@@ -11,6 +11,7 @@ interface User {
   phone: string;
   billing: Types.ObjectId;
   shipping: Types.ObjectId;
+  cart: Types.ObjectId;
   createAt: Date;
   updatedAt: Date;
   orders: string[];
@@ -36,6 +37,10 @@ const userSchema: Schema<User> = new mongoose.Schema({
   shipping: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Shipping",
+  },
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart'
   },
   createAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },

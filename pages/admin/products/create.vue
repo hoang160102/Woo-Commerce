@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useCategoryStore } from "~/store/categories";

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+ <script lang="ts" setup>
 import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",

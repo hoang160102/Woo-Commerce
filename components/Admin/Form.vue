@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<Props>(), {
   page: ''
 });
 const emit = defineEmits(['submit']);
-const formData = ref<object>({ ...props.initialData }); 
+const formData: any = ref<object>({ ...props.initialData }); 
 const isSubmit = ref<boolean>(false);
 const onFileChange = (event: any) => {
   formData.value.file = event.target.files[0];
@@ -21,7 +21,7 @@ const handleSubmit = () => {
   isSubmit.value = true;
   if (formData.value.name && formData.value.file) {
     emit("submit", formData.value);
-  }
+  } 
 };
 watch(formData, (newVal: any) => {
   formData.value = newVal;

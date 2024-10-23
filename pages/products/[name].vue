@@ -1,17 +1,46 @@
 <script setup lang="ts">
+interface Product {
+  name: string;
+  category: string;
+  productCollection: string[];
+  gender: string;
+  quanity: number;
+  price: number;
+  sale: number;
+  saleExpiration: Date | null;
+  color: string[];
+  size: string[];
+  description: string;
+  product_images: string[];
+  createdAt: string;
+  updatedAt: string;
+  rating: number;
+  reviews: object[];
+}
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { faStar, faHeart } from "@fortawesome/free-solid-svg-icons";
 import Description from "~/components/Comment/Description.vue";
 import Reviews from "~/components/Comment/Reviews.vue";
 import { useProductStore } from "~/store/products";
+import { useCartStore } from "~/store/cart";
 const productStore = useProductStore();
-const { getProductByName } = productStore;
-const selectedColor = ref<string>("");
+const cartStore = useCartStore()
+const { getProductByName, addToWishlist, removeFromWishlist } = productStore;
+const { addProductToCart } = cartStore
+const cookie: any = useCookie("currentUser");
+const quanity = ref<number>(0)
+const selectedColor = ref<string>('')
+const selectedSize = ref<string>("");
 const route: any = useRoute();
 const product = ref<any>(null);
 const isLoading = ref<boolean>(false);
 const currentImage = ref<string>("");
 const currentTab = ref("Description");
+const isProductInWishlist = computed(() => {
+  if (product.value) {
+    return cookie.value.wishList.includes(product.value["_id"]);
+  }
+});
 const currentTabComponent = computed(() => {
   switch (currentTab.value) {
     case "Description":
@@ -22,7 +51,18 @@ const currentTabComponent = computed(() => {
       return null;
   }
 });
-provide('product', product)
+provide("product", product);
+const formattedSizes = computed(() => {
+  if (product.value) {
+    return product.value.size.map((size: string) => {
+      if (size.toLowerCase().includes("xl")) {
+        return size.toUpperCase();
+      } else {
+        return size.charAt(0).toUpperCase();
+      }
+    });
+  }
+});
 watchEffect(async () => {
   isLoading.value = true;
   await getProductByName(route.params.name);
@@ -30,15 +70,53 @@ watchEffect(async () => {
   currentImage.value = product.value.product_images[0];
   isLoading.value = false;
 });
+const isFormValid = computed(() => {
+  return (
+    selectedColor.value.length > 0 &&
+    selectedSize.value.length > 0 &&
+    quanity.value > 0
+  )
+})
 const checkStock = computed(() => {
   return product.value.quanity > 0 ? "In Stock" : "Out of stock";
 });
 const changeImage = async (img: string) => {
   currentImage.value = img;
 };
+const addToCart = async (product: any) => {
+  event?.preventDefault()
+  if (isFormValid.value) {
+    addProductToCart(product)
+  }
+}
+const toggleProduct = async (productId: string) => {
+  const userCookie: any = useCookie("currentUser");
+
+  // Add the product to the wishlist in the cookie (assuming you store wishlist data in the cookie)
+  const currentWishlist = userCookie.value?.wishList || [];
+
+  // Check if the product is already in the wishlist
+  if (!isProductInWishlist.value) {
+    // Add product to wishlist
+    currentWishlist.push(productId);
+    await addToWishlist(userCookie.value["_id"], productId);
+  } else {
+    // Remove product from wishlist
+    const index = currentWishlist.indexOf(productId);
+    if (index > -1) {
+      currentWishlist.splice(index, 1);
+      await removeFromWishlist(userCookie.value["_id"], productId)
+    }
+  }
+  userCookie.value = {
+    ...userCookie.value,
+    wishList: currentWishlist,
+  };
+  refreshCookie("currentUser");
+};
 </script>
 <template>
-  <main v-if="product" class="main-content p-10 bg-gray-100">
+  <main v-if="product" class="main-content lg:px-10 px-5 py-10 bg-gray-100">
     <div class="container relative mx-auto xl:max-w-7xl">
       <div
         class="flex text-sm leading-none text-gray-400 gap-1 items-center mb-6"
@@ -58,7 +136,7 @@ const changeImage = async (img: string) => {
         class="flex flex-col gap-10 md:flex-row md:justify-between lg:gap-24"
       >
         <div class="relative flex-1">
-          <img :src="currentImage" class="rounded-2xl" alt="" />
+          <img :src="currentImage" class="rounded-2xl w-full" alt="" />
           <span
             v-if="product.sale > 0"
             class="bg-red-500 absolute text-xs rounded-md text-white top-4 p-2 right-4"
@@ -77,7 +155,7 @@ const changeImage = async (img: string) => {
             </div>
           </div>
         </div>
-        <div class="lg:max-w-md xl:max-w-lg md:py-2 w-full">
+        <div class="md:max-w-md xl:max-w-lg md:py-2 w-full">
           <div class="flex justify-between">
             <div class="name text-2xl font-light">{{ product.name }}</div>
             <div class="price flex">
@@ -122,7 +200,69 @@ const changeImage = async (img: string) => {
             {{ product.description }}
           </div>
           <form>
-            <!---->
+            <div class="space-y-4 mt-5">
+              <div>
+                <span class="font-bold">Color:</span>
+                <span class="ml-2">{{
+                  selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1)
+                }}</span>
+                <div class="flex space-x-4 mt-2">
+                  <div
+                    v-for="color in product.color"
+                    :key="color"
+                    class="flex items-center p-1 rounded-full"
+                    :class="{ 'border-color': selectedColor === color }"
+                  >
+                    <input
+                      type="radio"
+                      :id="color"
+                      v-model="selectedColor"
+                      :value="color"
+                      class="hidden"
+                    />
+                    <label
+                      :for="color"
+                      :style="{ backgroundColor: color }"
+                      class="w-7 h-7 rounded-full flex justify-center items-center cursor-pointer"
+                    >
+                      <span class="sr-only">{{ color }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <span class="font-bold">Size:</span>
+                <span class="ml-2">{{
+                  selectedSize.charAt(0).toUpperCase() + selectedSize.slice(1)
+                }}</span>
+                <div class="flex space-x-4 mt-2">
+                  <div
+                    v-for="size in formattedSizes"
+                    :key="size"
+                    class="flex items-center"
+                  >
+                    <input
+                      type="radio"
+                      :id="size"
+                      v-model="selectedSize"
+                      :value="size"
+                      class="hidden"
+                    />
+                    <label
+                      :for="size"
+                      class="px-4 py-2 rounded-md border cursor-pointer"
+                      :class="{
+                        'bg-blue-500 text-white': selectedSize === size,
+                        'bg-white text-black': selectedSize !== size,
+                        'border-blue-500': selectedSize === size,
+                      }"
+                    >
+                      {{ size }}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div
               class="fixed bottom-0 left-0 z-10 flex items-center w-full gap-4 p-4 mt-12 md:static md:bg-transparent bg-opacity-90 md:p-0"
             >
@@ -130,12 +270,22 @@ const changeImage = async (img: string) => {
                 type="number"
                 min="1"
                 aria-label="Quantity"
-                value="1"
-                class="bg-white border rounded-lg flex text-left p-2.5 w-20 gap-4 items-center justify-center focus:outline-none"
+                v-model="quanity"
+                class="bg-white border rounded-lg flex text-center p-2.5 w-20 gap-4 focus:outline-none"
               /><button
+                @click="addToCart(product)"
                 class="rounded-lg flex font-bold bg-gray-800 text-white text-center min-w-[150px] p-2.5 gap-4 items-center justify-center focus:outline-none flex-1 w-full md:max-w-xs"
               >
-                <span>Add to Cart</span
+                <span
+                  >Add to Cart -
+                  <span
+                    >{{
+                      (
+                        product.price -
+                        (product.price / 100) * product.sale
+                      ).toFixed(2)
+                    }}$</span
+                  > </span
                 ><!---->
               </button>
             </div>
@@ -151,21 +301,18 @@ const changeImage = async (img: string) => {
                 >Collections: {{ product.productCollection.join(", ") }}</span
               >
             </div>
-            <div class="flex items-center gap-2">
-              <select
-                v-model="selectedColor"
-                class="outline-none px-4 py-2 cursor-pointer rounded-md bg-blue-500 text-white"
+            <div
+              @click="toggleProduct(product['_id'])"
+              class="flex cursor-pointer items-center gap-2"
+            >
+              <FontAwesomeIcon
+                :class="isProductInWishlist ? 'text-red-400' : 'text-gray-500'"
+                :icon="faHeart"
               >
-                <option class="bg-white" disabled value="">Select color</option>
-                <option
-                  class="bg-white"
-                  v-for="color in product.color"
-                  :key="color"
-                  :value="color"
-                >
-                  {{ color.charAt(0).toUpperCase() + color.slice(1) }}
-                </option>
-              </select>
+              </FontAwesomeIcon>
+              <span class="text-gray-500">{{
+                isProductInWishlist ? "Remove from Wishlist" : "Add to Wishlist"
+              }}</span>
             </div>
           </div>
           <div class="my-15">
@@ -217,3 +364,8 @@ const changeImage = async (img: string) => {
     </div>
   </main>
 </template>
+<style scoped>
+.border-color {
+  border: 1px solid rgb(34, 117, 252);
+}
+</style>

@@ -71,7 +71,9 @@ const {
           <td class="px-5 text-start py-3">{{ product.quanity }}</td>
           <td class="px-5 text-start py-3">{{ product.category }}</td>
           <td class="px-5 text-start py-3">
-            <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
+            <NuxtLink :to="`/admin/products/${product.name}`">
+              <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
+            </NuxtLink>
             <FontAwesomeIcon :icon="faTrashCan" class="cursor-pointer ml-3" />
           </td>
         </tr>

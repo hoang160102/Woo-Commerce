@@ -65,11 +65,70 @@ export const useProductStore = defineStore("product-store", () => {
       console.log(err)
     }
   }
+  const updateProduct = async (product: Product, name: string) => {
+    try {
+      const formData = new FormData();
+      formData.append("name", product.name);
+      formData.append("category", product.category);
+      formData.append("productCollection", product.collection.toString());
+      formData.append("gender", product.gender);
+      formData.append("quanity", product.quanity.toString());
+      formData.append("price", product.price.toString());
+      formData.append("sale", product.sale.toString());
+      formData.append(
+        "saleExpiration",
+        product.saleExpiration ? product.saleExpiration : ""
+      );
+      formData.append("color", JSON.stringify(product.color));
+      formData.append("size", JSON.stringify(product.size));
+      formData.append("description", product.description);
+      Array.from(product.product_images).forEach((file) => {
+        formData.append("product_images", file);
+      });
+      const data = await $fetch(`/api/products/${name}`, {
+        method: 'put',
+        body: formData
+      })
+      toast.success('Updated product successfully')
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+  const addToWishlist = async (userId: string, productId: string) => {
+    const formData = new FormData();
+    formData.append("productId", productId);
+    try {
+      const response: any = await $fetch(`/api/users/${userId}`, {
+        method: 'put',
+        body: formData
+      });
+      console.log(response)
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const removeFromWishlist = async (userId: string, productId: string) => {
+    const formData = new FormData();
+    formData.append("productId", productId);
+    try {
+      const response: any = await $fetch(`/api/users/${userId}`, {
+        method: 'put',
+        body: formData
+      })
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
   return {
     createProduct,
     loadProducts,
     getAllProducts,
     getProductByName,
+    updateProduct,
+    addToWishlist,
+    removeFromWishlist,
     productsList,
     getProducts,
     productById

@@ -35,7 +35,6 @@ export default defineEventHandler(async (event: any) => {
           }
           if (body.name) {
             updateData = { ...updateData, ...body };
-            console.log(updateData)
           }
           if (body.oldPassword) {
             const isValidOldPassword = await bcrypt.compare(
@@ -48,6 +47,20 @@ export default defineEventHandler(async (event: any) => {
             }
             updateData.password = await bcrypt.hash(body.newPassword, 10);
             return resolve({ success: true, message: 'Updated password successfully'})
+          }
+          if (body.productId) {
+            updateData.wishList = findUser.wishList || [];
+            
+            // Check if the product is already in the wishlist
+            const productIndex = updateData.wishList.indexOf(body.productId);
+
+            if (productIndex === -1) {
+              // Add product if not in wishlist
+              updateData.wishList.push(body.productId);
+            } else {
+              // Remove product if it's already in the wishlist
+              updateData.wishList.splice(productIndex, 1);
+            }
           }
           const user = await User.findByIdAndUpdate(id, updateData, { new: true });
           if (!user) {

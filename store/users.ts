@@ -42,11 +42,11 @@ export const useUsersStore = defineStore("users-store", () => {
     }
   };
   const updateInformation = async (updateData: any, id: string) => {
-    const formData = new FormData()
-    formData.append('name', updateData.name)
-    formData.append('phone', updateData.phone)
-    formData.append('username', updateData.username)
-    formData.append('email', updateData.email)
+    const formData = new FormData();
+    formData.append("name", updateData.name);
+    formData.append("phone", updateData.phone);
+    formData.append("username", updateData.username);
+    formData.append("email", updateData.email);
     try {
       const response: any = await $fetch(`/api/users/${id}`, {
         method: "put",
@@ -59,24 +59,22 @@ export const useUsersStore = defineStore("users-store", () => {
     }
   };
   const updatePassword = async (passwordObj: any, id: string) => {
-    const formData = new FormData()
-    formData.append('oldPassword', passwordObj.oldPassword)
-    formData.append('newPassword', passwordObj.newPassword)
+    const formData = new FormData();
+    formData.append("oldPassword", passwordObj.oldPassword);
+    formData.append("newPassword", passwordObj.newPassword);
     try {
       const response: any = await $fetch(`/api/users/${id}`, {
-        method: 'put',
-        body: formData
-      })
-      console.log(response.success)
+        method: "put",
+        body: formData,
+      });
+      console.log(response.success);
       if (response.success === true) {
-        toast.success(response.message)
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
       }
-      else {
-        toast.error(response.message)
-      }
-    }
-    catch(err: any) {
-      console.log(err)
+    } catch (err: any) {
+      console.log(err);
     }
   };
   return {
