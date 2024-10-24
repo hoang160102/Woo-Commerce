@@ -24,12 +24,13 @@ import Reviews from "~/components/Comment/Reviews.vue";
 import { useProductStore } from "~/store/products";
 import { useCartStore } from "~/store/cart";
 const productStore = useProductStore();
-const cartStore = useCartStore()
-const { getProductByName, addToWishlist, removeFromWishlist } = productStore;
-const { addProductToCart } = cartStore
+const cartStore = useCartStore();
+const { getProductById, addToWishlist, removeFromWishlist, getAllProducts } = productStore;
+const { addProductToCart } = cartStore;
 const cookie: any = useCookie("currentUser");
-const quanity = ref<number>(0)
-const selectedColor = ref<string>('')
+const allProducts = ref<any>(null)
+const quanity = ref<number>(0);
+const selectedColor = ref<string>("");
 const selectedSize = ref<string>("");
 const route: any = useRoute();
 const product = ref<any>(null);
@@ -65,18 +66,30 @@ const formattedSizes = computed(() => {
 });
 watchEffect(async () => {
   isLoading.value = true;
-  await getProductByName(route.params.name);
+  await getAllProducts();
+  allProducts.value = productStore.productsList.products || [];
+  await getProductById(getProductId.value);
   product.value = productStore.productById;
-  currentImage.value = product.value.product_images[0];
+  if (product.value && product.value.product_images && product.value.product_images.length > 0) {
+    currentImage.value = product.value.product_images[0];
+  }
   isLoading.value = false;
 });
+const getProductId = computed(() => {
+  if(allProducts.value) {
+    const product = allProducts.value.find((prod: Product) => {
+      return prod.name === route.params.name
+    })
+    return product['_id']
+  }
+})
 const isFormValid = computed(() => {
   return (
     selectedColor.value.length > 0 &&
     selectedSize.value.length > 0 &&
     quanity.value > 0
-  )
-})
+  );
+});
 const checkStock = computed(() => {
   return product.value.quanity > 0 ? "In Stock" : "Out of stock";
 });
@@ -84,11 +97,17 @@ const changeImage = async (img: string) => {
   currentImage.value = img;
 };
 const addToCart = async (product: any) => {
-  event?.preventDefault()
+  event?.preventDefault();
   if (isFormValid.value) {
-    addProductToCart(product)
+    await addProductToCart(
+      cookie.value.cart,
+      product["_id"],
+      selectedColor.value,
+      selectedSize.value,
+      quanity.value
+    );
   }
-}
+};
 const toggleProduct = async (productId: string) => {
   const userCookie: any = useCookie("currentUser");
 
@@ -105,7 +124,7 @@ const toggleProduct = async (productId: string) => {
     const index = currentWishlist.indexOf(productId);
     if (index > -1) {
       currentWishlist.splice(index, 1);
-      await removeFromWishlist(userCookie.value["_id"], productId)
+      await removeFromWishlist(userCookie.value["_id"], productId);
     }
   }
   userCookie.value = {
@@ -135,7 +154,7 @@ const toggleProduct = async (productId: string) => {
       <div
         class="flex flex-col gap-10 md:flex-row md:justify-between lg:gap-24"
       >
-        <div class="relative flex-1">
+        <div v-if="product" class="relative flex-1">
           <img :src="currentImage" class="rounded-2xl w-full" alt="" />
           <span
             v-if="product.sale > 0"

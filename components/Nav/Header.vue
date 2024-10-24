@@ -7,12 +7,14 @@ import {
   faMagnifyingGlass,
   faXmark,
   faRightFromBracket,
+  faCartFlatbed,
 } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-regular-svg-icons/faUser";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { vOnClickOutside } from "@vueuse/components";
 import { useAuthStore } from "~/store/auth";
+import { useCartStore } from "~/store/cart";
 interface User {
   name: string;
   username: string;
@@ -29,12 +31,20 @@ interface User {
   isVerified: boolean;
 }
 const authStore = useAuthStore();
+const cartStore = useCartStore();
 const { userLogout } = authStore;
-const userCookie: any = useCookie('currentUser')
-const currentUser = ref<User | null>(userCookie.value);
+const { getUserCart } = cartStore;
+const userCookie: any = useCookie("currentUser");
+const currentUser: any = ref<User | null>(userCookie.value);
+const cartItems = ref<any>(null);
+watchEffect(async () => {
+  await getUserCart(currentUser.value.cart);
+  cartItems.value = cartStore.userCart.items;
+  console.log(cartItems.value)
+});
 watch(userCookie, (newVal: User) => {
-  currentUser.value = newVal
-})
+  currentUser.value = newVal;
+});
 const router = useRouter();
 const cart = ref<boolean>(false);
 const toggleCart = (): void => {
@@ -238,6 +248,7 @@ onMounted(() => {
     <Transition name="shoppingCart">
       <div class="overflow-hidden">
         <div
+          v-if="cartItems"
           v-on-click-outside="outSideCart"
           class="h-screen bg-white fixed top-0 transition-all duration-300 ease-in-out right-0 z-50"
           :style="{ width: cart ? '500px' : '0px' }"
@@ -250,7 +261,10 @@ onMounted(() => {
               class="fa-xl cursor-pointer"
               :icon="faXmark"
             />
-            <div class="count">Cart (<span>0</span>)</div>
+            <div class="count">
+              Cart (<span>{{ cartItems.length }}</span
+              >)
+            </div>
             <FontAwesomeIcon class="fa-xl cursor-pointer" :icon="faTrashCan" />
           </div>
 
@@ -259,7 +273,21 @@ onMounted(() => {
             class="flex flex-col flex-1 mt-4 gap-4 overflow-y-auto"
             style="max-height: calc(100% - 200px)"
           >
-            <CartProducts v-for="n in 6" :key="n"></CartProducts>
+          <div
+            class="flex justify-center mt-4"
+            v-if="cartItems.length === 0"
+          >
+            <FontAwesomeIcon
+              :icon="faCartFlatbed"
+              class="fa-xl text-yellow-400"
+            ></FontAwesomeIcon>
+            <span class="ml-3 text-gray-600">Your cart is currently empty</span>
+          </div>
+            <CartProducts
+              v-for="product in cartItems"
+              :key="product['_id']"
+              :id="product['_id']"
+            ></CartProducts>
           </div>
 
           <!-- Footer (fixed) -->

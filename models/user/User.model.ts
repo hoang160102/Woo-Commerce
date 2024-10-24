@@ -1,6 +1,4 @@
 import mongoose, { Document, Model, Schema, Types } from "mongoose";
-import Billing from "./Billing.model";
-import Shipping from "./Shipping.model";
 // import { v4 as uuidv4} from "uuid"
 
 interface User {

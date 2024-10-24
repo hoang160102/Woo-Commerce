@@ -1,6 +1,6 @@
 import Product from "~/models/Product.model";
 export default defineEventHandler(async (event: any) => {
-    const { name } = event.context.params
-    const product = await Product.findOne({ name: decodeURIComponent(name) })
+    const { id } = event.context.params
+    const product = await Product.findById(id)
     return product
 })

@@ -2,6 +2,18 @@
 import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { useProductStore } from "~/store/products";
+const productStore = useProductStore()
+const { getProductById } = productStore
+const product = ref<any>(null)
+const props = defineProps<{
+  id: string
+}>()
+watchEffect(async() => { 
+  await getProductById(props.id)
+  console.log(productStore.productById)
+})
+
 </script>
 <template>
   <div class="flex px-3 py-2 align-center justify-between">

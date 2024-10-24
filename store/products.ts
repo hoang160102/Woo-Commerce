@@ -23,10 +23,6 @@ export const useProductStore = defineStore("product-store", () => {
     const data = await $fetch(`/api/products/get`);
     productsList.value = data;
   };
-  const loadProducts = async (page: number, size: number) => {
-    const data = await $fetch(`/api/products/get?page=${page}&size=${size}`);
-    getProducts.value = data;
-  };
   const createProduct = async (newProduct: Product) => {
     try {
       const formData = new FormData();
@@ -56,9 +52,9 @@ export const useProductStore = defineStore("product-store", () => {
       console.log(err);
     }
   };
-  const getProductByName = async (name: string) => {
+  const getProductById = async (id: string) => {
     try {
-      const { data } = await useFetch(`/api/products/${name}`)
+      const { data } = await useFetch(`/api/products/${id}`)
       productById.value = data.value
     }
     catch(err) {
@@ -123,9 +119,8 @@ export const useProductStore = defineStore("product-store", () => {
   }
   return {
     createProduct,
-    loadProducts,
     getAllProducts,
-    getProductByName,
+    getProductById,
     updateProduct,
     addToWishlist,
     removeFromWishlist,
