@@ -8,7 +8,7 @@ interface Cart {
   items: CartItem[];
 }
 export const useCartStore = defineStore("cart-store", () => {
-  const userCart = ref<any>(null);
+  const userCart = ref<any>([]);
   const getUserCart = async (id: string) => {
     const { data } = await useFetch(`/api/cart/${id}`);
     userCart.value = data.value;
@@ -29,7 +29,8 @@ export const useCartStore = defineStore("cart-store", () => {
         qty,
       },
     });
-    userCart.value.items.push(data)
+    console.log(data)
+    userCart.value.items.push(data.items[data.items.length -1])
   };
   return {
     addProductToCart,

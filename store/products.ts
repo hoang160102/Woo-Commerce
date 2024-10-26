@@ -54,8 +54,8 @@ export const useProductStore = defineStore("product-store", () => {
   };
   const getProductById = async (id: string) => {
     try {
-      const { data } = await useFetch(`/api/products/${id}`)
-      productById.value = data.value
+      const data = await $fetch(`/api/products/${id}`)
+      productById.value = data
     }
     catch(err) {
       console.log(err)

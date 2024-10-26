@@ -39,9 +39,21 @@ const currentUser: any = ref<User | null>(userCookie.value);
 const cartItems = ref<any>(null);
 watchEffect(async () => {
   await getUserCart(currentUser.value.cart);
+  console.log(cartStore.userCart.items);
   cartItems.value = cartStore.userCart.items;
-  console.log(cartItems.value)
 });
+
+const totalPrice = ref(0);
+const totalQuantity = ref(0);
+const cartPrices = ref<{ [key: string]: number }>({});
+const cartQuantities = ref<{ [key: string]: number }>({});
+const updateCart = (id: string, price: number, quantity: number) => {
+  // Update individual product price and quantity
+  cartPrices.value[id] = price;
+  cartQuantities.value[id] = quantity;
+  totalPrice.value = Object.values(cartPrices.value).reduce((acc: any, curr: any) => acc + curr, 0);
+  totalQuantity.value = Object.values(cartQuantities.value).reduce((acc: any, curr: any) => acc + curr, 0);
+};
 watch(userCookie, (newVal: User) => {
   currentUser.value = newVal;
 });
@@ -203,8 +215,9 @@ onMounted(() => {
             >
               <FontAwesomeIcon class="fa-lg" :icon="faCartShopping" />
               <span
+                v-if="cartItems"
                 class="absolute top-[-10px] right-[-10px] text-xs text-center text-white inline-block w-5 h-5 bg-purple-600 rounded-full"
-                >0</span
+                >{{ totalQuantity }}</span
               >
             </button>
           </div>
@@ -273,20 +286,23 @@ onMounted(() => {
             class="flex flex-col flex-1 mt-4 gap-4 overflow-y-auto"
             style="max-height: calc(100% - 200px)"
           >
-          <div
-            class="flex justify-center mt-4"
-            v-if="cartItems.length === 0"
-          >
-            <FontAwesomeIcon
-              :icon="faCartFlatbed"
-              class="fa-xl text-yellow-400"
-            ></FontAwesomeIcon>
-            <span class="ml-3 text-gray-600">Your cart is currently empty</span>
-          </div>
+            <div class="flex justify-center mt-4" v-if="cartItems.length === 0">
+              <FontAwesomeIcon
+                :icon="faCartFlatbed"
+                class="fa-xl text-yellow-400"
+              ></FontAwesomeIcon>
+              <span class="ml-3 text-gray-600"
+                >Your cart is currently empty</span
+              >
+            </div>
             <CartProducts
               v-for="product in cartItems"
-              :key="product['_id']"
-              :id="product['_id']"
+              :key="product['product_id']"
+              :id="product['product_id']"
+              :qty="product.qty"
+              :size="product.size"
+              :color="product.color"
+              @update-quantity-price="updateCart"
             ></CartProducts>
           </div>
 
@@ -295,7 +311,8 @@ onMounted(() => {
             <a
               href="/checkout"
               class="block p-3 text-lg text-center text-white bg-gray-800 rounded-lg shadow-md justify-evenly hover:bg-gray-900"
-              ><span class="mx-2">Checkout</span><span>€28.00</span></a
+              ><span class="mx-2">Checkout</span
+              ><span>{{ totalPrice.toFixed(2) }}$</span></a
             >
           </div>
         </div>
