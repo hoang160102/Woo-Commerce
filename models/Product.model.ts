@@ -1,5 +1,6 @@
 import mongoose, { Collection, Model, Schema } from "mongoose";
 import dateToString from "~/composables/useDate";
+import UserReview from "./user/UserReview.model";
 
 interface Product {
   name: string;
@@ -17,7 +18,7 @@ interface Product {
   createdAt: string;
   updatedAt: string;
   rating: number;
-  reviews: object[]
+  reviews: UserReview[]
 }
 const productSchema: Schema<Product> = new mongoose.Schema({
   name: { type: String, required: true },

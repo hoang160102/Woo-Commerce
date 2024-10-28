@@ -18,7 +18,7 @@ interface Product {
 export const useProductStore = defineStore("product-store", () => {
   const productsList = ref<any>({});
   const getProducts = ref<any>({});
-  const productById = ref<any>({})
+  const productById = ref<any>({});
   const getAllProducts = async () => {
     const data = await $fetch(`/api/products/get`);
     productsList.value = data;
@@ -54,13 +54,12 @@ export const useProductStore = defineStore("product-store", () => {
   };
   const getProductById = async (id: string) => {
     try {
-      const data = await $fetch(`/api/products/${id}`)
-      productById.value = data
+      const data = await $fetch(`/api/products/${id}`);
+      productById.value = data;
+    } catch (err) {
+      console.log(err);
     }
-    catch(err) {
-      console.log(err)
-    }
-  }
+  };
   const updateProduct = async (product: Product, name: string) => {
     try {
       const formData = new FormData();
@@ -82,24 +81,23 @@ export const useProductStore = defineStore("product-store", () => {
         formData.append("product_images", file);
       });
       const data = await $fetch(`/api/products/${name}`, {
-        method: 'put',
-        body: formData
-      })
-      toast.success('Updated product successfully')
+        method: "put",
+        body: formData,
+      });
+      toast.success("Updated product successfully");
+    } catch (err) {
+      console.log(err);
     }
-    catch(err) {
-      console.log(err)
-    }
-  }
+  };
   const addToWishlist = async (userId: string, productId: string) => {
     const formData = new FormData();
     formData.append("productId", productId);
     try {
       const response: any = await $fetch(`/api/users/${userId}`, {
-        method: 'put',
-        body: formData
+        method: "put",
+        body: formData,
       });
-      console.log(response)
+      console.log(response);
     } catch (err) {
       console.log(err);
     }
@@ -109,14 +107,23 @@ export const useProductStore = defineStore("product-store", () => {
     formData.append("productId", productId);
     try {
       const response: any = await $fetch(`/api/users/${userId}`, {
-        method: 'put',
-        body: formData
-      })
+        method: "put",
+        body: formData,
+      });
+    } catch (err) {
+      console.log(err);
     }
-    catch(err) {
-      console.log(err)
-    }
-  }
+  };
+  const postProductReview = async (
+    userId: string,
+    productId: string,
+    rate: number,
+    comment: string,
+    email: string,
+    avatar: string
+  ) => {
+    console.log(userId, productId, rate, comment, email, avatar)
+  };
   return {
     createProduct,
     getAllProducts,
@@ -124,8 +131,9 @@ export const useProductStore = defineStore("product-store", () => {
     updateProduct,
     addToWishlist,
     removeFromWishlist,
+    postProductReview,
     productsList,
     getProducts,
-    productById
+    productById,
   };
 });

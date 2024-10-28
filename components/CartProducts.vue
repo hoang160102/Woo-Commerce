@@ -3,41 +3,45 @@ import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { useProductStore } from "~/store/products";
+import { useCartStore } from "~/store/cart";
 const productStore = useProductStore();
+const cartStore = useCartStore();
 const { getProductById } = productStore;
+const { updateQuantity, deleteCartItem } = cartStore;
+const userCookie: any = useCookie("currentUser");
 const product = ref<any>(null);
 const props = defineProps<{
   id: string;
+  idProduct: string;
   qty: number;
   size: string;
-  color: string 
+  color: string;
 }>();
 const qty = ref<number>(props.qty);
-const emit = defineEmits<{
-  (e: "update-quantity-price", id: string, totalPrice: number, quantity: number): void;
-}>();
+watch(
+  () => props.qty,
+  (newQty: number) => {
+    qty.value = newQty;
+  }
+);
 watchEffect(async () => {
-  await getProductById(props.id);
+  await getProductById(props.idProduct);
   product.value = productStore.productById;
-  if (product.value) {
-    emit("update-quantity-price", props.id, product.value.price * (qty.value ?? 0), qty.value ?? 0);
-  }
 });
-const updatePriceAndQuantity = () => {
-  if (product.value && qty.value !== null) {
-    emit("update-quantity-price", props.id, product.value.price * qty.value, qty.value);
-  }
-};
 const decreaseQty = async () => {
   qty.value--;
-  if (qty.value < 0) {
-    qty.value = 0;
+  if (qty.value === 0) {
+    await deleteCartItem(userCookie.value.cart, props.id);
   }
-  updatePriceAndQuantity();
+  await updateQuantity(qty.value, userCookie.value.cart, props.id);
 };
 const increaseQty = async () => {
   qty.value++;
-  updatePriceAndQuantity();
+  await updateQuantity(qty.value, userCookie.value.cart, props.id);
+};
+
+const deleteItem = async () => {
+  await deleteCartItem(userCookie.value.cart, props.id);
 };
 </script>
 <template>
@@ -50,8 +54,12 @@ const increaseQty = async () => {
       />
       <div class="info ml-3">
         <div class="name">{{ product.name }}</div>
+        <div class="flex my-1">
+          <div class="capitalize text-gray-600 text-xs">Color: {{ color }},</div>
+          <div class="text-gray-600 text-xs ml-1">Size: {{ size }}</div>
+        </div>
         <div class="price text-xs font-semibold">
-          {{ product.price.toFixed(2) }}$
+          {{ (product.price * qty).toFixed(2) }}$
         </div>
       </div>
     </div>
@@ -86,16 +94,14 @@ const increaseQty = async () => {
       <div
         class="text-xs text-gray-400 group-hover:text-gray-700 flex leading-none items-center"
       >
-        <button class="mr-2 pr-2 border-r-2" type="button">
-          Move to Wishlist
-        </button>
         <button
           title="Remove Item"
           aria-label="Remove Item"
           type="button"
+          @click="deleteItem"
           class="flex items-center gap-1 hover:text-red-500 cursor-pointer"
         >
-          <FontAwesomeIcon :icon="faTrashCan" class="fa-sm" />
+          <FontAwesomeIcon :icon="faTrashCan" class="fa-lg" />
         </button>
       </div>
     </div>

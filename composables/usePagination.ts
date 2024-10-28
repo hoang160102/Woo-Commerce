@@ -3,7 +3,10 @@ export default function usePagination(
   allItems: Ref<any>,
   rowsPer: number
 ) {
-  const totalRecords = ref<number>(allItems.value.length);
+  const totalRecords = ref<number>(0)
+  if (allItems.value) {
+    totalRecords.value = allItems.value.length;
+  }
   const rowsPerPage = ref<number>(rowsPer);
   const currentPage = ref<number>(0);
   const onPageChange = async (event: any) => {
@@ -16,7 +19,7 @@ export default function usePagination(
   };
   const paginatedProducts = computed(() => {
     const start = currentPage.value * rowsPerPage.value;
-    const end = start + rowsPerPage.value;
+    const end = start + rowsPerPage.value; 
     return sortedItems.value.slice(start, end);
   });
   watch(sortedItems, () => {

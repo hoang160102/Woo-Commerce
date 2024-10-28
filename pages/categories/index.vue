@@ -2,7 +2,7 @@
 import { useCategoryStore } from "~/store/categories";
 const store = useCategoryStore();
 const { getAllCategories } = store;
-const allCategories = ref<object[]>([]);
+const allCategories = ref<any>([]);
 async function fetchCategories() {
   await getAllCategories();
   allCategories.value = store.categoryList?.categories || [];

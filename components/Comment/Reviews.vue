@@ -1,28 +1,43 @@
 <script lang="ts" setup>
 import Rating from "primevue/rating";
+import { useProductStore } from "~/store/products";
 const value = ref<number>(1);
+const comment = ref<string>("");
 const progressValue = ref<number>(0);
 const isReview = ref<boolean>(false);
+const productStore = useProductStore();
+const userCookie: any = useCookie("currentUser");
+const { postProductReview } = productStore;
 const widthProgress = computed(() => {
   return {
     width: `${(300 / 100) * progressValue.value}px`,
   };
 });
+const product: any = inject("product");
 watch(progressValue, (newValue: number) => {
   progressValue.value = newValue;
 });
 const toggleReview = computed(() => {
   isReview.value = !isReview.value;
 });
+const submitReview = async () => {
+  event?.preventDefault();
+  await postProductReview(
+    userCookie.value["_id"],
+    product.value["_id"],
+    value.value,
+    comment.value,
+    userCookie.value.email,
+    userCookie.value.profile_img
+  );
+};
 onMounted(() => {
   const timer = setTimeout(() => (progressValue.value = 90), 500);
   return () => clearTimeout(timer);
 });
 </script>
 <template>
-  <section
-    class="review grid gap-4 mt-4 grid-cols-1 w-full"
-  >
+  <section class="review grid gap-4 mt-4 grid-cols-1 w-full">
     <div class="reviews">
       <h1 class="font-semibold text-sm">Customer reviews</h1>
       <div class="reviews-rate my-4 flex">
@@ -134,7 +149,10 @@ onMounted(() => {
       >
         Close
       </button>
-      <form v-if="isReview" class="writeReview ease-in-out transform transition-all">
+      <form
+        v-if="isReview"
+        class="writeReview ease-in-out transform transition-all"
+      >
         <div class="w-full text-gray-500">
           <div class="p-5 mt-3 grid gap-2 border rounded-lg">
             <div class="block text-center mb-1.5">
@@ -155,27 +173,17 @@ onMounted(() => {
                 class="w-full outline-none bg-white p-2 rounded-lg"
                 id="content"
                 placeholder="Great Quality"
+                v-model="comment"
               ></textarea>
-            </div>
-            <div class="w-full col-span-full">
-              <label for="author" class="text-sm mb-0.5"
-                >Your email <span class="text-red-500">*</span></label
-              ><input
-              class="w-full outline-none bg-white p-2 rounded-lg"
-                id="author"
-                placeholder="example@example.com"
-                type="email"
-                pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
-
-              />
             </div>
             <!----><!---->
             <div class="w-full col-span-full text-center mt-3">
               <button
+                @click="submitReview"
                 class="flex gap-4 justify-center items-center transition font-semibold rounded-md w-full p-2 bg-amber-300 text-amber-900 hover:bg-amber-400"
                 type="submit"
               >
-                 <span>Submit</span>
+                <span>Submit</span>
               </button>
             </div>
           </div>

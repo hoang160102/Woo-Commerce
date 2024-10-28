@@ -5,15 +5,17 @@ interface CartItem {
   qty: number;
   color: string;
   size: string;
-  cartId: string
+  cartId: string;
+  price: number
 }
 
 const cartItemSchema = new Schema<CartItem>({
   product_id: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-  qty: { type: Number, required: true, min: 1 },
+  qty: { type: Number, required: true, min: 0 },
   cartId: { type: String, required: true },
-  color: { type: String, required: true },
-  size: { type: String, required: true }
+  color: { type: String, },
+  size: { type: String, },
+  price: { type: Number }
 });
 
 const CartItem: Model<CartItem> = mongoose.model<CartItem>('CartItem', cartItemSchema)

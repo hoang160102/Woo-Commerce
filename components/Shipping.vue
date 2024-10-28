@@ -41,6 +41,7 @@ const getShipping = async () => {
     lastName.value = shippingStore.shippingById.lastName;
     address1.value = shippingStore.shippingById.address1;
     address2.value = shippingStore.shippingById.address2;
+    country.value = shippingStore.shippingById.country
     city.value = shippingStore.shippingById.city;
     state.value = shippingStore.shippingById.state;
     postal.value = shippingStore.shippingById.postal;

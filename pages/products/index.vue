@@ -2,6 +2,7 @@
 import { vOnClickOutside } from "@vueuse/components";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { faFaceFrown } from "@fortawesome/free-regular-svg-icons";
 import Paginator from "primevue/paginator";
 import { useProductStore } from "~/store/products";
 const allProducts = ref<any[]>([]);
@@ -139,6 +140,7 @@ onMounted(() => {
         </div>
         <div class="mb-4" v-if="!isLoading">
           <transition-group
+            v-if="paginatedProducts.length > 0"
             name="product"
             tag="div"
             class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
@@ -155,6 +157,10 @@ onMounted(() => {
               :rating="product.rating"
             ></HomeProducts>
           </transition-group>
+          <div class="flex flex-col justify-center items-center" v-else>
+            <FontAwesomeIcon :icon="faFaceFrown" class="fa-3x text-gray-600"/> 
+            <span class="text-xl text-gray-600 mt-3 font-semibold">No Products Found</span>
+          </div>
         </div>
         <Paginator
           v-if="sortedProducts.length > rowsPerPage "

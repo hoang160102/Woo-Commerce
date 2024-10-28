@@ -1,119 +1,70 @@
 <script lang="ts" setup>
 import { vOnClickOutside } from "@vueuse/components";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { useProductStore } from "~/store/products";
+import { faFaceFrown } from "@fortawesome/free-regular-svg-icons";
+interface Product {
+  _id: string;
+  name: string;
+  category: string;
+  productCollection: string[];
+  gender: string;
+  quanity: number;
+  price: number;
+  sale: number;
+  saleExpiration: Date | null;
+  color: string[];
+  size: string[];
+  description: string;
+  product_images: string[];
+  createdAt: string;
+  updatedAt: string;
+  rating: number;
+  reviews: object[];
+}
 const { isShowNav, toggleMenu, handleClickOutside, resizeWindow } =
   useToggleNav(768);
-const products = ref([
-  {
-    id: 1,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 20,
-    sale: 18,
-    rating: 4,
-    category: ["pants"],
-    color: ["red"],
-  },
-  {
-    id: 2,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 30,
-    sale: 30,
-    rating: 5,
-    category: ["clothing", "shorts"],
-    color: ["red", "yellow"],
-  },
-  {
-    id: 3,
-    name: "Woo Logo",
-    inStock: 3,
-    price: 27,
-    sale: 23,
-    rating: 3,
-    category: ["clothing", "socks"],
-    color: ["black", "yellow", "blue"],
-  },
-  {
-    id: 4,
-    name: "Woo Logo",
-    inStock: 4,
-    price: 28,
-    sale: 22,
-    rating: 4,
-    category: ["clothing", "t-shirts"],
-    color: ["orange", "green", "yellow", "blue"],
-  },
-  {
-    id: 5,
-    name: "Woo Logo",
-    inStock: 3,
-    price: 60,
-    sale: 60,
-    rating: 4,
-    category: ["clothing", "hoodies"],
-    color: ["red", "gray"],
-  },
-  {
-    id: 6,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 40,
-    sale: 40,
-    rating: 4,
-    category: ["clothing", "shoes"],
-    color: ["gray"],
-  },
-  {
-    id: 7,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 76,
-    sale: 76,
-    rating: 3,
-    category: ["bags"],
-    color: ["gray", "black"],
-  },
-  {
-    id: 8,
-    name: "Woo Logo",
-    inStock: 2,
-    price: 80,
-    sale: 74,
-    rating: 4,
-    category: ["clothing", "jackets"],
-    color: ["red", "blue", "yellow"],
-  },
-  {
-    id: 9,
-    name: "Woo Logo",
-    inStock: 0,
-    price: 76,
-    sale: 76,
-    rating: 3,
-    category: ["keychain"],
-    color: ["black", "orannge"],
-  },
-  {
-    id: 10,
-    name: "Woo Logo",
-    inStock: 1,
-    price: 56,
-    sale: 50,
-    rating: 2,
-    category: ["keychain"],
-    color: ["blue", "yellow"],
-  },
-]);
+const productStore = useProductStore();
+const route: any = useRoute();
+const { getAllProducts } = productStore;
+const allProducts = ref<any>(null);
+const isLoading = ref<boolean>(false);
+watchEffect(async () => {
+  isLoading.value = true;
+  await getAllProducts();
+  allProducts.value = productStore.productsList.products;
+  totalRecords.value = allProducts.value.length;
+  usePagination(sortedProducts, allProducts, 16)
+  isLoading.value = false;
+});
+const productsByCate = computed(() => {
+  if (allProducts.value) {
+    const getProductsByCate = allProducts.value?.filter((product: Product) => {
+      return product.category === route.params.name;
+    });
+    return getProductsByCate;
+  }
+});
 const {
   filteredProducts,
-  selectedCategory,
   selectedColor,
+  selectedCollection,
   selectedGender,
+  selectedSize,
   isSaleProduct,
   selectedRating,
   minValue,
   maxValue,
-} = useFilterProduct(products.value);
+} = useFilterProduct(productsByCate);
+const { sortedProducts, selectedOrder } = useSortProducts(filteredProducts);
+const {
+  totalRecords,
+  rowsPerPage,
+  currentPage,
+  onPageChange,
+  paginatedProducts,
+} = usePagination(sortedProducts, allProducts, 16);
 const filter = computed(() => {
   return isShowNav.value ? "block" : "hidden";
 });
@@ -138,12 +89,15 @@ onMounted(() => {
           class="filters z-40 md:z-0 p-10 md:p-0 fixed left-0 top-0 md:relative sm:w-[280px] w-[200px] lg:w-[280px] md:block"
         >
           <FilterPrice
-            v-model:min-price="minValue"
-            v-model:max-price="maxValue"
+            :min-price="minValue"
+            :max-price="maxValue"
+            @update:min-price="minValue = $event"
+            @update:max-price="maxValue = $event"
           ></FilterPrice>
           <FilterGender v-model="selectedGender"></FilterGender>
-          <FilterCategories v-model="selectedCategory"></FilterCategories>
+          <FilterCollections v-model="selectedCollection"></FilterCollections>
           <FilterColor v-model="selectedColor"></FilterColor>
+          <FilterSize v-model="selectedSize"></FilterSize>
           <div
             class="sale-product pb-8 mt-8 border-b border-gray-300 border-solid"
           >
@@ -155,36 +109,58 @@ onMounted(() => {
       </Transition>
       <div class="w-full">
         <div class="flex justify-between mb-10">
-          <div class="products-shown">Showing 1 to 24 of 38</div>
-          <select
-            class="hidden border shadow outline-none bg-white p-1 rounded-md md:block"
-            aria-label="Order by"
+          <div class="products-shown">Showing {{ paginatedProducts.length }} of {{ totalRecords }}</div>
+          <div
+            class="hidden border shadow cursor-pointer outline-none bg-white rounded-md md:flex"
           >
-            <option value="latest">Latest</option>
-            <option value="price">Price</option>
-            <option value="alphabetically">Alphabetically</option>
-            <option value="rating">Rating</option>
-            <option value="discount">Discount</option>
-          </select>
+            <div class="px-3 py-1 border-r">
+              <FontAwesomeIcon :icon="faFilter"></FontAwesomeIcon>
+            </div>
+            <select
+              v-model="selectedOrder"
+              class="w-full px-3 cursor-pointer outline-none"
+              aria-label="Order by"
+            >
+              <option value="default">Default</option>
+              <option value="latest">Latest</option>
+              <option value="price">Price</option>
+              <option value="alphabetically">Alphabetically</option>
+              <option value="rating">Rating</option>
+            </select>
+          </div>
           <button @click="toggleMenu" class="block md:hidden">Filter</button>
         </div>
-        <transition-group
-          name="product"
-          tag="div"
-          :class="{ 'overflow-hidden': isShowNav }"
-          class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 animation"
-        >
-          <HomeProducts
-            v-for="product in filteredProducts"
-            :key="product.id"
-            :id="product.id"
-            :name="product.name"
-            :inStock="product.inStock"
-            :price="product.price"
-            :sale="product.sale"
-            :rating="product.rating"
-          ></HomeProducts>
-        </transition-group>
+        <div class="mb-4" v-if="!isLoading">
+          <transition-group
+            v-if="paginatedProducts.length > 0"
+            name="product"
+            tag="div"
+            class="grid gap-8 grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+          >
+            <HomeProducts
+              v-for="product in paginatedProducts"
+              :key="product['_id']"
+              :id="product['_id']"
+              :name="product.name"
+              :image="product.product_images[0]"
+              :quanity="product.quanity"
+              :price="product.price"
+              :sale="product.sale"
+              :rating="product.rating"
+            ></HomeProducts>
+          </transition-group>
+          <div class="flex flex-col justify-center items-center" v-else>
+            <FontAwesomeIcon :icon="faFaceFrown" class="fa-3x text-gray-600"/> 
+            <span class="text-xl text-gray-600 mt-3 font-semibold">No Products Found</span>
+          </div>
+        </div>
+        <Paginator
+          v-if="sortedProducts.length > rowsPerPage "
+          :totalRecords="totalRecords"
+          :rows="rowsPerPage"
+          :page="currentPage"
+          @page="onPageChange"
+        />
       </div>
     </div>
     <div

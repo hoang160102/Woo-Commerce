@@ -33,27 +33,33 @@ interface User {
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const { userLogout } = authStore;
-const { getUserCart } = cartStore;
+const { getUserCart, clearCart } = cartStore;
 const userCookie: any = useCookie("currentUser");
 const currentUser: any = ref<User | null>(userCookie.value);
 const cartItems = ref<any>(null);
 watchEffect(async () => {
-  await getUserCart(currentUser.value.cart);
-  console.log(cartStore.userCart.items);
-  cartItems.value = cartStore.userCart.items;
+  if (userCookie.value) {
+    await getUserCart(currentUser.value.cart);
+    cartItems.value = cartStore.userCart.items;
+  }
 });
-
-const totalPrice = ref(0);
-const totalQuantity = ref(0);
-const cartPrices = ref<{ [key: string]: number }>({});
-const cartQuantities = ref<{ [key: string]: number }>({});
-const updateCart = (id: string, price: number, quantity: number) => {
-  // Update individual product price and quantity
-  cartPrices.value[id] = price;
-  cartQuantities.value[id] = quantity;
-  totalPrice.value = Object.values(cartPrices.value).reduce((acc: any, curr: any) => acc + curr, 0);
-  totalQuantity.value = Object.values(cartQuantities.value).reduce((acc: any, curr: any) => acc + curr, 0);
-};
+watch(
+  () => cartStore.userCart,
+  (newCart: any) => {
+    cartItems.value = newCart.items;
+  },
+  { immediate: true, deep: true }
+);
+const totalPrice = computed(() => {
+  if (cartItems.value) {
+    return cartItems.value.reduce((acc: any, item: any) => acc + item.price * item.qty, 0);
+  } 
+})
+const totalQuantity = computed(() => {
+  if (cartItems.value) {
+    return cartItems.value.reduce((acc: any, item: any) => acc + item.qty, 0);
+  }
+})
 watch(userCookie, (newVal: User) => {
   currentUser.value = newVal;
 });
@@ -73,6 +79,9 @@ const { toggleMenu, handleClickOutside, resizeWindow, isShowNav } =
 const logout = async () => {
   await userLogout();
 };
+const deleteCart = async () => {
+  await clearCart(userCookie.value.cart)
+}
 watch(router.currentRoute, (): void => {
   isShowNav.value = false;
   cart.value = false;
@@ -210,13 +219,14 @@ onMounted(() => {
               </div>
             </div>
             <button
+              v-if="cartItems"
               @click="toggleCart"
               class="text-gray-600 hover:text-purple-600 relative"
             >
               <FontAwesomeIcon class="fa-lg" :icon="faCartShopping" />
               <span
                 v-if="cartItems"
-                class="absolute top-[-10px] right-[-10px] text-xs text-center text-white inline-block w-5 h-5 bg-purple-600 rounded-full"
+                class="absolute leading-5 top-[-10px] right-[-10px] text-xs text-center text-white inline-block w-5 h-5 bg-purple-600 rounded-full"
                 >{{ totalQuantity }}</span
               >
             </button>
@@ -275,10 +285,10 @@ onMounted(() => {
               :icon="faXmark"
             />
             <div class="count">
-              Cart (<span>{{ cartItems.length }}</span
+              Cart (<span>{{ totalQuantity }}</span
               >)
             </div>
-            <FontAwesomeIcon class="fa-xl cursor-pointer" :icon="faTrashCan" />
+            <FontAwesomeIcon @click="deleteCart" class="fa-xl cursor-pointer hover:text-red-500" :icon="faTrashCan" />
           </div>
 
           <!-- Scrollable content -->
@@ -298,22 +308,22 @@ onMounted(() => {
             <CartProducts
               v-for="product in cartItems"
               :key="product['product_id']"
-              :id="product['product_id']"
+              :id-product="product['product_id']"
+              :id="product['_id']"
               :qty="product.qty"
               :size="product.size"
               :color="product.color"
-              @update-quantity-price="updateCart"
             ></CartProducts>
           </div>
 
           <!-- Footer (fixed) -->
           <div class="p-8 w-full absolute bottom-0 bg-white z-60">
-            <a
-              href="/checkout"
+            <NuxtLink
+              to="/checkout"
               class="block p-3 text-lg text-center text-white bg-gray-800 rounded-lg shadow-md justify-evenly hover:bg-gray-900"
               ><span class="mx-2">Checkout</span
-              ><span>{{ totalPrice.toFixed(2) }}$</span></a
-            >
+              ><span>{{ totalPrice.toFixed(2) }}$</span>
+            </NuxtLink>
           </div>
         </div>
       </div>

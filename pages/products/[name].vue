@@ -104,7 +104,8 @@ const addToCart = async (product: any) => {
       product["_id"],
       selectedColor.value,
       selectedSize.value,
-      quanity.value
+      quanity.value,
+      product.price
     );
   }
 };

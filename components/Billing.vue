@@ -38,6 +38,7 @@ const getBilling = async () => {
     lastName.value = billingStore.billingById.lastName
     address1.value = billingStore.billingById.address1
     address2.value = billingStore.billingById.address2
+    country.value = billingStore.billingById.country
     city.value = billingStore.billingById.city
     state.value = billingStore.billingById.state
     postal.value = billingStore.billingById.postal

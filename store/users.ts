@@ -67,7 +67,6 @@ export const useUsersStore = defineStore("users-store", () => {
         method: "put",
         body: formData,
       });
-      console.log(response.success);
       if (response.success === true) {
         toast.success(response.message);
       } else {
