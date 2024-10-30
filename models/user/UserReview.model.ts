@@ -5,7 +5,7 @@ interface UserReview {
   rate: number;
   comment: string;
   avatar: string;
-  email: string;
+  username: string;
 }
 
 const userReviewSchema = new Schema<UserReview>({
@@ -13,7 +13,7 @@ const userReviewSchema = new Schema<UserReview>({
   rate: { type: Number },
   comment: { type: String },
   avatar: { type: String },
-  email: { type: String }
+  username: { type: String }
 });
 
 const UserReview: Model<UserReview> = mongoose.model<UserReview>(

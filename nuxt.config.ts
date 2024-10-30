@@ -23,6 +23,9 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@primevue/nuxt-module",
     "nuxt-nodemailer",
+    ["nuxt-vue3-google-signin", {
+      clientId: '671352934044-q9pf963gp26jaipck5p3tjkarrid3ivt.apps.googleusercontent.com',
+    }]
   ],
   build: {
     transpile: ["vuetify"],
@@ -57,5 +60,5 @@ export default defineNuxtConfig({
   },
   nitro: {
     plugins: ['~/server/scheduler/sale-expiration-check.ts']
-  }
+  },
 });

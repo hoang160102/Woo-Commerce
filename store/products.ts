@@ -119,10 +119,25 @@ export const useProductStore = defineStore("product-store", () => {
     productId: string,
     rate: number,
     comment: string,
-    email: string,
+    username: string,
     avatar: string
   ) => {
-    console.log(userId, productId, rate, comment, email, avatar)
+    try {
+      const data: any = await $fetch(`/api/products/${productId}`, {
+        method: 'post',
+        body: {
+          userId,
+          rate,
+          comment,
+          username,
+          avatar
+        }
+      })
+      console.log(data)
+    }
+    catch(err) {
+      toast.error('Error')
+    }
   };
   return {
     createProduct,

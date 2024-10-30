@@ -60,6 +60,9 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
             console.log(err);
           }
         }
+        else {
+          return navigateTo('/login')
+        }
       }
     }, 10000 * 30);
   }

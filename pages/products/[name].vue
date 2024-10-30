@@ -365,7 +365,7 @@ const toggleProduct = async (productId: string) => {
                   type="button"
                   class="cursor-pointer text-lg"
                 >
-                  Reviews (<span>0</span>)
+                  Reviews (<span>{{ product.reviews.length }}</span>)
                 </button>
               </div>
             </nav>

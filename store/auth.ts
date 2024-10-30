@@ -22,7 +22,7 @@ interface Data {
 }
 const toast = useToast();
 export const useAuthStore = defineStore("auth-store", () => {
-  const currentUser: any = useCookie('currentUser');
+  const currentUser: any = useCookie("currentUser");
   async function userRegister(newUsers: any) {
     const createUsers = {
       ...newUsers,
@@ -92,8 +92,8 @@ export const useAuthStore = defineStore("auth-store", () => {
       if (err.response && err.response._data) {
         toast.error(err.response._data.statusMessage || "An error occurred");
       } else {
-        console.log(err)
-      }
+        console.log(err);
+      } 
     }
   }
   async function resendVerify(data: Data) {
@@ -112,17 +112,68 @@ export const useAuthStore = defineStore("auth-store", () => {
     }
   }
   async function userLogout() {
-    const data = await $fetch('/api/users/auth/logout', {
-      method: 'post'
-    })
-    const accessToken = useCookie('accessToken')
-    const refreshToken = useCookie('refreshToken')
-    const currentCookieUser = useCookie('currentUser')
-    accessToken.value = null
-    refreshToken.value = null
-    currentCookieUser.value = null
-    currentUser.value = null
-    await navigateTo('/login')
+    const data = await $fetch("/api/users/auth/logout", {
+      method: "post",
+    });
+    const accessToken = useCookie("accessToken");
+    const refreshToken = useCookie("refreshToken");
+    const currentCookieUser = useCookie("currentUser");
+    accessToken.value = null;
+    refreshToken.value = null;
+    currentCookieUser.value = null;
+    currentUser.value = null;
+    await navigateTo("/login");
   }
-  return { currentUser, userRegister, userLogin, resendVerify, userLogout };
+  const googleLogin = async (access: string, userAccount: any) => {
+    try {
+      const data: any = await $fetch(`/api/users/auth/google-login`, {
+        method: 'post',
+        body: {
+          userAccount
+        }
+      })
+      if (data) {
+        currentUser.value = data
+        const userCookie = useCookie("currentUser", {
+          maxAge: 365 * 24 * 60 * 60,
+          secure: false,
+          httpOnly: false,
+          path: "/",
+        });
+        userCookie.value = currentUser.value;
+      }
+      if (access && data.refreshToken) {
+        const accessToken: any = useCookie("accessToken", {
+          maxAge: 300,
+          secure: false,
+          httpOnly: false,
+          path: "/",
+        });
+        accessToken.value = access
+
+        const refreshToken = useCookie("refreshToken", {
+          maxAge: 365 * 24 * 60 * 60,
+          secure: false,
+          httpOnly: false,
+          path: "/",
+        });
+        refreshToken.value = data.refreshToken;
+      }
+      toast.success("Login successfully");
+      setTimeout(() => {
+        navigateTo("/");
+      }, 2000);
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
+  return {
+    currentUser,
+    userRegister,
+    userLogin,
+    resendVerify,
+    userLogout,
+    googleLogin
+  };
 });

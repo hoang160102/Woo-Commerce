@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { CredentialResponse } from "vue3-google-signin";
+import { GoogleSignInButton, decodeCredential } from "vue3-google-signin"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import {
   faUser,
@@ -11,7 +13,7 @@ import { useAuthStore } from "~/store/auth";
 definePageMeta({
   layout: "authentication",
 });
-const { userLogin } = useAuthStore();
+const { userLogin, googleLogin } = useAuthStore();
 const email = ref<string>("");
 const password = ref<string>("");
 const isSubmit = ref<boolean>(false);
@@ -28,6 +30,14 @@ const login = async () => {
     email: email.value,
     password: password.value,
   });
+};
+const handleSignInSuccess = async (response: CredentialResponse) => {
+  const credential: any = response.credential;
+  const googleUser = decodeCredential(credential);
+  await googleLogin(credential, googleUser)
+};
+const handleLoginError = () => {
+  console.error("Login failed");
 };
 </script>
 <template>
@@ -89,14 +99,11 @@ const login = async () => {
             >Sign Up</NuxtLink
           >
         </div>
-        <div>
-          <button
-            class="border w-full md:w-auto px-13 py-3 outline-none rounded-lg mt-4"
-          >
-            <FontAwesomeIcon :icon="faGoogle" />
-            Login With Google
-          </button>
-        </div>
+        <GoogleSignInButton
+          class="mt-4"
+          @success="handleSignInSuccess"
+          @error="handleLoginError"
+        ></GoogleSignInButton>
         <div>
           <button
             @click="login"

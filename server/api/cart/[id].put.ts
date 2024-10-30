@@ -41,6 +41,5 @@ export default defineEventHandler(async (event: any) => {
     );
   }
   await cart?.save();
-  console.log(cart)
   return cart;
 });

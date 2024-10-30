@@ -4,16 +4,41 @@ import { useProductStore } from "~/store/products";
 const value = ref<number>(1);
 const comment = ref<string>("");
 const progressValue = ref<number>(0);
+const possibleRatings = [1, 2, 3, 4, 5];
 const isReview = ref<boolean>(false);
 const productStore = useProductStore();
 const userCookie: any = useCookie("currentUser");
 const { postProductReview } = productStore;
-const widthProgress = computed(() => {
-  return {
-    width: `${(300 / 100) * progressValue.value}px`,
-  };
-});
 const product: any = inject("product");
+const averageRating = computed(() => {
+  const totalRate = product.value.reviews.reduce((sum: number, review: any) => {
+    return sum + review.rate;
+  }, 0);
+  return totalRate / product.value.reviews.length;
+});
+const ratingPercentages = computed(() => {
+  return possibleRatings.map((rate: number) => {
+    let percentage
+    const count = product.value.reviews.filter(
+      (review: any) => review.rate === rate
+    ).length;
+    if (product.value.reviews.length === 0) {
+      percentage = 0
+    }
+    else {
+      percentage = ((count / product.value.reviews.length) * 100)
+    }
+    return { rate, percentage: percentage + "%" };
+  });
+});
+// const widthProgress = computed(() => {
+//   return {
+//     width: `${(300 / 100) * progressValue.value}px`,
+//   };
+// });
+watchEffect(() => {
+  console.log(ratingPercentages.value);
+});
 watch(progressValue, (newValue: number) => {
   progressValue.value = newValue;
 });
@@ -27,7 +52,7 @@ const submitReview = async () => {
     product.value["_id"],
     value.value,
     comment.value,
-    userCookie.value.email,
+    userCookie.value.username,
     userCookie.value.profile_img
   );
 };
@@ -43,15 +68,21 @@ onMounted(() => {
       <div class="reviews-rate my-4 flex">
         <NuxtRating
           :readonly="true"
-          :ratingValue="4.3"
+          :ratingValue="averageRating"
           activeColor="#ffd700"
         ></NuxtRating>
-        <div class="ml-4 text-sm text-gray-600">Based on 21 reviews</div>
+        <div class="ml-4 text-sm text-gray-600">
+          Based on {{ product.reviews.length }} reviews
+        </div>
       </div>
-      <div class="rating-stats">
-        <div class="5-star my-2 align-center flex">
+      <div v-if="ratingPercentages" class="rating-stats">
+        <div
+          v-for="rating in ratingPercentages"
+          :key="rating.rate"
+          class="my-2 align-center flex"
+        >
           <div class="flex">
-            <div class="text-sm">5</div>
+            <div class="text-sm">{{rating.rate}}</div>
             <Rating v-model="value" class="ml-1" :stars="1" readonly />
           </div>
           <div class="card relative ml-3">
@@ -60,71 +91,7 @@ onMounted(() => {
             >
               <div
                 class="progress aboslute transition-all duration-300 ease-in-out top-0 h-[10px] rounded-full bg-yellow-300"
-                :style="widthProgress"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div class="4-star my-2 align-center flex">
-          <div class="flex">
-            <div class="text-sm">4</div>
-            <Rating v-model="value" class="ml-1" :stars="1" readonly />
-          </div>
-          <div class="card relative ml-3">
-            <div
-              class="bar aboslute top-0 h-[10px] w-[300px] rounded-full bg-white"
-            >
-              <div
-                class="progress aboslute transition-all duration-300 ease-in-out top-0 h-[10px] rounded-full bg-yellow-300"
-                :style="widthProgress"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div class="3-star my-2 align-center flex">
-          <div class="flex">
-            <div class="text-sm">3</div>
-            <Rating v-model="value" class="ml-1" :stars="1" readonly />
-          </div>
-          <div class="card relative ml-3">
-            <div
-              class="bar aboslute top-0 h-[10px] w-[300px] rounded-full bg-white"
-            >
-              <div
-                class="progress aboslute transition-all duration-300 ease-in-out top-0 h-[10px] rounded-full bg-yellow-300"
-                :style="widthProgress"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div class="2-star my-2 align-center flex">
-          <div class="flex">
-            <div class="text-sm">2</div>
-            <Rating v-model="value" class="ml-1" :stars="1" readonly />
-          </div>
-          <div class="card relative ml-3">
-            <div
-              class="bar aboslute top-0 h-[10px] w-[300px] rounded-full bg-white"
-            >
-              <div
-                class="progress aboslute transition-all duration-300 ease-in-out top-0 h-[10px] rounded-full bg-yellow-300"
-                :style="widthProgress"
-              ></div>
-            </div>
-          </div>
-        </div>
-        <div class="1-star my-2 align-center flex">
-          <div class="flex">
-            <div class="text-sm">1</div>
-            <Rating v-model="value" class="ml-1" :stars="1" readonly />
-          </div>
-          <div class="card relative ml-3">
-            <div
-              class="bar aboslute top-0 h-[10px] w-[300px] rounded-full bg-white"
-            >
-              <div
-                class="progress aboslute transition-all duration-300 ease-in-out top-0 h-[10px] rounded-full bg-yellow-300"
-                :style="widthProgress"
+                :style="{ width: rating.percentage }"
               ></div>
             </div>
           </div>
