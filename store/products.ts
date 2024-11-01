@@ -57,7 +57,7 @@ export const useProductStore = defineStore("product-store", () => {
       const data = await $fetch(`/api/products/${id}`);
       productById.value = data;
     } catch (err) {
-      console.log(err);
+      
     }
   };
   const updateProduct = async (product: Product, name: string) => {

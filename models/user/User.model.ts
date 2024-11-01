@@ -18,6 +18,7 @@ interface User {
   refreshToken: string;
   tokenExpire: Date;
   isVerified: boolean;
+  isAdmin: boolean
   verificationToken: string;
   expireAt: Date;
 }
@@ -48,6 +49,7 @@ const userSchema: Schema<User> = new mongoose.Schema({
   refreshToken: { type: String, default: "" },
   tokenExpire: { type: Date },
   isVerified: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: false },
   verificationToken: { type: String },
   expireAt: { type: Date },
 });

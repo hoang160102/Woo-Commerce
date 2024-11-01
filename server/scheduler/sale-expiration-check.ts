@@ -13,7 +13,6 @@ export default defineNitroPlugin(() => {
           product.saleExpiration = null
           product.sale = 0
           const newProduct = new Product(product)
-          console.log(newProduct)
           await newProduct.save()
         }
       })

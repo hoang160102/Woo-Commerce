@@ -1,4 +1,22 @@
 <script lang="ts" setup>
+interface Product {
+  name: string;
+  category: string;
+  productCollection: string[];
+  gender: string;
+  quanity: number;
+  price: number;
+  sale: number;
+  saleExpiration: Date | null;
+  color: string[];
+  size: string[];
+  description: string;
+  product_images: string[];
+  createdAt: string;
+  updatedAt: string;
+  rating: number;
+  reviews: object[];
+}
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUpload, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useProductStore } from "~/store/products";
@@ -43,13 +61,14 @@ const linkImg = ref<string[]>([]);
 const categories = ref<Category[]>([]);
 const collections = ref<Collection[]>([]);
 const isSubmit = ref<boolean>(false);
+const allProducts = ref<any>(null);
 const storeCate = useCategoryStore();
 const storeCollect = useCollectionStore();
 const storeProduct = useProductStore();
 const isLoading = ref<boolean>(false);
 const { getAllCategories } = storeCate;
 const { getAllCollections } = storeCollect;
-const { getProductByName, updateProduct } = storeProduct;
+const { getProductById, updateProduct, getAllProducts } = storeProduct;
 const isFormValid = computed(() => {
   return (
     name.value.length > 0 &&
@@ -63,7 +82,6 @@ const isFormValid = computed(() => {
     sizeArr.value.length > 0 &&
     description.value.length > 0 &&
     description.value.length <= 300 &&
-    file.value &&
     linkImg.value?.length >= 4
   );
 });
@@ -94,7 +112,10 @@ async function fetchCategories() {
 fetchCategories();
 
 watchEffect(async () => {
-  await getProductByName(route.params.name);
+  isLoading.value = true;
+  await getAllProducts();
+  allProducts.value = storeProduct.productsList.products || [];
+  await getProductById(getProductId.value);
   name.value = storeProduct.productById.name;
   category.value = storeProduct.productById.category;
   gender.value = storeProduct.productById.gender;
@@ -105,13 +126,24 @@ watchEffect(async () => {
   colorArr.value = storeProduct.productById.color;
   sizeArr.value = storeProduct.productById.size;
   description.value = storeProduct.productById.description;
-  linkImg.value = storeProduct.productById.product_images
+  linkImg.value = storeProduct.productById.product_images;
   if (storeProduct.productById.saleExpiration === null) {
-    expirationDate.value = ''
+    expirationDate.value = "";
+  } else {
+    expirationDate.value = new Date(storeProduct.productById.saleExpiration)
+      .toISOString()
+      .split("T")[0];
   }
-  else {
-    expirationDate.value = (new Date(storeProduct.productById.saleExpiration)).toISOString().split('T')[0]
-  } 
+  isLoading.value = false;
+});
+
+const getProductId = computed(() => {
+  if (allProducts.value) {
+    const product = allProducts.value.find((prod: Product) => {
+      return prod.name === route.params.name;
+    });
+    return product["_id"];
+  }
 });
 
 const handleUploadFiles = async (event: Event) => {
@@ -171,26 +203,29 @@ const deleteSize = async (size: string) => {
 };
 
 const submitData = async (event: Event) => {
-  console.log(file.value)
-  isLoading.value = true
+  console.log(file.value);
+  isLoading.value = true;
   event.preventDefault();
   isSubmit.value = true;
   if (isFormValid.value) {
-    console.log(file.value)
-    await updateProduct({
-      name: name.value,
-      category: category.value,
-      collection: collection.value,
-      gender: gender.value,
-      quanity: quanity.value,
-      price: price.value,
-      sale: sale.value,
-      saleExpiration: expirationDate.value,
-      color: colorArr.value,
-      size: sizeArr.value,
-      description: description.value,
-      product_images: file.value,
-    }, route.params.name);
+    console.log(file.value);
+    await updateProduct(
+      {
+        name: name.value,
+        category: category.value,
+        collection: collection.value,
+        gender: gender.value,
+        quanity: quanity.value,
+        price: price.value,
+        sale: sale.value,
+        saleExpiration: expirationDate.value,
+        color: colorArr.value,
+        size: sizeArr.value,
+        description: description.value,
+        product_images: file.value,
+      },
+      route.params.name
+    );
   }
 };
 watch(expirationDate, (newDate: string | null) => {

@@ -1,52 +1,62 @@
 <script lang="ts" setup>
 import Rating from "primevue/rating";
 import { useProductStore } from "~/store/products";
+import { socket } from "../Socket";
+
+// Define a Review interface
+interface Review {
+  comment: string;
+  rate: number;
+  username: string;
+  avatar: string;
+  createdAt: string
+}
+
 const value = ref<number>(1);
 const comment = ref<string>("");
-const progressValue = ref<number>(0);
-const possibleRatings = [1, 2, 3, 4, 5];
 const isReview = ref<boolean>(false);
+const reviews = ref<any>(null);
 const productStore = useProductStore();
 const userCookie: any = useCookie("currentUser");
 const { postProductReview } = productStore;
 const product: any = inject("product");
-const averageRating = computed(() => {
-  const totalRate = product.value.reviews.reduce((sum: number, review: any) => {
-    return sum + review.rate;
-  }, 0);
-  return totalRate / product.value.reviews.length;
+
+const possibleRatings = [1, 2, 3, 4, 5];
+
+watchEffect(async () => {
+  reviews.value = product.value.reviews;
 });
 const ratingPercentages = computed(() => {
-  return possibleRatings.map((rate: number) => {
-    let percentage
-    const count = product.value.reviews.filter(
-      (review: any) => review.rate === rate
-    ).length;
-    if (product.value.reviews.length === 0) {
-      percentage = 0
-    }
-    else {
-      percentage = ((count / product.value.reviews.length) * 100)
-    }
-    return { rate, percentage: percentage + "%" };
-  });
+  if (reviews.value) {
+    return possibleRatings.map((rate: number) => {
+      let percentage;
+      const count = reviews.value.filter(
+        (review: any) => review.rate === rate
+      ).length;
+      if (product.value.reviews.length === 0) {
+        percentage = 0;
+      } else {
+        percentage = (count / product.value.reviews.length) * 100;
+      }
+      return { rate, percentage: percentage + "%" };
+    });
+  }
 });
-// const widthProgress = computed(() => {
-//   return {
-//     width: `${(300 / 100) * progressValue.value}px`,
-//   };
-// });
-watchEffect(() => {
-  console.log(ratingPercentages.value);
-});
-watch(progressValue, (newValue: number) => {
-  progressValue.value = newValue;
-});
-const toggleReview = computed(() => {
+
+const toggleReview = () => {
   isReview.value = !isReview.value;
-});
-const submitReview = async () => {
+};
+
+const submitReview = async (event: Event) => {
   event?.preventDefault();
+  const newReview: Review = {
+    // Create a new review object with the defined type
+    comment: comment.value,
+    rate: value.value,
+    username: userCookie.value.username,
+    avatar: userCookie.value.profile_img,
+    createdAt: (new Date()).toISOString()
+  };
   await postProductReview(
     userCookie.value["_id"],
     product.value["_id"],
@@ -55,10 +65,15 @@ const submitReview = async () => {
     userCookie.value.username,
     userCookie.value.profile_img
   );
+  socket.emit("postReview", newReview);
+  isReview.value = false;
 };
+
 onMounted(() => {
-  const timer = setTimeout(() => (progressValue.value = 90), 500);
-  return () => clearTimeout(timer);
+  socket.on("reviewPosted", (newReview: Review) => {
+    reviews.value.push(newReview); // Update the reviews array when a new review is received
+  });
+  reviews.value = [...product.value.reviews];
 });
 </script>
 <template>
@@ -68,11 +83,11 @@ onMounted(() => {
       <div class="reviews-rate my-4 flex">
         <NuxtRating
           :readonly="true"
-          :ratingValue="averageRating"
+          :ratingValue="product.rating"
           activeColor="#ffd700"
         ></NuxtRating>
         <div class="ml-4 text-sm text-gray-600">
-          Based on {{ product.reviews.length }} reviews
+          Based on {{ reviews.length }} reviews
         </div>
       </div>
       <div v-if="ratingPercentages" class="rating-stats">
@@ -82,7 +97,7 @@ onMounted(() => {
           class="my-2 align-center flex"
         >
           <div class="flex">
-            <div class="text-sm">{{rating.rate}}</div>
+            <div class="text-sm">{{ rating.rate }}</div>
             <Rating v-model="value" class="ml-1" :stars="1" readonly />
           </div>
           <div class="card relative ml-3">
@@ -143,7 +158,6 @@ onMounted(() => {
                 v-model="comment"
               ></textarea>
             </div>
-            <!----><!---->
             <div class="w-full col-span-full text-center mt-3">
               <button
                 @click="submitReview"
@@ -157,7 +171,21 @@ onMounted(() => {
         </div>
       </form>
     </div>
+    <CommentUserRewiews
+      v-for="review in reviews"
+      :key="review['_id']"
+      :id="review['_id']"
+      :rate="review.rate"
+      :comment="review.comment"
+      :avatar="review.avatar"
+      :username="review.username"
+      :date="review.createdAt"
+    ></CommentUserRewiews>
   </section>
 </template>
 
-<style scoped></style>
+<style scoped>
+.review-item {
+  margin-bottom: 1rem;
+}
+</style>

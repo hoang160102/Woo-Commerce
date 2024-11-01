@@ -25,10 +25,11 @@ import { useProductStore } from "~/store/products";
 import { useCartStore } from "~/store/cart";
 const productStore = useProductStore();
 const cartStore = useCartStore();
-const { getProductById, addToWishlist, removeFromWishlist, getAllProducts } = productStore;
+const { getProductById, addToWishlist, removeFromWishlist, getAllProducts } =
+  productStore;
 const { addProductToCart } = cartStore;
 const cookie: any = useCookie("currentUser");
-const allProducts = ref<any>(null)
+const allProducts = ref<any>(null);
 const quanity = ref<number>(0);
 const selectedColor = ref<string>("");
 const selectedSize = ref<string>("");
@@ -70,19 +71,23 @@ watchEffect(async () => {
   allProducts.value = productStore.productsList.products || [];
   await getProductById(getProductId.value);
   product.value = productStore.productById;
-  if (product.value && product.value.product_images && product.value.product_images.length > 0) {
+  if (
+    product.value &&
+    product.value.product_images &&
+    product.value.product_images.length > 0
+  ) {
     currentImage.value = product.value.product_images[0];
   }
   isLoading.value = false;
 });
 const getProductId = computed(() => {
-  if(allProducts.value) {
+  if (allProducts.value) {
     const product = allProducts.value.find((prod: Product) => {
-      return prod.name === route.params.name
-    })
-    return product['_id']
+      return prod.name === route.params.name;
+    });
+    return product["_id"];
   }
-})
+});
 const isFormValid = computed(() => {
   return (
     selectedColor.value.length > 0 &&
@@ -160,7 +165,7 @@ const toggleProduct = async (productId: string) => {
           <span
             v-if="product.sale > 0"
             class="bg-red-500 absolute text-xs rounded-md text-white top-4 p-2 right-4"
-            >-10 %</span
+            >-{{ product.sale }} %</span
           >
           <div
             class="my-4 flex grid xl:grid-cols-6 md:grid-cols-4 grid-cols-5 gap-4"
@@ -202,14 +207,15 @@ const toggleProduct = async (productId: string) => {
             </div>
           </div>
           <div class="rate mt-2 flex">
-            <div class="inline-flex items-center">
-              <FontAwesomeIcon class="fa-sm text-gray-300" :icon="faStar" />
-              <FontAwesomeIcon class="fa-sm text-gray-300" :icon="faStar" />
-              <FontAwesomeIcon class="fa-sm text-gray-300" :icon="faStar" />
-              <FontAwesomeIcon class="fa-sm text-gray-300" :icon="faStar" />
-              <FontAwesomeIcon class="fa-sm text-gray-300" :icon="faStar" />
+            <NuxtRating
+              :readonly="true"
+              :ratingValue="product.rating"
+              activeColor="#ffd700"
+            ></NuxtRating>
+            <div class="ml-2 count">
+              (<span>{{ product.reviews.length }}</span
+              >)
             </div>
-            <div class="ml-2 count">(<span>0</span>)</div>
           </div>
           <div class="my-8 gap-2 grid">
             <div class="available">
@@ -335,7 +341,7 @@ const toggleProduct = async (productId: string) => {
               }}</span>
             </div>
           </div>
-          <div class="my-15">
+          <div class="mt-15 mb-5">
             <nav class="border-b flex gap-8">
               <div
                 :class="{
@@ -365,7 +371,8 @@ const toggleProduct = async (productId: string) => {
                   type="button"
                   class="cursor-pointer text-lg"
                 >
-                  Reviews (<span>{{ product.reviews.length }}</span>)
+                  Reviews (<span>{{ product.reviews.length }}</span
+                  >)
                 </button>
               </div>
             </nav>
