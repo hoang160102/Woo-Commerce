@@ -82,9 +82,10 @@ const isFormValid = computed(() => {
     sizeArr.value.length > 0 &&
     description.value.length > 0 &&
     description.value.length <= 300 &&
-    linkImg.value?.length >= 4
+    linkImg.value.length >= 4
   );
 });
+
 
 const imageErr = computed(() => {
   if (!linkImg.value && isSubmit.value) {
@@ -159,19 +160,6 @@ const handleUploadFiles = async (event: Event) => {
   }
 };
 
-const removeImage = async (index: number) => {
-  linkImg.value.splice(index, 1);
-  if (file.value) {
-    const dataTransfer = new DataTransfer();
-    Array.from(file.value).forEach((f: any, i) => {
-      if (i !== index) {
-        dataTransfer.items.add(f);
-      }
-    });
-    file.value = dataTransfer.files;
-  }
-};
-
 const addColor = async (color: string) => {
   const boolean: boolean = colorArr.value.some((item: string) => {
     return item === color;
@@ -203,29 +191,50 @@ const deleteSize = async (size: string) => {
 };
 
 const submitData = async (event: Event) => {
-  console.log(file.value);
-  isLoading.value = true;
   event.preventDefault();
+  isLoading.value = true;
   isSubmit.value = true;
   if (isFormValid.value) {
-    console.log(file.value);
-    await updateProduct(
-      {
-        name: name.value,
-        category: category.value,
-        collection: collection.value,
-        gender: gender.value,
-        quanity: quanity.value,
-        price: price.value,
-        sale: sale.value,
-        saleExpiration: expirationDate.value,
-        color: colorArr.value,
-        size: sizeArr.value,
-        description: description.value,
-        product_images: file.value,
-      },
-      route.params.name
-    );
+    if (linkImg.value[0].includes('blob')) {
+      await updateProduct(
+        {
+          name: name.value,
+          category: category.value,
+          collection: collection.value,
+          gender: gender.value,
+          quanity: quanity.value,
+          price: price.value,
+          sale: sale.value,
+          saleExpiration: expirationDate.value,
+          color: colorArr.value,
+          size: sizeArr.value,
+          description: description.value,
+          product_images: file.value,
+        },
+        storeProduct.productById['_id']
+      );
+      isLoading.value = false
+    }
+    else if (linkImg.value[0].includes('cloudinary')) {
+      await updateProduct(
+        {
+          name: name.value,
+          category: category.value,
+          collection: collection.value,
+          gender: gender.value,
+          quanity: quanity.value,
+          price: price.value,
+          sale: sale.value,
+          saleExpiration: expirationDate.value,
+          color: colorArr.value,
+          size: sizeArr.value,
+          description: description.value,
+          product_images: [],
+        },
+        storeProduct.productById['_id']
+      );
+      isLoading.value = false
+    }
   }
 };
 watch(expirationDate, (newDate: string | null) => {
@@ -517,12 +526,6 @@ watch(expirationDate, (newDate: string | null) => {
                   class="w-full h-42 object-cover rounded-lg"
                   alt="Preview"
                 />
-                <div
-                  @click="removeImage(index)"
-                  class="absolute top-2 right-2 cursor-pointer bg-red-500 text-white rounded-full p-1"
-                >
-                  &times;
-                </div>
               </div>
             </div>
           </div>

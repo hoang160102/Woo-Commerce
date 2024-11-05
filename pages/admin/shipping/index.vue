@@ -1,86 +1,20 @@
 <script lang="ts" setup>
-import {
-  faPlus,
-  faClose,
-  faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
-import { faEdit, faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { faPlus, faClose, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { vOnClickOutside } from "@vueuse/components";
-import { useCategoryStore } from "~/store/categories";
-
 definePageMeta({
-  layout: "admin",
-});
-
-const store = useCategoryStore();
-const { getAllCategories, deleteCategory } = store;
-const allCategories = ref<object[]>([]);
-const selectedCategory = ref<string>("");
-const isModal = ref<boolean>(false);
-
-const nameCategory = computed(() => {
-  const selectCate: any = allCategories.value.find(
-    (cate: any) => cate["_id"] === selectedCategory.value
-  );
-  return selectCate ? selectCate.name : "";
-});
-const { searchInput, filteredListItems } = useSearchItem(allCategories);
-const modalDelete = (id: string) => {
-  selectedCategory.value = id;
-  isModal.value = true;
-};
-
-const closeModal = () => {
-  isModal.value = false;
-};
-
-const handleClickOutside = () => {
-  isModal.value = false;
-};
-
-watch(isModal, (newVal: boolean) => {
-  if (newVal) {
-    document.body.classList.add("overflow-hidden");
-  } else {
-    document.body.classList.remove("overflow-hidden");
-  }
-});
-// async function fetchCategories() {
-//   await getAllCategories();
-//   allCategories.value = store.categoryList?.categories || [];
-// }
-// fetchCategories();
-
-// watch(
-//   () => store.categoryList,
-//   (newVal: any) => {
-//     allCategories.value = newVal?.categories || [];
-//   },
-//   { immediate: true }
-// );
-watchEffect(async () => {
-  await getAllCategories()
-  allCategories.value = store.categoryList.categories || []
+    layout: "admin"
 })
-
-const deleteCate = async (id: string) => {
-  allCategories.value = allCategories.value.filter(
-    (category: any) => category["_id"] !== id
-  );
-  await deleteCategory(id);
-  isModal.value = false;
-};
-
+const allShippingMethods = ref<object[]>([])
+const { searchInput, filteredListItems } = useSearchItem(allShippingMethods)
 </script>
-
 <template>
   <section class="my-4">
     <div class="nav flex my-8">
       <NuxtLink to="/admin/categories/create">
         <button class="px-4 py-3 rounded-lg bg-violet-600 text-white">
           <FontAwesomeIcon :icon="faPlus" />
-          Create new category
+          Create new shipping methods
         </button>
       </NuxtLink>
       <div class="relative ml-10 px-4 border flex align-center rounded-lg">
@@ -98,7 +32,7 @@ const deleteCate = async (id: string) => {
     </div>
     <ClientOnly>
       <table class="w-full">
-        <thead>
+        <!-- <thead>
           <tr>
             <th class="pb-5">Name</th>
             <th class="pb-5">Image</th>
@@ -134,10 +68,10 @@ const deleteCate = async (id: string) => {
               />
             </td>
           </tr>
-        </tbody>
+        </tbody> -->
       </table>
     </ClientOnly>
-    <ClientOnly>
+    <!-- <ClientOnly>
       <Teleport to="body">
         <div
           v-if="isModal"
@@ -176,29 +110,6 @@ const deleteCate = async (id: string) => {
           </div>
         </div>
       </Teleport>
-    </ClientOnly>
+    </ClientOnly> -->
   </section>
 </template>
-
-<style scoped>
-table tr:nth-child(even) {
-  background-color: rgba(246, 248, 251, 0.8);
-  font-weight: bold;
-  color: #333;
-}
-tbody > tr:hover {
-  background-color: #edf1f5;
-}
-tr td:first-child {
-  border-top-left-radius: 16px;
-  border-bottom-left-radius: 16px;
-}
-
-tr td:last-child {
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-.modal {
-  background-color: rgba(0, 0, 0, 0.4);
-}
-</style>

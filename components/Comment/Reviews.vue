@@ -3,7 +3,6 @@ import Rating from "primevue/rating";
 import { useProductStore } from "~/store/products";
 import { socket } from "../Socket";
 
-// Define a Review interface
 interface Review {
   comment: string;
   rate: number;
@@ -20,15 +19,13 @@ const productStore = useProductStore();
 const userCookie: any = useCookie("currentUser");
 const { postProductReview } = productStore;
 const product: any = inject("product");
+const ratingValue = ref<number>(product.value.rating)
+const ratingPercentages = ref<any>(null)
 
 const possibleRatings = [1, 2, 3, 4, 5];
-
-watchEffect(async () => {
-  reviews.value = product.value.reviews;
-});
-const ratingPercentages = computed(() => {
+const calculateRatingPercentage = () => {
   if (reviews.value) {
-    return possibleRatings.map((rate: number) => {
+    const obj = possibleRatings.map((rate: number) => {
       let percentage;
       const count = reviews.value.filter(
         (review: any) => review.rate === rate
@@ -40,7 +37,12 @@ const ratingPercentages = computed(() => {
       }
       return { rate, percentage: percentage + "%" };
     });
+    ratingPercentages.value = obj
   }
+}
+watchEffect(async () => {
+  reviews.value = product.value.reviews;
+  calculateRatingPercentage()
 });
 
 const toggleReview = () => {
@@ -72,6 +74,11 @@ const submitReview = async (event: Event) => {
 onMounted(() => {
   socket.on("reviewPosted", (newReview: Review) => {
     reviews.value.push(newReview); // Update the reviews array when a new review is received
+    calculateRatingPercentage()
+    if(reviews.value) {
+      const totalRating = reviews.value.reduce((sum: number, review: any) => sum + review.rate, 0);
+      ratingValue.value = totalRating / reviews.value.length
+    }
   });
   reviews.value = [...product.value.reviews];
 });
@@ -83,7 +90,7 @@ onMounted(() => {
       <div class="reviews-rate my-4 flex">
         <NuxtRating
           :readonly="true"
-          :ratingValue="product.rating"
+          :ratingValue="ratingValue"
           activeColor="#ffd700"
         ></NuxtRating>
         <div class="ml-4 text-sm text-gray-600">

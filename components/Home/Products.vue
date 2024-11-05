@@ -10,10 +10,6 @@ const props = defineProps<{
   rating: number;
   image: string
 }>();
-
-function defineProps<T>() {
-  throw new Error("Function not implemented.");
-}
 </script>
 <template>
   <div class="relative product-card">

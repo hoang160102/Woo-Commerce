@@ -168,7 +168,7 @@ const submitData = async (event: Event) => {
       color: colorArr.value,
       size: sizeArr.value,
       description: description.value,
-      product_images: file.value,
+      product_images: file.value
     });
     name.value = "";
     category.value = "";

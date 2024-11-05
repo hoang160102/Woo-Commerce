@@ -12,7 +12,7 @@ const allProducts = ref<any[]>([]);
 const productStore = useProductStore();
 const isLoading = ref<boolean>(false);
 const { searchInput, filteredListItems } = useSearchItem(allProducts);
-const { getAllProducts } = productStore;
+const { getAllProducts, deleteProduct } = productStore;
 watchEffect(async () => {
   isLoading.value = true;
   await getAllProducts();
@@ -27,6 +27,12 @@ const {
   onPageChange,
   paginatedProducts,
 } = usePagination(filteredListItems, allProducts, 15)
+const deleteItem = async (id: string) => {
+  allProducts.value = await allProducts.value.filter((prod: any) => {
+    return prod['_id'] !== id
+  })
+  await deleteProduct(id)
+}
 </script>
 <template>
   <section class="my-4">
@@ -74,7 +80,7 @@ const {
             <NuxtLink :to="`/admin/products/${product.name}`">
               <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
             </NuxtLink>
-            <FontAwesomeIcon :icon="faTrashCan" class="cursor-pointer ml-3" />
+            <FontAwesomeIcon @click="deleteItem(product['_id'])" :icon="faTrashCan" class="cursor-pointer ml-3" />
           </td>
         </tr>
         <div class="flex w-full justify-center">

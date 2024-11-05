@@ -13,7 +13,7 @@ interface Product {
   color: string[];
   size: string[];
   description: string;
-  product_images: FileList;
+  product_images: string[] ;
 }
 export const useProductStore = defineStore("product-store", () => {
   const productsList = ref<any>({});
@@ -60,7 +60,7 @@ export const useProductStore = defineStore("product-store", () => {
       
     }
   };
-  const updateProduct = async (product: Product, name: string) => {
+  const updateProduct = async (product: Product, id: string) => {
     try {
       const formData = new FormData();
       formData.append("name", product.name);
@@ -80,15 +80,22 @@ export const useProductStore = defineStore("product-store", () => {
       Array.from(product.product_images).forEach((file) => {
         formData.append("product_images", file);
       });
-      const data = await $fetch(`/api/products/${name}`, {
+      const data = await $fetch(`/api/products/${id}`, {
         method: "put",
         body: formData,
       });
+      console.log(data)
       toast.success("Updated product successfully");
     } catch (err) {
       console.log(err);
     }
   };
+  const deleteProduct = async (id: string) => {
+    await $fetch(`/api/products/${id}`, {
+      method: 'delete'
+    })
+    toast.success('Delete Successfully')
+  }
   const addToWishlist = async (userId: string, productId: string) => {
     const formData = new FormData();
     formData.append("productId", productId);
@@ -133,7 +140,6 @@ export const useProductStore = defineStore("product-store", () => {
           avatar
         }
       })
-      console.log(data)
     }
     catch(err) {
       toast.error('Error')
@@ -144,6 +150,7 @@ export const useProductStore = defineStore("product-store", () => {
     getAllProducts,
     getProductById,
     updateProduct,
+    deleteProduct,
     addToWishlist,
     removeFromWishlist,
     postProductReview,

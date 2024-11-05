@@ -15,6 +15,7 @@ import {
   faUsers,
   faBagShopping,
   faBoxArchive,
+  faTruck,
   faCopy
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -95,6 +96,15 @@ const toggle = (): void => {
         <FontAwesomeIcon class="fa-xl" :icon="faCopy" />
         <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
           >Collections</span
+        >
+      </NuxtLink>
+      <NuxtLink
+        to="/admin/shipping"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
+      >
+        <FontAwesomeIcon class="fa-xl" :icon="faTruck" />
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Shipping</span
         >
       </NuxtLink>
       <NuxtLink
