@@ -65,7 +65,7 @@ const toggle = (): void => {
     </div>
     <div class="navigation flex flex-col">
       <NuxtLink
-        to="/admin/home"
+        to="/admin/dashboard"
         class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faHouse" />
@@ -99,7 +99,7 @@ const toggle = (): void => {
         >
       </NuxtLink>
       <NuxtLink
-        to="/admin/shipping"
+        to="/admin/shipping-method"
         class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
         <FontAwesomeIcon class="fa-xl" :icon="faTruck" />

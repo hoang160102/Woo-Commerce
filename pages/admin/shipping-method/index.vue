@@ -1,17 +1,33 @@
 <script lang="ts" setup>
-import { faPlus, faClose, faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons"
+import {
+  faPlus,
+  faClose,
+  faEdit,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { vOnClickOutside } from "@vueuse/components";
+import { useShippingMethodStore } from "~/store/shipping-method";
 definePageMeta({
-    layout: "admin"
-})
-const allShippingMethods = ref<object[]>([])
-const { searchInput, filteredListItems } = useSearchItem(allShippingMethods)
+  layout: "admin",
+});
+interface ShippingMethod {
+  name: string;
+  price: number;
+}
+const shippingMethodStore = useShippingMethodStore();
+const { getAllShippingMethods } = shippingMethodStore;
+const allMethods = ref<ShippingMethod[]>([]);
+watchEffect(async () => {
+  await getAllShippingMethods();
+  allMethods.value = shippingMethodStore.allShippingMethods;
+});
+const { searchInput, filteredListItems } = useSearchItem(allMethods);
 </script>
 <template>
   <section class="my-4">
     <div class="nav flex my-8">
-      <NuxtLink to="/admin/categories/create">
+      <NuxtLink to="/admin/shipping-method/create">
         <button class="px-4 py-3 rounded-lg bg-violet-600 text-white">
           <FontAwesomeIcon :icon="faPlus" />
           Create new shipping methods
@@ -31,44 +47,42 @@ const { searchInput, filteredListItems } = useSearchItem(allShippingMethods)
       </div>
     </div>
     <ClientOnly>
-      <table class="w-full">
-        <!-- <thead>
-          <tr>
-            <th class="pb-5">Name</th>
-            <th class="pb-5">Image</th>
-            <th class="pb-5">Date of Created</th>
-            <th class="pb-5">Date of Updated</th>
-            <th class="pb-5">Action</th>
+      <table class="w-full border rounded-lg border-gray-300">
+        <thead>
+          <tr class="border-b border-gray-300">
+            <th class="py-5 border-r border-gray-300">Name</th>
+            <th class="py-5 border-r border-gray-300">Price</th>
+            <th class="py-5 border-r border-gray-300">Date of Created</th>
+            <th class="py-5 border-r border-gray-300">Date of Updated</th>
+            <th class="py-5">Action</th>
           </tr>
         </thead>
         <tbody>
           <tr
-            :id="cate['_id']"
-            v-for="cate in filteredListItems"
-            :key="cate['_id']"
+            v-for="ship in filteredListItems"
+            :id="ship['_id']"
+            :key="ship['_id']"
+            class="border-b border-gray-300"
           >
-            <td class="text-center py-3">{{ cate.name }}</td>
-            <td class="flex justify-center py-3 align-center">
-              <img
-                class="w-[60px] aspect-square"
-                :src="cate.image"
-                :alt="cate.name"
-              />
+            <td class="text-center py-3 border-r border-gray-300">
+              {{ ship.name }}
             </td>
-            <td class="text-center py-3">{{ cate.createdAt }}</td>
-            <td class="text-center py-3">{{ cate.updatedAt }}</td>
+            <td class="text-center py-3 border-r border-gray-300">
+              {{ (ship.price).toFixed(2) }}$
+            </td>
+            <td class="text-center py-3 border-r border-gray-300">
+              {{ ship.createdAt }}
+            </td>
+            <td class="text-center py-3 border-r border-gray-300">
+              {{ ship.updatedAt }}
+            </td>
             <td class="text-center py-3">
-              <NuxtLink :to="`/admin/categories/${cate['_id']}`">
+              <NuxtLink :to="`/admin/categories/${ship['_id']}`">
                 <FontAwesomeIcon class="cursor-pointer" :icon="faEdit" />
               </NuxtLink>
-              <FontAwesomeIcon
-                @click="modalDelete(cate['_id'])"
-                :icon="faTrashCan"
-                class="ml-2 cursor-pointer"
-              />
             </td>
           </tr>
-        </tbody> -->
+        </tbody>
       </table>
     </ClientOnly>
     <!-- <ClientOnly>

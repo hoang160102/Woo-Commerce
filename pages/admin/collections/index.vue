@@ -20,7 +20,7 @@ const selectedCollection = ref<string>("");
 const isModal = ref<boolean>(false);
 
 const nameCollection = computed(() => {
-  const selectCollect = allCollections.value.find((collect: any) => {
+  const selectCollect :any = allCollections.value.find((collect: any) => {
     return collect["_id"] === selectedCollection.value;
   });
   return selectCollect ? selectCollect.name : "";

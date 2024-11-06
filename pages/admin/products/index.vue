@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import { faPlus, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faMagnifyingGlass, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { vOnClickOutside } from "@vueuse/components";
 import { useProductStore } from "~/store/products";
 import Paginator from "primevue/paginator";
 definePageMeta({
@@ -10,7 +11,9 @@ definePageMeta({
 });
 const allProducts = ref<any[]>([]);
 const productStore = useProductStore();
+const selectedProduct = ref<string>("")
 const isLoading = ref<boolean>(false);
+const isModal = ref<boolean>(false)
 const { searchInput, filteredListItems } = useSearchItem(allProducts);
 const { getAllProducts, deleteProduct } = productStore;
 watchEffect(async () => {
@@ -27,12 +30,30 @@ const {
   onPageChange,
   paginatedProducts,
 } = usePagination(filteredListItems, allProducts, 15)
+const nameProduct = computed(() => {
+  const selectProd: any = allProducts.value.find((prod: any) => {
+    return prod['_id'] === selectedProduct.value
+  })
+  return selectProd ? selectProd.name : ""
+})
+const modalDelete = (id: string) => {
+  selectedProduct.value = id
+  isModal.value = true
+}
 const deleteItem = async (id: string) => {
-  allProducts.value = await allProducts.value.filter((prod: any) => {
+  allProducts.value = allProducts.value.filter((prod: any) => {
     return prod['_id'] !== id
   })
   await deleteProduct(id)
+  isModal.value = false
 }
+
+const closeModal = () => {
+  isModal.value = false
+}
+const handleClickOutside = () => {
+  isModal.value = false;
+};
 </script>
 <template>
   <section class="my-4">
@@ -80,7 +101,7 @@ const deleteItem = async (id: string) => {
             <NuxtLink :to="`/admin/products/${product.name}`">
               <FontAwesomeIcon :icon="faPenToSquare" class="cursor-pointer" />
             </NuxtLink>
-            <FontAwesomeIcon @click="deleteItem(product['_id'])" :icon="faTrashCan" class="cursor-pointer ml-3" />
+            <FontAwesomeIcon @click="modalDelete(product['_id'])" :icon="faTrashCan" class="cursor-pointer ml-3" />
           </td>
         </tr>
         <div class="flex w-full justify-center">
@@ -93,6 +114,46 @@ const deleteItem = async (id: string) => {
           ></Paginator>
         </div>
       </table>
+    </ClientOnly>
+    <ClientOnly>
+      <Teleport to="body">
+        <div
+          v-if="isModal"
+          class="modal fixed w-screen flex justify-center align-center h-screen z-[200] left-0 top-0"
+        >
+          <div
+            v-on-click-outside="handleClickOutside"
+            class="modal-content bg-white relative rounded-lg p-10"
+          >
+            <FontAwesomeIcon
+              @click="closeModal"
+              :icon="faClose"
+              class="fa-lg absolute top-[20px] right-[20px] cursor-pointer"
+            />
+            <div
+              class="main-content w-full flex flex-col mt-5 justify-center align-center"
+            >
+              <div class="text-xl font-semibold">
+                Are you sure to delete collection {{ nameProduct }} ?
+              </div>
+              <div class="confirm my-10 flex">
+                <button
+                  @click="closeModal"
+                  class="px-9 py-3 bg-slate-400 font-semibold rounded-lg text-white"
+                >
+                  Cancel
+                </button>
+                <button
+                  @click="deleteItem(selectedProduct)"
+                  class="px-9 ml-5 py-3 bg-red-500 font-sembold rounded-lg text-white"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Teleport>
     </ClientOnly>
   </section>
 </template>
@@ -117,5 +178,8 @@ table tr:nth-child(even) {
 tr:not(:first-child):hover {
   background-color: #edf1f5;
   cursor: pointer;
+}
+.modal {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>

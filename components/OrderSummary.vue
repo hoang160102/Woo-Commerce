@@ -15,6 +15,13 @@ interface User {
   tokenExpire: Date;
   isVerified: boolean;
 }
+interface ShippingMethod {
+  name: string;
+  price: number;
+}
+const props = defineProps<{
+  price: number;
+}>();
 const cartStore = useCartStore();
 const { getUserCart } = cartStore;
 const userCookie: any = useCookie("currentUser");
@@ -31,16 +38,24 @@ watch(
   },
   { immediate: true, deep: true }
 );
-const totalPrice = computed(() => {
+const subtotal = computed(() => {
   if (cartItems.value) {
-    return cartItems.value.reduce((acc: any, item: any) => acc + item.price * item.qty, 0);
-  } 
-})
+    return cartItems.value.reduce(
+      (acc: any, item: any) => acc + item.price * item.qty,
+      0
+    );
+  }
+});
+const totalPrice = computed(() => {
+  if (subtotal.value) {
+    return subtotal.value + props.price;
+  }
+});
 const totalQuantity = computed(() => {
   if (cartItems.value) {
     return cartItems.value.reduce((acc: any, item: any) => acc + item.qty, 0);
   }
-})
+});
 </script>
 <template>
   <div
@@ -62,15 +77,21 @@ const totalQuantity = computed(() => {
     <div class="total-cart p-4 my-4">
       <div class="subtotal flex justify-between">
         <span class="text-sm text-gray-500 font-medium">Subtotal</span>
-        <span class="text-sm text-gray-500 font-semibold">{{ totalPrice.toFixed(2) }}</span>
+        <span class="text-sm text-gray-500 font-semibold"
+          >{{ subtotal.toFixed(2) }}$</span
+        >
       </div>
       <div class="shipping mt-1 flex justify-between">
         <span class="text-sm text-gray-500 font-medium">Shipping</span>
-        <span class="text-sm text-gray-500 font-semibold">€11.50</span>
+        <span class="text-sm text-gray-500 font-semibold"
+          >{{ props.price.toFixed(2) }}$</span
+        >
       </div>
       <div class="total mt-4 flex justify-between">
         <span class="text-sm text-gray-500 font-medium">Total</span>
-        <span class="text-lg text-gray-600 font-semibold">{{ totalPrice.toFixed(2) }}</span>
+        <span class="text-lg text-gray-600 font-semibold"
+          >{{ totalPrice.toFixed(2) }}$</span
+        >
       </div>
     </div>
     <button

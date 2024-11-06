@@ -1,6 +1,14 @@
 <script lang="ts" setup>
 const paymentMethod = ref<string>('')
-const shippingMethod = ref<string>('')
+const shippingMethod = ref<any>(null)
+const price = computed(() => {
+  if (shippingMethod.value) {
+    return shippingMethod.value.price
+  }
+  else {
+    return 0
+  }
+})
 const currentUser: any = useCookie('currentUser')
 </script>
 <template>
@@ -12,11 +20,9 @@ const currentUser: any = useCookie('currentUser')
         <h2 class="w-full mb-3 text-2xl font-semibold">Billing Details</h2>
         <Billing :currentUser="currentUser"></Billing>
         <ShippingMethods v-model="shippingMethod"></ShippingMethods>
-        <h1>{{ shippingMethod }}</h1>
         <PaymentOptions v-model="paymentMethod"></PaymentOptions>
-        <h1>{{ paymentMethod }}</h1>
       </div>
-      <OrderSummary></OrderSummary>
+      <OrderSummary :price="price"></OrderSummary>
     </form>
   </div>
 </template>
