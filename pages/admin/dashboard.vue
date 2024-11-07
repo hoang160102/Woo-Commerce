@@ -8,6 +8,7 @@ import {
 import { faDropbox } from "@fortawesome/free-brands-svg-icons";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 </script>
 <template>

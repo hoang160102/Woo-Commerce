@@ -3,6 +3,7 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const date = new Date();
 const orders = ref([

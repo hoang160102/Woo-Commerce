@@ -2,6 +2,7 @@
 import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const { createCollection } = useCollectionStore();
 const submitData = async (data: any) => {

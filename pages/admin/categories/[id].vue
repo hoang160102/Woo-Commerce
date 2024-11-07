@@ -2,6 +2,7 @@
 import { useCategoryStore } from "~/store/categories";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 }); 
 const route: any = useRoute();
 const store = useCategoryStore();

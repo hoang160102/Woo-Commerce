@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faUser } from "@fortawesome/free-regular-svg-icons";

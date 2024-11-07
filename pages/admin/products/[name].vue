@@ -25,6 +25,7 @@ import { useCollectionStore } from "~/store/collections";
 import ProgressSpinner from "primevue/progressspinner";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const route: any = useRoute();
 

@@ -21,6 +21,7 @@ const currentUser: any = useCookie('currentUser')
         <Billing :currentUser="currentUser"></Billing>
         <ShippingMethods v-model="shippingMethod"></ShippingMethods>
         <PaymentOptions v-model="paymentMethod"></PaymentOptions>
+        <div v-if="paymentMethod === 'cash'">cash</div>
       </div>
       <OrderSummary :price="price"></OrderSummary>
     </form>

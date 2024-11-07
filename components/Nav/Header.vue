@@ -37,6 +37,9 @@ const { getUserCart, clearCart } = cartStore;
 const userCookie: any = useCookie("currentUser");
 const currentUser: any = ref<User | null>(userCookie.value);
 const cartItems = ref<any>(null);
+const router = useRouter();
+const query = ref<string>('')
+const cart = ref<boolean>(false);
 watchEffect(async () => {
   if (userCookie.value) {
     await getUserCart(currentUser.value.cart);
@@ -52,19 +55,26 @@ watch(
 );
 const totalPrice = computed(() => {
   if (cartItems.value) {
-    return cartItems.value.reduce((acc: any, item: any) => acc + item.price * item.qty, 0);
-  } 
-})
+    return cartItems.value.reduce(
+      (acc: any, item: any) => acc + item.price * item.qty,
+      0
+    );
+  }
+});
 const totalQuantity = computed(() => {
   if (cartItems.value) {
     return cartItems.value.reduce((acc: any, item: any) => acc + item.qty, 0);
   }
-})
+});
+
 watch(userCookie, (newVal: User) => {
   currentUser.value = newVal;
 });
-const router = useRouter();
-const cart = ref<boolean>(false);
+const searchProducts = async () => {
+  if (query.value) {
+    router.push({ path: '/search', query: { keyword: query.value } });
+  }
+}
 const toggleCart = (): void => {
   cart.value = true;
 };
@@ -80,8 +90,8 @@ const logout = async () => {
   await userLogout();
 };
 const deleteCart = async () => {
-  await clearCart(userCookie.value.cart)
-}
+  await clearCart(userCookie.value.cart);
+};
 watch(router.currentRoute, (): void => {
   isShowNav.value = false;
   cart.value = false;
@@ -155,11 +165,14 @@ onMounted(() => {
               <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                 <FontAwesomeIcon :icon="faMagnifyingGlass" />
               </span>
-              <input
-                type="text"
-                placeholder="Search Products..."
-                class="py-3 text-sm pl-10 pr-4 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-              />
+              <form @submit.prevent="searchProducts">
+                <input
+                  type="text"
+                  placeholder="Search Products..."
+                  class="py-3 text-sm pl-10 pr-4 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                  v-model="query"
+                />
+              </form>
             </div>
             <div class="text-gray-600 hover:text-purple-600 user relative">
               <img
@@ -288,7 +301,11 @@ onMounted(() => {
               Cart (<span>{{ totalQuantity }}</span
               >)
             </div>
-            <FontAwesomeIcon @click="deleteCart" class="fa-xl cursor-pointer hover:text-red-500" :icon="faTrashCan" />
+            <FontAwesomeIcon
+              @click="deleteCart"
+              class="fa-xl cursor-pointer hover:text-red-500"
+              :icon="faTrashCan"
+            />
           </div>
 
           <!-- Scrollable content -->

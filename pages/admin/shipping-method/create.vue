@@ -3,6 +3,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import { useShippingMethodStore } from "~/store/shipping-method";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const shippingMethodStore = useShippingMethodStore();
 const { createShippingMethod } = shippingMethodStore;

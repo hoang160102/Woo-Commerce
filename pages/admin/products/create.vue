@@ -26,6 +26,7 @@ interface Collection {
 
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 
 const name = ref<string>("");

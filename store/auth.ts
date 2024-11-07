@@ -143,6 +143,7 @@ export const useAuthStore = defineStore("auth-store", () => {
         userCookie.value = currentUser.value;
       }
       if (access && data.refreshToken) {
+        console.log(access)
         const accessToken: any = useCookie("accessToken", {
           maxAge: 300,
           secure: false,

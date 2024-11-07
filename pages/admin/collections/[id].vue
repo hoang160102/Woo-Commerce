@@ -2,10 +2,11 @@
 import { useCollectionStore } from "~/store/collections";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const route: any = useRoute();
 const store = useCollectionStore();
-const cate = ref<object>({});
+const cate = ref<any>({});
 const { getCollectionById, updateCollection } = store;
 const name = ref<string>("");
 const saveData = async (data: any) => {

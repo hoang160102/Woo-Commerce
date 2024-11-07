@@ -3,6 +3,7 @@ import { useCategoryStore } from "~/store/categories";
 
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const { createCategory } = useCategoryStore();
 const submitData = async (data: any) => {

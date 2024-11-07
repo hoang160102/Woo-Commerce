@@ -8,6 +8,7 @@ import { useProductStore } from "~/store/products";
 import Paginator from "primevue/paginator";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 const allProducts = ref<any[]>([]);
 const productStore = useProductStore();

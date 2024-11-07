@@ -10,6 +10,7 @@ import { vOnClickOutside } from "@vueuse/components";
 import { useShippingMethodStore } from "~/store/shipping-method";
 definePageMeta({
   layout: "admin",
+  middleware: "auth-admin"
 });
 interface ShippingMethod {
   name: string;
