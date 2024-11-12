@@ -106,7 +106,6 @@ const handleLoginError = () => {
         ></GoogleSignInButton>
         <div>
           <button
-            @click="login"
             class="px-13 py-3 w-full md:w-auto bg-blue-500 rounded-lg mt-4 text-white text-lg font-semibold"
           >
             Login

@@ -14,7 +14,7 @@ watchEffect(async () => {
   await getAllShippingMethods();
   allMethods.value = shippingMethodStore.allShippingMethods;
 });
-const shippingMethod = defineModel<ShippingMethod>();
+const shippingMethod: any = defineModel<ShippingMethod>();
 const selectMethod = (method: ShippingMethod) => {
   shippingMethod.value = method;
 };
@@ -45,24 +45,9 @@ const selectMethod = (method: ShippingMethod) => {
           </div>
         </div>
       </div>
-      <!-- <div
-        @click="selectMethod('express')"
-        :class="{ 'active-option': shippingMethod === 'express'}"
-        class="flex cursor-pointer items-center bg-white px-4 py-3 justify-between option rounded-lg"
-      >
-        <div>
-          <div class="text-sm leading-tight text-gray-500">
-            Express Shipping
-          </div>
-          <div class="font-semibold text-gray-600">€25.00</div>
-        </div>
-        <div
-          v-if="shippingMethod === 'express'"
-          class="check w-[20px] h-[20px] flex justify-center align-center bg-violet-400 rounded-full"
-        >
-          <FontAwesomeIcon :icon="faCheck" class="fa-xs text-white" />
-        </div>
-      </div> -->
+    </div>
+    <div class="mt-2 text-red-500" v-if="!shippingMethod">
+      You have to choose shipping method
     </div>
   </div>
 </template>

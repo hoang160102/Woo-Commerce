@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useCartStore } from "~/store/cart";
+import { useCheckoutStore } from "~/store/checkout";
 interface User {
   name: string;
   username: string;
@@ -21,9 +22,12 @@ interface ShippingMethod {
 }
 const props = defineProps<{
   price: number;
+  payMethod: any;
 }>();
 const cartStore = useCartStore();
+const checkoutStore = useCheckoutStore();
 const { getUserCart } = cartStore;
+const { checkoutCart } = checkoutStore;
 const userCookie: any = useCookie("currentUser");
 const currentUser: any = ref<User | null>(userCookie.value);
 const cartItems = ref<any>(null);
@@ -56,6 +60,23 @@ const totalQuantity = computed(() => {
     return cartItems.value.reduce((acc: any, item: any) => acc + item.qty, 0);
   }
 });
+const handleCheckout = async () => {
+  event?.preventDefault();
+  if (props.price > 0) {
+    try {
+      const items = cartItems.value.map((item: any) => ({
+        id: item.product_id,
+        price: item.price,
+        color: item.color,
+        size: item.size,
+        qty: item.qty,
+      }));
+      await checkoutCart(items, props.price)
+    } catch (error) {
+      console.error("Error initiating checkout:", error);
+    }
+  }
+};
 </script>
 <template>
   <div
@@ -95,6 +116,7 @@ const totalQuantity = computed(() => {
       </div>
     </div>
     <button
+      @click="handleCheckout"
       type="submit"
       class="bg-violet-400 w-full font-semibold rounded-lg shadow-md bg-violet-500 hover:bg-violet-700 text-lg px-7 text-white text-center py-3"
     >

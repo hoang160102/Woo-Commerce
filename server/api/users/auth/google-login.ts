@@ -32,5 +32,9 @@ export default defineEventHandler(async (event) => {
     await newCart.save()
     await user.save()
   }
+  else {
+    user.refreshToken = generateRefreshToken(userAccount.id)
+    await user.save()
+  }
   return user
 });

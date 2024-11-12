@@ -64,4 +64,7 @@ export default defineNuxtConfig({
       websocket: true
     },
   },
+  runtimeConfig: {
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY
+  }
 })

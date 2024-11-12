@@ -23,7 +23,7 @@ const currentUser: any = useCookie('currentUser')
         <PaymentOptions v-model="paymentMethod"></PaymentOptions>
         <div v-if="paymentMethod === 'cash'">cash</div>
       </div>
-      <OrderSummary :price="price"></OrderSummary>
+      <OrderSummary :payMethod="paymentMethod" :price="price"></OrderSummary>
     </form>
   </div>
 </template>

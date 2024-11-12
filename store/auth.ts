@@ -57,6 +57,7 @@ export const useAuthStore = defineStore("auth-store", () => {
           "Content-Type": "application/json",
         },
       });
+      console.log(data)
       if (data && data["_doc"]) {
         currentUser.value = data["_doc"];
         const userCookie = useCookie("currentUser", {
@@ -132,7 +133,8 @@ export const useAuthStore = defineStore("auth-store", () => {
           userAccount
         }
       })
-      if (data) {
+      console.log(data)
+      if (!!data) {
         currentUser.value = data
         const userCookie = useCookie("currentUser", {
           maxAge: 365 * 24 * 60 * 60,
