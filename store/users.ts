@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 const toast = useToast();
-interface Users {
+interface User {
   name: string;
   username: string;
   password: string;
@@ -20,6 +20,7 @@ interface Users {
 }
 export const useUsersStore = defineStore("users-store", () => {
   const usersList = ref<any>({});
+  const userById = ref<User | null>(null)
   const userCookie: any = useCookie("currentUser");
   async function getAllUsers() {
     try {
@@ -28,6 +29,9 @@ export const useUsersStore = defineStore("users-store", () => {
     } catch (err) {
       console.log(err);
     }
+  }
+  const getUserById = async () => {
+    
   }
   const uploadProfileImage = async (data: FormData, id: string) => {
     try {

@@ -55,11 +55,26 @@ const deleteItem = async () => {
       <div class="info ml-3">
         <div class="name">{{ product.name }}</div>
         <div class="flex my-1">
-          <div class="capitalize text-gray-600 text-xs">Color: {{ color }},</div>
+          <div class="capitalize text-gray-600 text-xs">
+            Color: {{ color }},
+          </div>
           <div class="text-gray-600 text-xs ml-1">Size: {{ size }}</div>
         </div>
-        <div class="price text-xs font-semibold">
-          {{ (product.price * qty).toFixed(2) }}$
+        <div class="flex">
+          <div
+            class="price text-xs font-semibold"
+            :class="[
+              { 'line-through': product.sale > 0 },
+              { 'text-gray-400': product.sale > 0 },
+            ]"
+          >
+            {{ (product.price * qty).toFixed(2) }}$
+          </div>
+          <div v-if="product.sale > 0" class="text-xs ml-3 font-semibold">
+            {{
+              ((product.price - (product.price / 100) * product.sale) * qty).toFixed(2)
+            }}$
+          </div>
         </div>
       </div>
     </div>

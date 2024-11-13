@@ -116,44 +116,15 @@ const toggle = (): void => {
           >Orders</span
         >
       </NuxtLink>
-      <div
-        class="justify-between cursor-pointer rounded-lg p-3"
-        @click="toggle"
+      <NuxtLink
+        to="/admin/users"
+        class="flex hover:bg-gray-200 rounded-lg p-3 nav align-center"
       >
-        <div class="flex nav align-center justify-between">
-          <div class="flex">
-            <FontAwesomeIcon class="fa-xl" :icon="faUser" />
-            <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
-              >Users</span
-            >
-          </div>
-          <FontAwesomeIcon
-            class="icon fa-lg"
-            :class="{ 'rotate-180': isExpanded }"
-            :icon="faAngleDown"
-          />
-        </div>
-        <div
-          class="subnav mt-2 transition-all duration-300 ease-in-out overflow-hidden"
-          :class="{ 'max-h-0': !isExpanded, 'max-h-40': isExpanded }"
+        <FontAwesomeIcon class="fa-xl" :icon="faUser"/>
+        <span v-if="!navWidth" class="text-lg hidden xl:block ml-3"
+          >Users</span
         >
-          <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
-            to="/admin/staffs"
-          >
-            <FontAwesomeIcon :icon="faCircleUser" />
-            <span v-if="!navWidth" class="ml-2 hidden xl:block">Employees</span>
-          </NuxtLink>
-          <NuxtLink
-            class="flex hover:bg-gray-200 px-3 py-2 rounded-lg nav align-center"
-            to="/admin/users"
-          >
-            <FontAwesomeIcon :icon="faUsers" />
-            <span v-if="!navWidth" class="ml-2 hidden xl:block">Clients</span>
-          </NuxtLink>
-        </div>
-      </div>
-      <div class="bar h-[1px] w-full bg-gray-300 my-3"></div>
+      </NuxtLink>
       <NuxtLink
         to="/admin/settings"
         class="flex hover:bg-gray-200 rounded-lg px-3 py-2 nav align-center"

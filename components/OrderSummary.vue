@@ -71,7 +71,7 @@ const handleCheckout = async () => {
         size: item.size,
         qty: item.qty,
       }));
-      await checkoutCart(items, props.price)
+      await checkoutCart(items, props.price, userCookie.value['_id'])
     } catch (error) {
       console.error("Error initiating checkout:", error);
     }

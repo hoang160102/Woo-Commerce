@@ -3,7 +3,7 @@ import Cart from "~/models/user/cart/Cart.model";
 export default defineEventHandler(async (event: any) => {
   const { id } = event.context.params;
   const body = await readBody(event);
-  const { productId, color, size, qty, price } = body;
+  const { productId, color, size, qty, price, sale } = body;
   let cart: any = await Cart.findById(id).populate('items');
   const existingItem: any = cart?.items.find((item: any) => {
     return (
@@ -20,7 +20,8 @@ export default defineEventHandler(async (event: any) => {
         color,
         size,
         qty,
-        price
+        price,
+        sale
       });
       await cartItem.save();
       cart?.items.push(cartItem);

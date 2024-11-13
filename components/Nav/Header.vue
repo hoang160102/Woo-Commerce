@@ -56,7 +56,7 @@ watch(
 const totalPrice = computed(() => {
   if (cartItems.value) {
     return cartItems.value.reduce(
-      (acc: any, item: any) => acc + item.price * item.qty,
+      (acc: any, item: any) => acc + (item.price - (item.price / 100) * item.sale) * item.qty,
       0
     );
   }

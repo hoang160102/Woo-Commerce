@@ -19,7 +19,8 @@ export const useCartStore = defineStore("cart-store", () => {
     color: string,
     size: string,
     qty: number,
-    price: number
+    price: number,
+    sale: number
   ) => {
     try {
       const data: any = await $fetch(`/api/cart/${cartId}`, {
@@ -29,7 +30,8 @@ export const useCartStore = defineStore("cart-store", () => {
           color,
           size,
           qty,          
-          price
+          price,
+          sale
         },
       });
       userCart.value = data

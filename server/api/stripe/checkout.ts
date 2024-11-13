@@ -58,7 +58,6 @@ export default defineEventHandler(async (event) => {
         },
       ],
     });
-    console.log(session)
     return {
       url: session.url,
     };

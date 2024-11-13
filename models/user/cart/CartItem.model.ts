@@ -6,7 +6,8 @@ interface CartItem {
   color: string;
   size: string;
   cartId: string;
-  price: number
+  price: number;
+  sale: number
 }
 
 const cartItemSchema = new Schema<CartItem>({
@@ -15,7 +16,8 @@ const cartItemSchema = new Schema<CartItem>({
   cartId: { type: String, required: true },
   color: { type: String, },
   size: { type: String, },
-  price: { type: Number }
+  price: { type: Number },
+  sale: { type: Number }
 });
 
 const CartItem: Model<CartItem> = mongoose.model<CartItem>('CartItem', cartItemSchema)

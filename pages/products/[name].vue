@@ -110,7 +110,8 @@ const addToCart = async (product: any) => {
       selectedColor.value,
       selectedSize.value,
       quanity.value,
-      product.price
+      product.price,
+      product.sale
     );
   }
 };
@@ -306,10 +307,10 @@ const toggleProduct = async (productId: string) => {
                   >Add to Cart -
                   <span
                     >{{
-                      (
+                      ((
                         product.price -
                         (product.price / 100) * product.sale
-                      ).toFixed(2)
+                      ) * quanity).toFixed(2)
                     }}$</span
                   > </span
                 ><!---->
