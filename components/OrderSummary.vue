@@ -45,7 +45,7 @@ watch(
 const subtotal = computed(() => {
   if (cartItems.value) {
     return cartItems.value.reduce(
-      (acc: any, item: any) => acc + item.price * item.qty,
+      (acc: any, item: any) => acc + (item.price - (item.price / 100 * item.sale)) * item.qty,
       0
     );
   }
@@ -69,9 +69,10 @@ const handleCheckout = async () => {
         price: item.price,
         color: item.color,
         size: item.size,
+        sale: item.sale,
         qty: item.qty,
       }));
-      await checkoutCart(items, props.price, userCookie.value['_id'])
+      await checkoutCart(items, props.price, userCookie.value.cart)
     } catch (error) {
       console.error("Error initiating checkout:", error);
     }

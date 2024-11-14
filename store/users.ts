@@ -7,10 +7,12 @@ interface User {
   password: string;
   email: string;
   phone: string;
-  billing_info_id: string;
-  shipping_info_id: string;
+  billing: string;
+  shipping: string;
   createAt: Date;
   updatedAt: Date;
+  cart: string
+  isAdmin: boolean
   orders: string[];
   profile_img: string;
   wishList: string[];
@@ -20,7 +22,7 @@ interface User {
 }
 export const useUsersStore = defineStore("users-store", () => {
   const usersList = ref<any>({});
-  const userById = ref<User | null>(null)
+  const userById = ref<any>(null)
   const userCookie: any = useCookie("currentUser");
   async function getAllUsers() {
     try {
@@ -30,8 +32,9 @@ export const useUsersStore = defineStore("users-store", () => {
       console.log(err);
     }
   }
-  const getUserById = async () => {
-    
+  const getUserById = async (id: string) => {
+    const { data } = await useFetch(`/api/users/${id}`)
+    userById.value = data.value
   }
   const uploadProfileImage = async (data: FormData, id: string) => {
     try {
@@ -80,11 +83,29 @@ export const useUsersStore = defineStore("users-store", () => {
       console.log(err);
     }
   };
+  const updateRole = async (role: string, id: string) => {
+    let isAdmin = role === 'Admin' ? true : false
+    const formData = new FormData()
+    formData.append('isAdmin', isAdmin.toString())
+    try {
+      const response: any = await $fetch(`/api/users/${id}`, {
+        method: 'put',
+        body: formData
+      })
+      // console.log(response)
+    }
+    catch(err) {
+      console.log(err)
+    }
+  }
   return {
     usersList,
+    userById,
     getAllUsers,
     uploadProfileImage,
     updateInformation,
     updatePassword,
+    getUserById,
+    updateRole
   };
 });

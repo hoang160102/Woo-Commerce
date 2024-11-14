@@ -38,11 +38,15 @@ export default defineEventHandler(async (event) => {
             description: `Size: ${item.size}, Color: ${item.color}`,
             images: [item.imageUrl],
           },
-          unit_amount: item.price * 100, // Stripe expects prices in cents
+          unit_amount: Math.round((item.price - item.price * item.sale / 100) * 100),
         },
         quantity: item.qty,
       })),
       mode: "payment",
+      metadata: {
+        cartId: body.cartId,
+        items: JSON.stringify(itemProducts.map((item: any) => ({ id: item.id, qty: item.qty })))
+      },
       success_url: `${process.env.BASE_URL}/checkout/success`,
       cancel_url: `${process.env.BASE_URL}/checkout/cancel`,
       shipping_options: [

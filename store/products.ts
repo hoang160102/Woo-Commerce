@@ -84,7 +84,6 @@ export const useProductStore = defineStore("product-store", () => {
         method: "put",
         body: formData,
       });
-      console.log(data)
       toast.success("Updated product successfully");
     } catch (err) {
       console.log(err);

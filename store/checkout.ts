@@ -6,9 +6,9 @@ export const useCheckoutStore = defineStore("checkout-store", () => {
       const response: any = await $fetch("/api/stripe/checkout", {
         method: "POST",
         body: {
+          cartId: id,
           items,
           shippingPrice: shipPrice,
-          metadat: id
         },
       });
       window.location.href = response.url

@@ -68,6 +68,10 @@ export default defineEventHandler(async (event: any) => {
               updateData.wishList.splice(productIndex, 1);
             }
           }
+          if (body.isAdmin) {
+            let isAdmin: boolean = body.isAdmin === 'true'
+            updateData.isAdmin = isAdmin
+          }
 
           const user = await User.findByIdAndUpdate(id, updateData, { new: true });
           if (!user) {
